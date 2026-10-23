@@ -185,28 +185,62 @@ h2 { margin: 0; font-variation-settings: "wdth" 80; font-weight: 800; font-size:
 @media (prefers-reduced-motion: no-preference) {
   .opt, .cell, .seg button { transition: background-color .15s, border-color .15s, color .15s; }
 }
+
+/* tabs */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tab { border: 1px solid var(--rule); background: var(--sheet); border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 700; font-variation-settings: "wdth" 85; text-transform: uppercase; letter-spacing: .04em; font-size: 13px; display: flex; gap: 8px; align-items: center; }
+.tab .n { font: 600 11px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
+.tab[aria-selected="true"] .n { color: var(--sheet); opacity: .75; }
+.tab .dot { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--bad); color: var(--on-solid); font: 600 11px/20px var(--mono); text-align: center; }
+.layout.solo { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 520px) {
+  .tabs { gap: 4px; flex-wrap: nowrap; }
+  .tab { flex: 1 1 auto; justify-content: center; padding: 9px 8px; font-size: 12px; letter-spacing: .02em; }
+  .tab .n { display: none; }
+}
+.sync { display: inline-flex; gap: 6px; align-items: center; font: 600 11px/1.2 var(--mono); letter-spacing: .04em; color: var(--muted); }
+.sync::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+.sync.on { color: var(--ok); }
+.sync.on::before { background: var(--ok); }
+.mhead { padding: 20px; display: grid; gap: 14px; border-bottom: 1px solid var(--rule); }
+.mhead p { margin: 0; color: var(--muted); max-width: 68ch; }
+.mtabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.mfilter { border: 1px solid var(--rule); background: var(--sheet); border-radius: 999px; padding: 6px 12px; cursor: pointer; font-size: 13px; font-weight: 600; }
+.mfilter[aria-pressed="true"] { background: var(--form); border-color: var(--form); color: var(--on-solid); }
+.copybox { display: grid; gap: 8px; }
+.copybox textarea { width: 100%; min-height: 160px; font: 13px/1.45 var(--mono); padding: 10px; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); color: var(--ink); resize: vertical; }
+.toast { font-size: 13px; color: var(--ok); font-weight: 600; }
+.mlist { padding: 20px; display: grid; gap: 22px; }
+.mgroup { display: grid; gap: 10px; }
+.mgroup h2 { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.mgroup h2 span { font: 600 12px var(--mono); color: var(--muted); text-transform: none; letter-spacing: 0; }
+.times { font: 600 11px var(--mono); color: var(--bad); }
+.empty { padding: 32px 20px; display: grid; gap: 10px; justify-items: start; }
+.empty p { margin: 0; color: var(--muted); max-width: 60ch; }
 </style>
 
 <div class="wrap">
   <header class="cover">
     <div>
       <div class="eyebrow">ENGL020 · Major 2 · Use of English</div>
-      <h1>Grammar Drill</h1>
+      <h1 id="pageTitle">Grammar Drill</h1>
     </div>
-    <dl class="spec">
-      <div><dt>Prep TOEFL</dt><dd>Skills 1–30</dd></div>
-      <div><dt>Life</dt><dd>Units 5–8</dd></div>
-      <div><dt>Exam pace</dt><dd>45 s / question</dd></div>
-      <div><dt>Bank</dt><dd id="bankCount">–</dd></div>
-    </dl>
+    <dl class="spec" id="spec"></dl>
   </header>
 
-  <div class="layout">
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button type="button" class="tab" role="tab" id="tab-g" data-view="g">Grammar <span class="n" id="n-g"></span></button>
+    <button type="button" class="tab" role="tab" id="tab-v" data-view="v">Vocabulary <span class="n" id="n-v"></span></button>
+    <button type="button" class="tab" role="tab" id="tab-m" data-view="m">My mistakes <span class="dot" id="n-m" hidden></span></button>
+  </nav>
+
+  <div class="layout" id="layout">
     <details class="builder" id="builder" open>
       <summary>Build a quiz <span class="chev">▾</span></summary>
       <div class="bbody">
-        <div class="group" id="grpToefl"></div>
-        <div class="group" id="grpLife"></div>
+        <div class="group" id="grpA"></div>
+        <div class="group" id="grpB"></div>
         <div class="fld">
           <span>Questions</span>
           <div class="seg" id="countSeg" role="group" aria-label="Number of questions"></div>
@@ -220,10 +254,7 @@ h2 { margin: 0; font-variation-settings: "wdth" 80; font-weight: 800; font-size:
           <p class="hint" id="modeHint"></p>
         </div>
         <button class="btn wide" type="button" id="startBtn">Start quiz</button>
-        <div class="mistakes" id="mistakeBox" hidden>
-          <p class="hint" id="mistakeText"></p>
-          <button class="btn ghost wide" type="button" id="mistakeBtn">Practise my mistakes</button>
-        </div>
+        <span class="sync" id="syncNote"></span>
       </div>
     </details>
 
@@ -434,10 +465,10 @@ const BANK = [
     w: "The short pattern is the + adj + N, the + adj + N: the faster the car, the higher the risk." },
 
   // ---------- Skills 30–32
-  { t: "S30", k: "e", q: "Students [[should]] [[brought]] [[their]] calculators [[to]] the exam.",
-    a: 1, w: "After a modal (should, can, will, might…), always use V1: should bring." },
-  { t: "S30", k: "e", q: "Ken [[has]] [[went]] to Spain [[three]] [[times]].",
-    a: 1, w: "When have is a helping verb, follow it with V3: has gone." },
+  { t: "S30", k: "e", q: "Students should [[brought]] [[their]] calculators [[to]] the [[exam]].",
+    a: 0, w: "After a modal (should, can, will, might…), always use V1: should bring." },
+  { t: "S30", k: "e", q: "Ken has [[went]] [[to]] Spain [[three]] [[times]].",
+    a: 0, w: "When have is a helping verb, follow it with V3: has gone." },
   { t: "S30", k: "e", q: "That [[is mean]] the meeting [[has]] [[been]] [[cancelled]].",
     a: 0, w: "Do not put be before an active simple verb. That means is correct; That is mean is not." },
   { t: "S30", k: "e", q: "The first mosque in the city [[was]] [[build]] [[over]] two hundred years [[ago]].",
@@ -571,182 +602,5281 @@ const BANK = [
     w: "wish / if only + would + V1 = you are annoyed and want someone else to change their behaviour." }
 ];
 
+BANK.push(
+  // ---------- Skills 1–5
+  { t: "S1", k: "c", q: "The new hospital ______ by the end of next year.",
+    o: ["will complete", "will be completed", "completing", "to be completed"], a: 1,
+    w: "People complete the hospital; the hospital is completed. The passive needs be + V3: will be completed." },
+  { t: "S1", k: "e", q: "Every morning, the cleaners [[washes]] the floors [[before]] the students [[arrive]] [[at]] school.",
+    a: 0, w: "The subject the cleaners is plural, so the verb is wash." },
+  { t: "S1", k: "c", q: "______, a city in the Eastern Province, is known for its oil industry.",
+    o: ["Dhahran", "Dhahran is", "It is Dhahran", "Because Dhahran"], a: 0,
+    w: "The appositive between the commas describes the subject. The blank must be the subject only, because the verb is already there (is known)." },
+  { t: "S1", k: "c", q: "The Burj Khalifa, ______ in the world, is in Dubai.",
+    o: ["is the tallest building", "the tallest building", "which the tallest building", "it is the tallest building"], a: 1,
+    w: "Between the commas you need an appositive: a noun phrase with no verb. which would need a verb (which is…)." },
+  { t: "S1", k: "c", q: "In the library ______ quietly for their exams.",
+    o: ["students study", "studying students", "students studying", "study students"], a: 0,
+    w: "the library is the object of the preposition in, not the subject. The sentence still needs its own subject + verb: students study." },
+  { t: "S1", k: "c", q: "The ______ news made everyone in the room cry.",
+    o: ["shocked", "shocking", "shocks", "shockingly"], a: 1,
+    w: "The news caused the shock, so use the -ing adjective: shocking news." },
+  { t: "S1", k: "c", q: "The ______ windows were repaired the next day.",
+    o: ["breaking", "broke", "broken", "break"], a: 2,
+    w: "Someone broke the windows, so the meaning is passive. Use the V3 adjective: broken windows." },
+  { t: "S1", k: "e", q: "The children were [[exciting]] [[about]] the trip [[to]] the [[science]] museum.",
+    a: 0, w: "The children have the feeling, so use the V3 adjective: excited." },
+  { t: "S1", k: "e", q: "A [[developing]] country [[need]] good roads, [[schools]] and [[hospitals]].",
+    a: 1, w: "A developing country is singular, so the verb is needs. developing is a correct -ing adjective (the country is developing)." },
+
+  // ---------- Skills 6–8
+  { t: "S6", k: "c", q: "I wanted to buy the jacket, ______ it was too expensive.",
+    o: ["so", "but", "because", "or"], a: 1,
+    w: "The second clause contrasts with the first, so use but." },
+  { t: "S6", k: "c", q: "Hurry up, ______ you will miss the flight.",
+    o: ["or", "so", "but", "and"], a: 0,
+    w: "or here means otherwise: if you don't hurry, you will miss the flight." },
+  { t: "S6", k: "c", q: "______ it was raining, we decided to stay at home.",
+    o: ["Because", "Because of", "Due to", "So"], a: 0,
+    w: "A clause (it was raining) follows, so use the adverb connector because. because of and due to take a noun." },
+  { t: "S6", k: "c", q: "We stayed at home ______ the rain.",
+    o: ["because", "because of", "since", "so"], a: 1,
+    w: "A noun (the rain) follows, so use the preposition because of." },
+  { t: "S6", k: "c", q: "______ you finish the test, hand your paper to the teacher.",
+    o: ["As soon as", "During", "Until", "Despite"], a: 0,
+    w: "A clause follows and the meaning is time: as soon as = immediately when. During and despite take nouns." },
+  { t: "S6", k: "c", q: "He kept working ______ he was very tired.",
+    o: ["even though", "despite", "because of", "in spite of"], a: 0,
+    w: "A contrast clause (he was very tired) follows, so use even though. despite and in spite of take a noun." },
+  { t: "S6", k: "c", q: "______ the bad weather, the plane landed safely.",
+    o: ["Although", "Despite", "Even though", "However"], a: 1,
+    w: "A noun phrase (the bad weather) follows, so use the preposition despite. although and even though take a clause." },
+  { t: "S6", k: "c", q: "Take an umbrella ______ it rains this afternoon.",
+    o: ["in case", "unless", "despite", "so"], a: 0,
+    w: "in case = because it might happen. You take the umbrella now because it might rain later." },
+  { t: "S6", k: "c", q: "You can borrow my car ______ you bring it back by six.",
+    o: ["as long as", "unless", "although", "because of"], a: 0,
+    w: "as long as = on condition that. It introduces a condition clause." },
+  { t: "S6", k: "e", q: "Since the road [[was]] closed, [[so]] we [[took]] a [[different]] route.",
+    a: 1, w: "Since already joins the two clauses. Do not add a second connector, so delete so." },
+  { t: "S6", k: "e", q: "[[Because of]] the students [[were]] late, the teacher [[started]] the lesson [[again]].",
+    a: 0, w: "A full clause (the students were late) follows, so use because, not because of." },
+  { t: "S6", k: "c", q: "The museum was closed, ______ we visited the park instead.",
+    o: ["so", "because", "although", "unless"], a: 0,
+    w: "The second clause is the result of the first, so use the coordinate conjunction so." },
+  { t: "S6", k: "c", q: "Ali didn't go to class ______ he was sick.",
+    o: ["because", "although", "unless", "despite"], a: 0,
+    w: "The second clause gives the reason, so use because." },
+
+  // ---------- Skills 9–12
+  { t: "S9", k: "c", q: "I don't know ______ the meeting will start.",
+    o: ["when", "when does", "when will", "that when"], a: 0,
+    w: "A noun clause uses statement word order: when + the meeting + will start. Don't add does or move will." },
+  { t: "S9", k: "c", q: "______ he said surprised everyone in the room.",
+    o: ["What", "That what", "Which", "It"], a: 0,
+    w: "The noun clause what he said is the subject of surprised. what = the thing that." },
+  { t: "S9", k: "c", q: "Can you tell me ______ this bus goes to the airport?",
+    o: ["if", "that", "what", "does"], a: 0,
+    w: "A yes / no question becomes a noun clause with if or whether + statement word order." },
+  { t: "S9", k: "e", q: "Nobody [[understands]] [[why]] [[did the experiment fail]] [[in]] the first place.",
+    a: 2, w: "In a noun clause, use statement word order: why the experiment failed." },
+  { t: "S9", k: "c", q: "______ the earth goes around the sun was proved centuries ago.",
+    o: ["That", "What", "Which", "It"], a: 0,
+    w: "A complete statement used as a subject starts with that: That the earth goes around the sun was proved." },
+  { t: "S9", k: "c", q: "The house ______ we bought last year needs a new roof.",
+    o: ["who", "which", "whose", "where"], a: 1,
+    w: "Use which (or that) for things. Here it is the object of bought." },
+  { t: "S9", k: "c", q: "This is the town ______ my grandfather was born.",
+    o: ["which", "where", "whom", "whose"], a: 1,
+    w: "Use where for a place when the clause is already complete (my grandfather was born). where = in which." },
+  { t: "S9", k: "c", q: "The woman ______ I met at the conference is a famous scientist.",
+    o: ["whom", "whose", "which", "where"], a: 0,
+    w: "whom is the object form for people: I met her, so the woman whom I met." },
+  { t: "S9", k: "e", q: "The students [[who]] [[lives]] in the dormitory [[must]] return [[by]] midnight.",
+    a: 1, w: "who refers to The students, which is plural, so the verb in the relative clause is live." },
+  { t: "S9", k: "e", q: "The car [[which]] [[it]] was parked outside [[belongs]] [[to]] my brother.",
+    a: 1, w: "which is already the subject of was parked. Do not add a second subject (it)." },
+  { t: "S9", k: "c", q: "Professor Smith, ______ class I am taking, is very strict.",
+    o: ["who", "whom", "whose", "which"], a: 2,
+    w: "whose shows possession: Professor Smith's class becomes whose class." },
+  { t: "S9", k: "c", q: "The question ______ the teacher asked was very difficult.",
+    o: ["that", "who", "what", "where"], a: 0,
+    w: "After a noun (the question) use that or which. what already contains its own noun, so it cannot follow one." },
+
+  // ---------- Skills 13–14
+  { t: "S13", k: "c", q: "The girl ______ a red dress is my sister.",
+    o: ["wears", "wearing", "worn", "is wearing"], a: 1,
+    w: "who is wearing reduces to wearing. A full verb would give the sentence two main verbs." },
+  { t: "S13", k: "c", q: "The letters ______ by the manager were sent this morning.",
+    o: ["signing", "signed", "signs", "are signed"], a: 1,
+    w: "The letters were signed (passive). which were signed reduces to the V3 form: signed." },
+  { t: "S13", k: "c", q: "Anyone ______ to join the club should speak to Mr Ali.",
+    o: ["wants", "wanting", "wanted", "is wanting"], a: 1,
+    w: "who wants reduces to wanting. The main verb of the sentence is should speak." },
+  { t: "S13", k: "c", q: "The road ______ the two cities was built in 2010.",
+    o: ["connects", "connecting", "connected", "it connects"], a: 1,
+    w: "which connects reduces to connecting (active meaning). The main verb is was built." },
+  { t: "S13", k: "e", q: "The books [[writing]] by this author [[are]] [[very]] [[popular]].",
+    a: 0, w: "The books were written by the author (passive), so the reduced clause uses V3: written." },
+  { t: "S13", k: "e", q: "The man [[standing]] at the door [[want]] [[to]] see [[you]].",
+    a: 1, w: "standing at the door is a reduced relative clause. The subject is The man, so the verb is wants." },
+  { t: "S13", k: "c", q: "______ the news, she started to cry.",
+    o: ["Hearing", "Heard", "She heard", "Hear"], a: 0,
+    w: "When she heard reduces to Hearing (active, same subject). She heard would make a comma splice." },
+  { t: "S13", k: "c", q: "Before ______ the house, make sure all the windows are closed.",
+    o: ["leave", "leaving", "left", "you leaving"], a: 1,
+    w: "Before you leave reduces to before leaving." },
+  { t: "S13", k: "c", q: "If ______ correctly, this medicine is very safe.",
+    o: ["taking", "taken", "it taken", "takes"], a: 1,
+    w: "If it is taken (passive) reduces to If taken." },
+  { t: "S13", k: "c", q: "When ______ about the accident, the driver said nothing.",
+    o: ["asking", "asked", "was asked", "asks"], a: 1,
+    w: "When he was asked (passive: someone asked the driver) reduces to When asked." },
+  { t: "S13", k: "e", q: "[[While]] [[walk]] in the park, Sara [[saw]] an old [[friend]].",
+    a: 1, w: "While she was walking reduces to while walking." },
+  { t: "S13", k: "e", q: "[[Having]] [[finish]] his homework, Ahmed [[went]] [[out]] to play.",
+    a: 1, w: "When have is a helping verb, it is followed by V3, so Having finished." },
+  { t: "S13", k: "c", q: "Although ______ very tired, Ken stayed up to finish the report.",
+    o: ["feeling", "felt", "he feeling", "feels"], a: 0,
+    w: "Although he felt reduces to although feeling (active, same subject)." },
+  { t: "S13", k: "c", q: "The students ______ the exam early may leave the room.",
+    o: ["finishing", "finished", "finish", "they finish"], a: 0,
+    w: "who finish reduces to finishing (active: the students finish the exam). The main verb is may leave." },
+
+  // ---------- Skills 15–19
+  { t: "S15", k: "c", q: "Not until the bell rang ______ the classroom.",
+    o: ["the students left", "did the students leave", "the students did leave", "left the students"], a: 1,
+    w: "Not until … at the start causes inversion in the main clause: did + subject + V1." },
+  { t: "S15", k: "c", q: "Only after the results were published ______ how serious the problem was.",
+    o: ["we realized", "did we realize", "we did realize", "realized we"], a: 1,
+    w: "Only after … at the start causes inversion in the main clause: did we realize." },
+  { t: "S15", k: "c", q: "Hardly ______ home when it started to rain.",
+    o: ["we had arrived", "had we arrived", "we arrived", "arrived we"], a: 1,
+    w: "Hardly is a negative word. At the start it causes inversion: had + subject + V3." },
+  { t: "S15", k: "c", q: "In the centre of the square ______ a tall statue of the king.",
+    o: ["stand", "stands", "standing", "does stand"], a: 1,
+    w: "Locative inversion: place phrase, then verb + subject. a tall statue is singular, so stands." },
+  { t: "S15", k: "c", q: "Under the table ______ two cats.",
+    o: ["was sleeping", "were sleeping", "sleeping", "sleeps"], a: 1,
+    w: "Locative inversion: the subject comes after the verb. two cats is plural, so were sleeping." },
+  { t: "S15", k: "c", q: "Such was his anger ______ he could not speak.",
+    o: ["what", "that", "which", "so"], a: 1,
+    w: "Resultative inversion: Such + be + subject + that + result." },
+  { t: "S15", k: "c", q: "______ you see Mr Ali, tell him I called.",
+    o: ["Should", "Had", "Were", "Did"], a: 0,
+    w: "First conditional with inversion: Should you see = If you see." },
+  { t: "S15", k: "c", q: "Had I known about the exam, I ______ harder.",
+    o: ["would study", "would have studied", "will study", "studied"], a: 1,
+    w: "Had I known = If I had known (third conditional), so the result is would have + V3." },
+  { t: "S15", k: "c", q: "Were the weather better, we ______ to the beach.",
+    o: ["would go", "will go", "would have gone", "go"], a: 0,
+    w: "Were the weather better = If the weather were better (second conditional), so the result is would + V1." },
+  { t: "S15", k: "c", q: "Saudi students read more than ______ students in many other countries.",
+    o: ["do", "are", "have", "does"], a: 0,
+    w: "Inversion with comparatives: than + helping verb + subject. read is present simple and students is plural, so do." },
+
+  // ---------- Skills 20–23
+  { t: "S20", k: "c", q: "The list of books for the course ______ on the website.",
+    o: ["are", "is", "were", "have been"], a: 1,
+    w: "The subject is list (singular). of books is the object of a preposition and does not change the verb." },
+  { t: "S20", k: "c", q: "The students in my class ______ very hard.",
+    o: ["works", "work", "is working", "has worked"], a: 1,
+    w: "The subject is students (plural). in my class does not change the verb." },
+  { t: "S20", k: "c", q: "Some of the water in the bottle ______.",
+    o: ["has spilled", "have spilled", "are spilled", "were spill"], a: 0,
+    w: "After some of, the verb follows the noun. water is uncountable, so the verb is singular." },
+  { t: "S20", k: "c", q: "Half of the apples ______ rotten.",
+    o: ["is", "are", "was", "has been"], a: 1,
+    w: "After half of, the verb follows the noun. apples is plural, so are." },
+  { t: "S20", k: "c", q: "All of the furniture in this room ______ new.",
+    o: ["is", "are", "were", "have been"], a: 0,
+    w: "After all of, the verb follows the noun. furniture is uncountable, so is." },
+  { t: "S20", k: "c", q: "Nobody in the class ______ the answer.",
+    o: ["know", "knows", "are knowing", "have known"], a: 1,
+    w: "Indefinite pronouns such as nobody are singular: nobody knows." },
+  { t: "S20", k: "c", q: "Every student and teacher ______ a parking permit.",
+    o: ["need", "needs", "are needing", "have needed"], a: 1,
+    w: "every is followed by a singular noun and takes a singular verb, even when two nouns are joined: every student and teacher needs." },
+  { t: "S20", k: "e", q: "Rarely [[does]] the students [[complain]] [[about]] the [[food]].",
+    a: 0, w: "With negative inversion the subject comes after the helping verb. the students is plural, so do." },
+  { t: "S20", k: "e", q: "Riyadh, [[the]] capital of Saudi Arabia, [[have]] [[grown]] very [[quickly]].",
+    a: 1, w: "The appositive separates the subject from the verb. The subject is Riyadh (singular), so has grown." },
+  { t: "S20", k: "e", q: "The number of cars in the city [[have]] [[increased]] [[a lot]] [[in]] recent years.",
+    a: 0, w: "The number of … is singular, so has increased. (A number of … is plural.)" },
+  { t: "S20", k: "e", q: "Somebody [[have]] [[left]] [[a]] bag [[in]] the classroom.",
+    a: 0, w: "Somebody is singular, so has left." },
+  { t: "S20", k: "c", q: "Neither the teacher nor the students ______ the answer.",
+    o: ["know", "knows", "is knowing", "has known"], a: 0,
+    w: "With neither … nor and either … or, the verb agrees with the nearer subject: the students know." },
+  { t: "S20", k: "c", q: "There ______ several reasons for the delay.",
+    o: ["is", "are", "was", "has"], a: 1,
+    w: "After there, the verb agrees with the noun that follows: several reasons are." },
+
+  // ---------- Skills 24–26
+  { t: "S24", k: "c", q: "She likes swimming, running, and ______.",
+    o: ["to cycle", "cycling", "cycle", "cycles"], a: 1,
+    w: "Parallel structure: swimming, running, and cycling are all -ing forms." },
+  { t: "S24", k: "c", q: "The film was long but ______.",
+    o: ["interesting", "interest", "interestingly", "it was interesting"], a: 0,
+    w: "Parallel structure: but joins two adjectives, long and interesting." },
+  { t: "S24", k: "e", q: "He is neither tired [[or]] [[hungry]] [[after]] [[the]] trip.",
+    a: 0, w: "neither goes with nor. either goes with or." },
+  { t: "S24", k: "e", q: "Both the teacher [[and]] the students [[was]] [[happy]] [[with]] the results.",
+    a: 1, w: "Both … and makes a plural subject, so were." },
+  { t: "S24", k: "c", q: "You can either call me ______ send me an email.",
+    o: ["nor", "or", "and", "but"], a: 1,
+    w: "The paired conjunction is either … or." },
+  { t: "S24", k: "e", q: "Reading books is [[more]] useful [[than]] [[to watch]] [[television]].",
+    a: 2, w: "Comparisons are parallel too: reading books … than watching television." },
+  { t: "S24", k: "c", q: "Japanese cars are as reliable ______ German cars.",
+    o: ["than", "as", "like", "to"], a: 1,
+    w: "The comparative structure is as … as." },
+  { t: "S24", k: "c", q: "Using a tablet is similar ______ using a phone.",
+    o: ["as", "to", "than", "with"], a: 1,
+    w: "The structure is similar to. the same takes as, and more / -er takes than." },
+  { t: "S24", k: "c", q: "The new manager is friendly, helpful, and ______.",
+    o: ["she works hard", "hard-working", "works hard", "working hardly"], a: 1,
+    w: "Parallel structure: friendly, helpful, and hard-working are all adjectives." },
+  { t: "S24", k: "e", q: "To succeed in business, you need [[patience]], [[hard work]], [[and]] [[lucky]].",
+    a: 3, w: "Parallel nouns: patience, hard work, and luck. lucky is an adjective." },
+  { t: "S24", k: "c", q: "Not only did he win the race, ______ he also broke the record.",
+    o: ["and", "but", "or", "nor"], a: 1,
+    w: "The paired conjunction is not only … but also." },
+  { t: "S24", k: "c", q: "The teacher asked us to read the text carefully and ______ the questions.",
+    o: ["answering", "to answering", "answer", "answered"], a: 2,
+    w: "Parallel structure: to read … and (to) answer. The second to can be left out, so use V1." },
+  { t: "S24", k: "e", q: "She enjoys [[cooking]], [[to read]], and [[travelling]] [[with]] her family.",
+    a: 1, w: "Parallel -ing forms after enjoy: cooking, reading, and travelling." },
+  { t: "S24", k: "c", q: "He spoke slowly and ______ so that everyone could understand.",
+    o: ["clear", "clearly", "clearness", "more clear"], a: 1,
+    w: "Parallel adverbs: slowly and clearly." },
+
+  // ---------- Skills 27–29
+  { t: "S27", k: "c", q: "Riyadh is ______ than Jeddah in summer.",
+    o: ["hot", "hotter", "hottest", "more hot"], a: 1,
+    w: "Two things are compared with than, so use the comparative: hotter." },
+  { t: "S27", k: "c", q: "This is the ______ exam I have ever taken.",
+    o: ["easier", "easiest", "most easy", "more easy"], a: 1,
+    w: "the + superlative + that / I have ever: the easiest. easy takes -est, not most." },
+  { t: "S27", k: "e", q: "Gold is [[more]] [[expensive]] [[then]] [[silver]].",
+    a: 2, w: "A comparative is followed by than, not then." },
+  { t: "S27", k: "e", q: "He is [[the]] [[most]] [[tallest]] student [[in]] the class.",
+    a: 1, w: "Never use most with an -est adjective. Write the tallest." },
+  { t: "S27", k: "c", q: "The more you read, ______ your vocabulary becomes.",
+    o: ["the richer", "richer", "the more rich", "the richest"], a: 0,
+    w: "the + comparative + S + V, the + comparative + S + V: the more you read, the richer your vocabulary becomes." },
+  { t: "S27", k: "c", q: "The older you get, ______ you remember.",
+    o: ["the less", "less", "the least", "the fewer"], a: 0,
+    w: "The pattern is the + comparative + S + V, the + comparative + S + V: the older you get, the less you remember." },
+  { t: "S27", k: "c", q: "Of all the students, Ahmed is ______.",
+    o: ["the most hard-working", "more hard-working", "most hard-working than", "the more hard-working"], a: 0,
+    w: "of + a group shows a superlative. After be, a superlative adjective takes the: the most hard-working." },
+  { t: "S27", k: "e", q: "This car is [[cheaper]] [[and]] [[more]] reliable [[that]] my old one.",
+    a: 3, w: "A comparative is followed by than, not that." },
+  { t: "S27", k: "c", q: "My new house is much ______ my old one.",
+    o: ["bigger than", "more big than", "biggest than", "bigger as"], a: 0,
+    w: "big becomes bigger, and the comparative is followed by than." },
+  { t: "S27", k: "c", q: "Today is ______ day of the year.",
+    o: ["the hottest", "hotter", "hottest", "the most hot"], a: 0,
+    w: "One day compared with all the days of the year needs the superlative with the: the hottest." },
+  { t: "S27", k: "e", q: "Mr Brown is the [[worse]] teacher [[that]] I [[have]] ever [[had]].",
+    a: 0, w: "the + superlative + that I have ever: the worst." },
+  { t: "S27", k: "c", q: "The ______ the car, the more it costs to run.",
+    o: ["biggest", "bigger", "big", "more big"], a: 1,
+    w: "the + comparative, the + comparative: the bigger the car, the more it costs." },
+  { t: "S27", k: "e", q: "The bigger the city, [[more]] [[expensive]] [[the]] [[rent]].",
+    a: 0, w: "Both halves of this pattern start with the: the bigger the city, the more expensive the rent." },
+  { t: "S27", k: "c", q: "This problem is ______ difficult than the last one.",
+    o: ["much more", "much", "most", "very more"], a: 0,
+    w: "difficult takes more … than. Use much, not very, to make a comparative stronger." },
+
+  // ---------- Skills 30–32
+  { t: "S30", k: "e", q: "You [[must]] [[to finish]] the report [[before]] [[Friday]].",
+    a: 1, w: "After a modal, use V1 with no to: must finish." },
+  { t: "S30", k: "e", q: "She can [[speaks]] [[three]] [[languages]] [[fluently]].",
+    a: 0, w: "After a modal, use V1: can speak." },
+  { t: "S30", k: "e", q: "They have [[ate]] [[all]] the [[cake]] [[already]].",
+    a: 0, w: "have as a helping verb is followed by V3: have eaten." },
+  { t: "S30", k: "e", q: "The letter [[was]] [[wrote]] [[by]] my [[grandfather]].",
+    a: 1, w: "The passive is be + V3: was written." },
+  { t: "S30", k: "e", q: "He [[might]] [[comes]] [[to]] the party [[tonight]].",
+    a: 1, w: "After a modal, use V1: might come." },
+  { t: "S30", k: "e", q: "I [[am agree]] [[with]] [[your]] [[opinion]].",
+    a: 0, w: "agree is a verb, so don't put be before it: I agree." },
+  { t: "S30", k: "e", q: "Ali [[is]] [[study]] [[in]] the library [[now]].",
+    a: 1, w: "After be, use -ing for an action in progress: is studying." },
+  { t: "S30", k: "e", q: "We had [[already]] [[saw]] the film [[before]] [[last week]].",
+    a: 1, w: "had as a helping verb is followed by V3: had already seen." },
+  { t: "S30", k: "e", q: "Having [[spoke]] to the manager, [[she]] [[felt]] [[better]].",
+    a: 0, w: "Having is a form of have, so it is followed by V3: Having spoken." },
+  { t: "S30", k: "c", q: "The students should ______ the instructions carefully.",
+    o: ["read", "reading", "to read", "reads"], a: 0,
+    w: "After a modal (should), use V1." },
+  { t: "S30", k: "c", q: "The new stadium will ______ next year.",
+    o: ["be built", "build", "built", "building"], a: 0,
+    w: "The stadium does not build anything; it is built. After will, the passive is be + V3." },
+  { t: "S30", k: "c", q: "Ken is ______ at Aramco.",
+    o: ["employ", "employed", "employs", "to employ"], a: 1,
+    w: "After be, use V3 for the passive: Ken is employed." },
+  { t: "S30", k: "c", q: "He has ______ to Spain twice.",
+    o: ["went", "been", "go", "going"], a: 1,
+    w: "has as a helping verb is followed by V3: has been." },
+  { t: "S30", k: "c", q: "This experiment could ______ the way we treat cancer.",
+    o: ["changes", "change", "changed", "changing"], a: 1,
+    w: "After a modal (could), use V1." },
+
+  // ---------- Life Unit 5
+  { t: "L5", k: "c", q: "I enjoy ______ in the evening.",
+    o: ["walk", "to walk", "walking", "walked"], a: 2, w: "enjoy + -ing." },
+  { t: "L5", k: "c", q: "She promised ______ me with my homework.",
+    o: ["helping", "to help", "help", "helped"], a: 1, w: "promise + to + infinitive." },
+  { t: "L5", k: "c", q: "We are planning ______ to Abha in the summer.",
+    o: ["travel", "travelling", "to travel", "travelled"], a: 2, w: "plan + to + infinitive." },
+  { t: "L5", k: "c", q: "He avoided ______ the question.",
+    o: ["answer", "to answer", "answering", "answered"], a: 2, w: "avoid + -ing." },
+  { t: "L5", k: "c", q: "Do you want ______ out for dinner tonight?",
+    o: ["going", "to go", "go", "went"], a: 1, w: "want + to + infinitive." },
+  { t: "L5", k: "c", q: "I forgot ______ the door, so someone came in.",
+    o: ["locking", "to lock", "lock", "locked"], a: 1,
+    w: "forget + to + infinitive = not do something you should do. forget + -ing = not remember a past event." },
+  { t: "L5", k: "c", q: "I'll never forget ______ the Grand Canyon for the first time.",
+    o: ["seeing", "to see", "see", "saw"], a: 0,
+    w: "forget + -ing = (not) remember an experience from the past." },
+  { t: "L5", k: "c", q: "If you can't sleep, try ______ a glass of warm milk. It might help.",
+    o: ["drinking", "to drink", "drink", "drunk"], a: 0,
+    w: "try + -ing = do something as an experiment to see if it works. try + to + infinitive = make an effort to do something difficult." },
+  { t: "L5", k: "c", q: "I tried ______ the heavy box, but I couldn't even move it.",
+    o: ["lifting", "to lift", "lift", "lifted"], a: 1,
+    w: "try + to + infinitive = make an effort to do something difficult." },
+
+  // ---------- Life Unit 6
+  { t: "L6", k: "c", q: "Where ______ you born?",
+    o: ["did", "were", "are", "have"], a: 1,
+    w: "be born is passive and past, so the question is Where were you born?" },
+  { t: "L6", k: "c", q: "What ______ you do last weekend?",
+    o: ["did", "do", "were", "have"], a: 0,
+    w: "last weekend is past, so use did + subject + V1." },
+  { t: "L6", k: "c", q: "Who ______ you call last night?",
+    o: ["did", "called", "was", "has"], a: 0,
+    w: "Here who is the object (you called someone), so the question needs did + subject + V1." },
+  { t: "L6", k: "c", q: "Who ______ you last night?",
+    o: ["did call", "called", "was call", "call"], a: 1,
+    w: "Here who is the subject (someone called you), so there is no did: Who called you?" },
+  { t: "L6", k: "c", q: "I don't know where ______.",
+    o: ["does she live", "she lives", "lives she", "she does live"], a: 1,
+    w: "An indirect question uses statement word order: where she lives." },
+  { t: "L6", k: "c", q: "Can you tell me how much ______?",
+    o: ["does this cost", "this costs", "costs this", "is this cost"], a: 1,
+    w: "An indirect question uses statement word order and no does: how much this costs." },
+  { t: "L6", k: "c", q: "He ______ go to university last year.",
+    o: ["didn't", "doesn't", "wasn't", "hasn't"], a: 0,
+    w: "The past simple negative is didn't + V1." },
+  { t: "L6", k: "c", q: "We ______ finished the project yet.",
+    o: ["didn't", "haven't", "aren't", "don't"], a: 1,
+    w: "yet and finished (V3) need the present perfect negative: haven't finished." },
+  { t: "L6", k: "c", q: "______ you like coffee? I thought everyone liked coffee!",
+    o: ["Don't", "Aren't", "Haven't", "Won't"], a: 0,
+    w: "A negative question shows surprise. like is present simple, so Don't you like …?" },
+  { t: "L6", k: "c", q: "I asked her ______ she wanted tea or coffee.",
+    o: ["whether", "that", "what", "does"], a: 0,
+    w: "A reported choice question uses whether (or if) + statement word order." },
+  { t: "L6", k: "c", q: "There ______ any milk left in the fridge.",
+    o: ["isn't", "aren't", "doesn't", "hasn't"], a: 0,
+    w: "milk is uncountable, so the negative is There isn't any milk." },
+
+  // ---------- Life Unit 7
+  { t: "L7", k: "c", q: "If you mix red and blue, you ______ purple.",
+    o: ["get", "will got", "would get", "got"], a: 0,
+    w: "Zero conditional for something that is always true: If + present, present." },
+  { t: "L7", k: "c", q: "If I see Sara, I ______ her the news.",
+    o: ["tell", "will tell", "told", "would tell"], a: 1,
+    w: "First conditional for a real future possibility: If + present, will + V1." },
+  { t: "L7", k: "c", q: "Unless you ______ harder, you will fail the course.",
+    o: ["study", "will study", "studied", "don't study"], a: 0,
+    w: "unless = if not, and it takes a present verb for the future. Don't add not: unless you study." },
+  { t: "L7", k: "c", q: "Wait here until I ______ back.",
+    o: ["will come", "come", "came", "would come"], a: 1,
+    w: "After until and other time linkers, use the present simple for the future." },
+  { t: "L7", k: "c", q: "Before you ______ the room, turn off the lights.",
+    o: ["will leave", "leave", "left", "are leaving"], a: 1,
+    w: "After before and other time linkers, use the present simple for the future." },
+  { t: "L7", k: "c", q: "When I was young, we ______ visit my grandparents every Friday.",
+    o: ["would", "were used to", "are used to", "use to"], a: 0,
+    w: "would + V1 describes a repeated action in the past." },
+  { t: "L7", k: "c", q: "Did you ______ play football at school?",
+    o: ["use to", "used to", "would", "using to"], a: 0,
+    w: "After did in questions and negatives, write use to (no -d)." },
+  { t: "L7", k: "c", q: "I'm not ______ to the hot weather yet. I only arrived last week.",
+    o: ["use", "used", "using", "uses"], a: 1,
+    w: "be used to + noun / -ing = be familiar with something." },
+  { t: "L7", k: "c", q: "New students soon ______ used to the university timetable.",
+    o: ["get", "are", "would", "use"], a: 0,
+    w: "get used to = become familiar with something over time. soon shows the change." },
+
+  // ---------- Life Unit 8
+  { t: "L8", k: "c", q: "If I ______ you, I would apologize.",
+    o: ["am", "was being", "were", "had"], a: 2,
+    w: "Second conditional advice: If I were you, I would …" },
+  { t: "L8", k: "c", q: "If we had left earlier, we ______ the train.",
+    o: ["wouldn't miss", "wouldn't have missed", "won't miss", "didn't miss"], a: 1,
+    w: "Third conditional: If + had + V3, would have + V3." },
+  { t: "L8", k: "c", q: "What would you do if you ______ a million riyals?",
+    o: ["win", "won", "had won", "will win"], a: 1,
+    w: "Second conditional for an imaginary situation: would + V1 … if + past simple." },
+  { t: "L8", k: "c", q: "If she ______ the answer yesterday, she would have told us.",
+    o: ["knew", "had known", "knows", "would know"], a: 1,
+    w: "Third conditional about yesterday: If + had + V3, would have + V3." },
+  { t: "L8", k: "c", q: "I wish I ______ a car. I hate taking the bus.",
+    o: ["have", "had", "would have", "had had"], a: 1,
+    w: "wish + past simple = you want the present to be different." },
+  { t: "L8", k: "c", q: "I wish I ______ so much last night. I feel sick now.",
+    o: ["didn't eat", "hadn't eaten", "don't eat", "wouldn't eat"], a: 1,
+    w: "wish + past perfect (had + V3) = regret about the past." },
+  { t: "L8", k: "c", q: "I wish it ______ raining. I want to go out.",
+    o: ["would stop", "stops", "has stopped", "will stop"], a: 0,
+    w: "wish + would + V1 = you want something outside your control to change." },
+  { t: "L8", k: "c", q: "If only I ______ the answer!",
+    o: ["know", "knew", "will know", "am knowing"], a: 1,
+    w: "If only works like wish: if only + past simple = you want the present to be different." },
+  { t: "L8", k: "c", q: "If I hadn't studied medicine, I ______ a teacher now.",
+    o: ["would be", "would have been", "will be", "had been"], a: 0,
+    w: "Mixed conditional: a past condition with a present result (now), so would + V1." },
+  { t: "L8", k: "c", q: "If he were more careful, he ______ that accident last week.",
+    o: ["wouldn't have", "wouldn't have had", "won't have", "didn't have"], a: 1,
+    w: "Mixed conditional: a present quality (were more careful) with a past result (last week), so would have + V3." },
+  { t: "L8", k: "c", q: "She would have passed if she ______ more questions.",
+    o: ["answers", "had answered", "would answer", "answered"], a: 1,
+    w: "Third conditional: would have + V3 … if + had + V3." }
+);
+
+const VTOPICS = [
+{
+"id": "VR5",
+"src": "Reading Explorer",
+"label": "Unit 5",
+"name": "Human Journey"
+},
+{
+"id": "VR6",
+"src": "Reading Explorer",
+"label": "Unit 6",
+"name": "Money and Trade"
+},
+{
+"id": "VR7",
+"src": "Reading Explorer",
+"label": "Unit 7",
+"name": "Group Behavior"
+},
+{
+"id": "VR8",
+"src": "Reading Explorer",
+"label": "Unit 8",
+"name": "Investigations"
+},
+{
+"id": "VT12",
+"src": "Integrated Materials",
+"label": "Text 12",
+"name": "Nuclear Energy"
+},
+{
+"id": "VT13",
+"src": "Integrated Materials",
+"label": "Text 13",
+"name": "Hybrid Vehicles"
+},
+{
+"id": "VT14",
+"src": "Integrated Materials",
+"label": "Text 14",
+"name": "UK Energy"
+},
+{
+"id": "VT15",
+"src": "Integrated Materials",
+"label": "Text 15",
+"name": "Heat Pumps"
+},
+{
+"id": "VT16",
+"src": "Integrated Materials",
+"label": "Text 16",
+"name": "Antibiotics and Antibiotic Resistance"
+},
+{
+"id": "VT17",
+"src": "Integrated Materials",
+"label": "Text 17",
+"name": "Ebola"
+},
+{
+"id": "VT18",
+"src": "Integrated Materials",
+"label": "Text 18",
+"name": "Sourdough Bread"
+},
+{
+"id": "VT19",
+"src": "Integrated Materials",
+"label": "Text 19",
+"name": "Norman the Neanderthal"
+},
+{
+"id": "VT20",
+"src": "Integrated Materials",
+"label": "Text 20",
+"name": "Fukushima Nuclear Disaster"
+},
+{
+"id": "VT21",
+"src": "Integrated Materials",
+"label": "Text 21",
+"name": "AI and Future of Employment"
+},
+{
+"id": "VT22",
+"src": "Integrated Materials",
+"label": "Text 22",
+"name": "The Singularity"
+},
+{
+"id": "VT23",
+"src": "Integrated Materials",
+"label": "Text 23",
+"name": "Counterfactual History / Internet"
+}
+];
+const VBANK = [
+{
+"t": "VR5",
+"k": "v",
+"q": "The ______ of the budget went on salaries, and only a little was left for equipment.",
+"o": [
+"artifact",
+"heritage",
+"bulk",
+"interval"
+],
+"a": 2,
+"w": "bulk (noun, C1): The majority or main part."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "He spent most of his pay on rent and saved the ______.",
+"o": [
+"origin",
+"phenomenon",
+"feat",
+"remainder"
+],
+"a": 3,
+"w": "remainder (noun, C1): The remaining part."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Scientists are still trying to discover the ______ of the universe.",
+"o": [
+"geneticist",
+"origin",
+"insight",
+"phenomenon"
+],
+"a": 1,
+"w": "origin (noun, AWL, B2): The beginning or source of something."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Tourists visit the old town to learn about the country's rich cultural ______.",
+"o": [
+"heritage",
+"consensus",
+"clue",
+"bulk"
+],
+"a": 0,
+"w": "heritage (noun, B2): Traditions and qualities passed down."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Many people in this village ______ from the same ancestors.",
+"o": [
+"descend",
+"navigate",
+"hypothesize",
+"reverse"
+],
+"a": 0,
+"w": "descend (verb, B2): Be descended from; come from."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The ______ people of the island have lived there since long before the first ships arrived.",
+"o": [
+"immense",
+"stubborn",
+"intact",
+"indigenous"
+],
+"a": 3,
+"w": "indigenous (adjective, C1): Native to a particular place."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The twins look exactly the same; their faces are almost ______.",
+"o": [
+"stubborn",
+"intact",
+"identical",
+"mitochondrial"
+],
+"a": 2,
+"w": "identical (adjective, B2): Exactly the same."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The two phones are not exactly the same, but their prices are ______.",
+"o": [
+"oral",
+"comparable",
+"mitochondrial",
+"indigenous"
+],
+"a": 1,
+"w": "comparable (adjective, B2): Similar in importance or quality."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "When the dog ran into the yard, the chickens began to ______ in every direction.",
+"o": [
+"scatter",
+"hypothesize",
+"rely",
+"trace"
+],
+"a": 0,
+"w": "scatter (verb, B2): Spread over a wide area."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The sandy beach seems to ______ for miles along the coast.",
+"o": [
+"mutate",
+"stretch",
+"hypothesize",
+"navigate"
+],
+"a": 1,
+"w": "stretch (verb, B2): Extend over a distance."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The police managed to ______ the phone call to a house in Jeddah.",
+"o": [
+"endure",
+"rely",
+"trace",
+"mutate"
+],
+"a": 2,
+"w": "trace (verb, B2): Find or follow someone or something."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The ______ in the letter helped the police find the thief.",
+"o": [
+"archipelago",
+"origin",
+"framework",
+"clue"
+],
+"a": 3,
+"w": "clue (noun, B2): A sign thathelps solve a problem."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The ______ crowd filled the whole stadium and the streets around it.",
+"o": [
+"intact",
+"maternal",
+"indigenous",
+"immense"
+],
+"a": 3,
+"w": "immense (adjective, B2): Extremely large."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Despite the strong earthquake, the old mosque remained ______.",
+"o": [
+"identical",
+"maternal",
+"intact",
+"oral"
+],
+"a": 2,
+"w": "intact (adjective, C1): Complete and not damaged."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Archaeologists found ______ tools in the cave that are more than ten thousand years old.",
+"o": [
+"prehistoric",
+"identical",
+"maternal",
+"analogous"
+],
+"a": 0,
+"w": "prehistoric (adjective, B2): Before recorded history."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The museum keeps every ancient ______ in a glass case.",
+"o": [
+"motive",
+"artifact",
+"bulk",
+"archipelago"
+],
+"a": 1,
+"w": "artifact (noun, C1): An object made by humans."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Scientists fear that the virus may ______ and become more dangerous.",
+"o": [
+"reverse",
+"hypothesize",
+"mutate",
+"stretch"
+],
+"a": 2,
+"w": "mutate (verb, C1): Undergo a change in genes."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The ______ studied the family's DNA to find the cause of the disease.",
+"o": [
+"insight",
+"clue",
+"framework",
+"geneticist"
+],
+"a": 3,
+"w": "geneticist (noun, C1): A scientist who studies genes."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The scientist extracted ______ DNA from the ancient bones.",
+"o": [
+"prehistoric",
+"mitochondrial",
+"identical",
+"physical"
+],
+"a": 1,
+"w": "mitochondrial (adjective, C1): Relating to mitochondria in cells."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "She is very close to her ______ grandmother, her mother's mother.",
+"o": [
+"maternal",
+"physical",
+"analogous",
+"comparable"
+],
+"a": 0,
+"w": "maternal (adjective, C1): From the mother's side."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The sound was so quiet that it was ______ to the human ear.",
+"o": [
+"intact",
+"analogous",
+"imperceptible",
+"prehistoric"
+],
+"a": 2,
+"w": "imperceptible (adjective, C1): Impossible to notice."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The film tells the story of one ______ who lived on the island long before Europeans arrived.",
+"o": [
+"consensus",
+"aborigine",
+"interval",
+"artifact"
+],
+"a": 1,
+"w": "aborigine (noun, C1): An original inhabitant of a place."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Swimming and running are ______ activities that keep your body fit.",
+"o": [
+"physical",
+"maternal",
+"stubborn",
+"immense"
+],
+"a": 0,
+"w": "physical (adjective, AWL, B2): Relating to the body or real things."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The two parties are still far from ______ on this issue.",
+"o": [
+"archipelago",
+"phenomenon",
+"remainder",
+"consensus"
+],
+"a": 3,
+"w": "consensus (noun, AWL, C1): General agreement."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The course gives students a clear ______ for planning an essay: introduction, body and conclusion.",
+"o": [
+"feat",
+"geneticist",
+"bulk",
+"framework"
+],
+"a": 3,
+"w": "framework (noun, AWL, B2): A basic structure or system."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The refugees had to ______ hunger and cold for many weeks.",
+"o": [
+"trace",
+"endure",
+"stretch",
+"descend"
+],
+"a": 1,
+"w": "endure (verb, B2): Suffer through something difficult."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Finishing the marathon with an injured leg was a real ______ of strength.",
+"o": [
+"feat",
+"interval",
+"consensus",
+"bulk"
+],
+"a": 0,
+"w": "feat (noun, C1): An impressive achievement."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Without a map, it was hard to ______ through the narrow streets of the old city.",
+"o": [
+"hypothesize",
+"trace",
+"navigate",
+"reverse"
+],
+"a": 2,
+"w": "navigate (verb, B2): Find the way."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "There was a ten-minute ______ between the first and second half of the play.",
+"o": [
+"interval",
+"insight",
+"feat",
+"bulk"
+],
+"a": 0,
+"w": "interval (noun, B2): A period of time between events."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The cleaner could not remove the ______ stain, however hard he scrubbed.",
+"o": [
+"comparable",
+"physical",
+"intact",
+"stubborn"
+],
+"a": 3,
+"w": "stubborn (adjective, B2): Difficult to solve or deal with."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The structure of the human eye is ______ to that of a camera.",
+"o": [
+"stubborn",
+"analogous",
+"intact",
+"oral"
+],
+"a": 1,
+"w": "analogous (adjective, C1): Similar in some way."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Students must pass the written test and the ______ test, where they speak to the examiner.",
+"o": [
+"analogous",
+"comparable",
+"oral",
+"mitochondrial"
+],
+"a": 2,
+"w": "oral (adjective, B2): Spoken, not written."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The documentary gave viewers a deeper ______ into the lives of refugees.",
+"o": [
+"clue",
+"insight",
+"geneticist",
+"feat"
+],
+"a": 1,
+"w": "insight (noun, B2): Understanding of something."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Many farmers ______ on rain to water their crops.",
+"o": [
+"rely",
+"navigate",
+"scatter",
+"trace"
+],
+"a": 0,
+"w": "rely (verb, B2): Depend on."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The Philippines is a large ______ made up of more than seven thousand islands.",
+"o": [
+"clue",
+"origin",
+"archipelago",
+"artifact"
+],
+"a": 2,
+"w": "archipelago (noun, C1): A group of islands."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Researchers ______ that the dinosaurs disappeared because of a huge asteroid.",
+"o": [
+"stretch",
+"mutate",
+"trace",
+"hypothesize"
+],
+"a": 3,
+"w": "hypothesize (verb, C1): Suggest as a theory."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The northern lights are a beautiful natural ______.",
+"o": [
+"framework",
+"consensus",
+"geneticist",
+"phenomenon"
+],
+"a": 3,
+"w": "phenomenon (noun, B2): An event or fact that can be observed."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The court decided to ______ its earlier ruling and release the man.",
+"o": [
+"rely",
+"reverse",
+"stretch",
+"hypothesize"
+],
+"a": 1,
+"w": "reverse (verb, B2): Turn around; change to the opposite."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The police could not find any ______ for the murder.",
+"o": [
+"motive",
+"framework",
+"consensus",
+"archipelago"
+],
+"a": 0,
+"w": "motive (noun, B2): A reason for doing something."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The olive branch is ______ of peace in many cultures.",
+"o": [
+"durable",
+"essential",
+"symbolic",
+"convenient"
+],
+"a": 2,
+"w": "symbolic (adjective, B2): Representing something else."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The new bridge brought ______ benefits to the town; people could see and measure them.",
+"o": [
+"legitimate",
+"stable",
+"anonymous",
+"tangible"
+],
+"a": 3,
+"w": "tangible (adjective, C1): Able to be touched or felt."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Parrots can ______ human speech perfectly.",
+"o": [
+"imitate",
+"prize",
+"signify",
+"evade"
+],
+"a": 0,
+"w": "imitate (verb, B2): Copy something."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The gang was arrested for trying to ______ banknotes.",
+"o": [
+"evade",
+"counterfeit",
+"inscribe",
+"prize"
+],
+"a": 1,
+"w": "counterfeit (verb, C1): Make fake money or goods."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "These boots are very ______ and will last for many years.",
+"o": [
+"convenient",
+"anonymous",
+"durable",
+"symbolic"
+],
+"a": 2,
+"w": "durable (adjective, C1): Lasting a long time."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "After the surgery, the patient's condition is now ______.",
+"o": [
+"ceramic",
+"virtual",
+"vast",
+"stable"
+],
+"a": 3,
+"w": "stable (adjective, AWL, B2): Not changing or failing."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "In many countries, a white flag can ______ surrender.",
+"o": [
+"authorize",
+"signify",
+"prize",
+"imitate"
+],
+"a": 1,
+"w": "signify (verb, C1): Mean or represent something."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The magician was careful not to ______ the secret of his trick.",
+"o": [
+"reveal",
+"defy",
+"prize",
+"authorize"
+],
+"a": 0,
+"w": "reveal (verb, B2): Make known a surprising fact."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Oil is a valuable ______ that is bought and sold all around the world.",
+"o": [
+"majority",
+"fraud",
+"commodity",
+"pseudonym"
+],
+"a": 2,
+"w": "commodity (noun, C1): Something that can be bought and sold."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "He lost all his savings in a risky business ______.",
+"o": [
+"venture",
+"cryptography",
+"fraction",
+"fraud"
+],
+"a": 0,
+"w": "venture (noun, B2): A business project or activity."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "During the pandemic, many students attended ______ classes from home.",
+"o": [
+"ceramic",
+"durable",
+"tangible",
+"virtual"
+],
+"a": 3,
+"w": "virtual (adjective, B2): Existing in a digital, not physical, form."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Bitcoin is a digital ______ that people use to pay for things online.",
+"o": [
+"fraud",
+"cryptocurrency",
+"venture",
+"alloy"
+],
+"a": 1,
+"w": "cryptocurrency (noun, C1): Digital money that uses encryption."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Banks use ______ to turn customers' data into secret codes.",
+"o": [
+"transaction",
+"cryptocurrency",
+"cryptography",
+"analogy"
+],
+"a": 2,
+"w": "cryptography (noun, C1): The art of writing or solving codes."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Every transaction is stored in a chain of linked digital records called the ______.",
+"o": [
+"transaction",
+"venture",
+"equivalent",
+"blockchain"
+],
+"a": 3,
+"w": "blockchain (noun, C1): A digital ledger for recording transactions."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Her real name is Anna, but she writes novels under the ______ 'Leo Hart'.",
+"o": [
+"majority",
+"fraction",
+"pseudonym",
+"equivalent"
+],
+"a": 2,
+"w": "pseudonym (noun, C1): A false name used by an author."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The survey is completely ______, so you do not have to write your name.",
+"o": [
+"tangible",
+"anonymous",
+"virtual",
+"legitimate"
+],
+"a": 1,
+"w": "anonymous (adjective, B2): Not named or identified."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Please ______ your password by typing it again.",
+"o": [
+"verify",
+"signify",
+"prize",
+"evade"
+],
+"a": 0,
+"w": "verify (verb, AWL, B2): Check that something is true."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Is this online shop ______, or is it a scam?",
+"o": [
+"tangible",
+"symbolic",
+"ceramic",
+"legitimate"
+],
+"a": 3,
+"w": "legitimate (adjective, AWL, C1): Legal and acceptable."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Only a small ______ of the money was ever recovered.",
+"o": [
+"fraud",
+"blockchain",
+"fraction",
+"accountant"
+],
+"a": 2,
+"w": "fraction (noun, B2): A small part of something."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The ______ of voters supported the new law; only a few were against it.",
+"o": [
+"commodity",
+"majority",
+"fraud",
+"venture"
+],
+"a": 1,
+"w": "majority (noun, AWL, B2): Most of a group."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The company asked its ______ to check the financial records.",
+"o": [
+"accountant",
+"cryptography",
+"commodity",
+"blockchain"
+],
+"a": 0,
+"w": "accountant (noun, B2): A person who keeps financial records."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The plates are made of baked clay, so they are called ______ plates.",
+"o": [
+"ceramic",
+"tangible",
+"vast",
+"scarce"
+],
+"a": 0,
+"w": "ceramic (adjective, B2): Made of clay."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "In our family, we ______ honesty above everything else.",
+"o": [
+"authorize",
+"prize",
+"defy",
+"evade"
+],
+"a": 1,
+"w": "prize (verb, C1): Value highly."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The protesters decided to ______ the order and stay in the square.",
+"o": [
+"underwrite",
+"imitate",
+"defy",
+"reveal"
+],
+"a": 2,
+"w": "defy (verb, C1): Resist or refuse to obey."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The desire for freedom is ______; it exists in every culture.",
+"o": [
+"anonymous",
+"sophisticated",
+"stable",
+"universal"
+],
+"a": 3,
+"w": "universal (adjective, B2): Existing everywhere."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Bronze, made by mixing copper and tin, is a well-known ______.",
+"o": [
+"alloy",
+"equivalent",
+"accountant",
+"majority"
+],
+"a": 0,
+"w": "alloy (noun, C1): A metal made by mixing metals."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "They decided to ______ the names of the soldiers on the stone monument.",
+"o": [
+"counterfeit",
+"inscribe",
+"prize",
+"verify"
+],
+"a": 1,
+"w": "inscribe (verb, C1): Write or carve on something."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "A wealthy businessman agreed to ______ the cost of the new hospital.",
+"o": [
+"defy",
+"verify",
+"underwrite",
+"evade"
+],
+"a": 2,
+"w": "underwrite (verb, C1): Provide financial support for."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Only the ______ of a valid ticket will be allowed to enter the stadium.",
+"o": [
+"pseudonym",
+"commodity",
+"analogy",
+"bearer"
+],
+"a": 3,
+"w": "bearer (noun, C1): The person who owns a document."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Water is ______ for all living things; nobody can live without it.",
+"o": [
+"legitimate",
+"essential",
+"symbolic",
+"virtual"
+],
+"a": 1,
+"w": "essential (adjective, AWL, B2): Basic or main."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The thief tried to ______ the police by hiding in a warehouse.",
+"o": [
+"prize",
+"verify",
+"authorize",
+"evade"
+],
+"a": 3,
+"w": "evade (verb, C1): Escape or avoid."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Fresh water is ______ in the desert, so people must save it.",
+"o": [
+"vast",
+"tangible",
+"scarce",
+"virtual"
+],
+"a": 2,
+"w": "scarce (adjective, C1): Not easy to find."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Ten dollars is roughly the ______ of thirty-seven riyals.",
+"o": [
+"equivalent",
+"fraud",
+"fraction",
+"pseudonym"
+],
+"a": 0,
+"w": "equivalent (noun, AWL, B2): Something that has the same value."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The teacher used the ______ of a river to explain how electricity flows.",
+"o": [
+"alloy",
+"commodity",
+"accountant",
+"analogy"
+],
+"a": 3,
+"w": "analogy (noun, C1): A comparison between two things."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Modern smartphones are highly ______ devices with powerful processors.",
+"o": [
+"anonymous",
+"stable",
+"sophisticated",
+"universal"
+],
+"a": 2,
+"w": "sophisticated (adjective, C1): Highly developed and complex."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The bank sent me a message to confirm the online ______.",
+"o": [
+"transaction",
+"cryptocurrency",
+"cryptography",
+"blockchain"
+],
+"a": 0,
+"w": "transaction (noun, AWL, B2): A business exchange."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "He was sent to prison for tax ______.",
+"o": [
+"alloy",
+"fraud",
+"venture",
+"equivalent"
+],
+"a": 1,
+"w": "fraud (noun, C1): Illegal trickery to get money."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Only the manager can ______ the payment.",
+"o": [
+"imitate",
+"counterfeit",
+"authorize",
+"prize"
+],
+"a": 2,
+"w": "authorize (verb, AWL, B2): Officially allow."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The new metro station is very ______ for people who live nearby.",
+"o": [
+"convenient",
+"anonymous",
+"scarce",
+"virtual"
+],
+"a": 0,
+"w": "convenient (adjective, B2): Easy and suitable."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The Empty Quarter alone covers ______ areas of sand.",
+"o": [
+"symbolic",
+"vast",
+"legitimate",
+"essential"
+],
+"a": 1,
+"w": "vast (adjective, B2): Extremely large in area or amount."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Each ______ walked slowly towards the holy city to pray.",
+"o": [
+"compassion",
+"sociality",
+"harmony",
+"pilgrim"
+],
+"a": 3,
+"w": "pilgrim (noun, B2): A person who travels to a holy place."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Many Muslims dream of making the ______ to Makkah.",
+"o": [
+"harmony",
+"pilgrimage",
+"neurobiology",
+"humanity"
+],
+"a": 1,
+"w": "pilgrimage (noun, B2): A journey to a sacred place."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "She is a very ______ Muslim who prays five times a day and reads the Quran daily.",
+"o": [
+"theatrical",
+"volatile",
+"devout",
+"contemporary"
+],
+"a": 2,
+"w": "devout (adjective, C1): Deeply religious."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The tribe performs a special ______ at the start of every harvest, with songs and prayers.",
+"o": [
+"ritual",
+"cohesion",
+"strategy",
+"pilgrim"
+],
+"a": 0,
+"w": "ritual (adjective/noun, B2): Part of a religious ceremony."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Before the exam, she felt so much ______ that she could not sleep.",
+"o": [
+"competitor",
+"harmony",
+"neurobiology",
+"anxiety"
+],
+"a": 3,
+"w": "anxiety (noun, B2): A feeling of worry."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The doctor said his illness was not physical but ______, caused by stress and worry.",
+"o": [
+"psychological",
+"contemporary",
+"volatile",
+"devout"
+],
+"a": 0,
+"w": "psychological (adjective, AWL, B2): Relating to the mind."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The college sent brochures to ______ students who might join next year.",
+"o": [
+"devout",
+"prospective",
+"belligerent",
+"evident"
+],
+"a": 1,
+"w": "prospective (adjective, C1): Likely to be or happen."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The museum has a section for ______ art made by living artists.",
+"o": [
+"mutual",
+"belligerent",
+"contemporary",
+"theatrical"
+],
+"a": 2,
+"w": "contemporary (adjective, AWL, B2): Modern or present -day."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "High fines are used to ______ people from throwing litter in the street.",
+"o": [
+"cooperate",
+"explode",
+"inherit",
+"deter"
+],
+"a": 3,
+"w": "deter (verb, C1): Discourage someone from doing something."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "It is illegal to ______ employees with unwanted messages.",
+"o": [
+"harass",
+"deter",
+"alter",
+"inherit"
+],
+"a": 0,
+"w": "harass (verb, C1): Subject to aggressive pressure or intimidation."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Oil prices are ______ and can rise or fall sharply in a single day.",
+"o": [
+"devout",
+"volatile",
+"anonymous",
+"substantial"
+],
+"a": 1,
+"w": "volatile (adjective, C1): Likely to change suddenly and unexpectedly."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "His grandfather left him ______ sums of money.",
+"o": [
+"belligerent",
+"anonymous",
+"crucial",
+"substantial"
+],
+"a": 3,
+"w": "substantial (adjective, AWL, B2): Large in amount or degree."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The drunk man became ______ and started shouting at the waiter.",
+"o": [
+"devout",
+"crucial",
+"belligerent",
+"mutual"
+],
+"a": 2,
+"w": "belligerent (adjective, C1): Hostile and aggressive."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Witnesses said the ______ attacked first, without any warning.",
+"o": [
+"aggressor",
+"compassion",
+"harmony",
+"pilgrimage"
+],
+"a": 0,
+"w": "aggressor (noun, C1): Someone who attacks others."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The nurse treated every patient with kindness and ______.",
+"o": [
+"anxiety",
+"compassion",
+"competitor",
+"participant"
+],
+"a": 1,
+"w": "compassion (noun, B2): Sympathy for others' suffering."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Crimes against ______ are judged by international courts.",
+"o": [
+"context",
+"ritual",
+"incident",
+"humanity"
+],
+"a": 3,
+"w": "humanity (noun, B2): The quality of being kind and understanding."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Strong social ______ means that members of a community stay united and support each other.",
+"o": [
+"neurobiology",
+"humanity",
+"cohesion",
+"perpetrator"
+],
+"a": 2,
+"w": "cohesion (noun, C1): The state of sticking together."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Ants and bees are famous for their high level of ______, living together in large colonies.",
+"o": [
+"compassion",
+"perpetrator",
+"sociality",
+"anxiety"
+],
+"a": 2,
+"w": "sociality (noun, C1): The tendency to live in groups."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "She raised both arms and sighed in a very ______ way, just to get attention.",
+"o": [
+"theatrical",
+"anonymous",
+"volatile",
+"substantial"
+],
+"a": 0,
+"w": "theatrical (adjective, C1): Exaggerated and dramatic."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "People of different religions live together in peace and ______ in this city.",
+"o": [
+"anxiety",
+"harmony",
+"strategy",
+"context"
+],
+"a": 1,
+"w": "harmony (noun, B2): Peace and agreement."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The company has a new marketing ______ to attract young customers.",
+"o": [
+"context",
+"stampede",
+"sociality",
+"strategy"
+],
+"a": 3,
+"w": "strategy (noun, AWL, B2): A plan to achieve something."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Every ______ in the workshop received a certificate.",
+"o": [
+"harmony",
+"perpetrator",
+"sociality",
+"participant"
+],
+"a": 3,
+"w": "participant (noun, AWL, B2): A person taking part in something."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "We may have to ______ our plans if the weather gets worse.",
+"o": [
+"alter",
+"confront",
+"perceive",
+"explode"
+],
+"a": 0,
+"w": "alter (verb, B2): Change."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Their friendship is based on ______ trust and respect.",
+"o": [
+"volatile",
+"mutual",
+"contemporary",
+"prospective"
+],
+"a": 1,
+"w": "mutual (adjective, B2): Shared by two or more people."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "It was ______ from her smile that she had passed the exam.",
+"o": [
+"crucial",
+"belligerent",
+"evident",
+"prospective"
+],
+"a": 2,
+"w": "evident (adjective, B2): Clearly seen or understood."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Several people were hurt in the ______ when the crowd rushed towards the gates.",
+"o": [
+"neurobiology",
+"context",
+"stampede",
+"pilgrim"
+],
+"a": 2,
+"w": "stampede (noun, C1): A sudden rush of a large crowd."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The company's biggest ______ has just lowered its prices.",
+"o": [
+"cohesion",
+"competitor",
+"strategy",
+"sociality"
+],
+"a": 1,
+"w": "competitor (noun, B2): A person who competes with others."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Police are investigating the ______ that happened outside the shopping mall last night.",
+"o": [
+"pilgrimage",
+"strategy",
+"ritual",
+"incident"
+],
+"a": 3,
+"w": "incident (noun, AWL, B2): An event, especially an unusual one."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "She is ______ the best student in the class; no one doubts it.",
+"o": [
+"undoubtedly",
+"rarely",
+"barely",
+"hardly"
+],
+"a": 0,
+"w": "undoubtedly (adverb, B2): Definitely, certainly."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Neighbours should ______ with each other to keep the street clean.",
+"o": [
+"deter",
+"alter",
+"cooperate",
+"explode"
+],
+"a": 2,
+"w": "cooperate (verb, AWL, B2): Work together."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "CCTV cameras helped the police identify the ______ of the robbery.",
+"o": [
+"perpetrator",
+"strategy",
+"incident",
+"humanity"
+],
+"a": 0,
+"w": "perpetrator (noun, C1): Someone who commits a crime."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The writer of the letter wished to remain ______ and did not sign his name.",
+"o": [
+"prospective",
+"anonymous",
+"psychological",
+"devout"
+],
+"a": 1,
+"w": "anonymous (adjective, B2): Not named or identified."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Over millions of years, birds ______ from small dinosaurs.",
+"o": [
+"confront",
+"harass",
+"cooperate",
+"evolve"
+],
+"a": 3,
+"w": "evolve (verb, B2): Develop gradually."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "When her father dies, she will ______ his house and money, because she is his only child.",
+"o": [
+"inherit",
+"explode",
+"alter",
+"confront"
+],
+"a": 0,
+"w": "inherit (verb, B2): Receive something from ancestors."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "You can often guess the meaning of a new word from its ______.",
+"o": [
+"pilgrimage",
+"context",
+"stampede",
+"humanity"
+],
+"a": 1,
+"w": "context (noun, AWL, B2): The situation in which something happens."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The population of the city began to ______ in the 1990s, doubling in only ten years.",
+"o": [
+"inherit",
+"confront",
+"harass",
+"explode"
+],
+"a": 3,
+"w": "explode (verb, B2): Increase suddenly and violently."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Dogs can ______ sounds that humans cannot hear.",
+"o": [
+"harass",
+"deter",
+"perceive",
+"confront"
+],
+"a": 2,
+"w": "perceive (verb, AWL, B2): Become aware of something."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "She wants to study ______ to understand how the brain and nerves work.",
+"o": [
+"neurobiology",
+"stampede",
+"strategy",
+"sociality"
+],
+"a": 0,
+"w": "neurobiology (noun, C1): The study of the nervous system."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "It is ______ to wear a seat belt, because it can save your life.",
+"o": [
+"volatile",
+"crucial",
+"anonymous",
+"devout"
+],
+"a": 1,
+"w": "crucial (adjective, B2): Extremely important."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "She decided to ______ her neighbour about the loud music at night.",
+"o": [
+"perceive",
+"explode",
+"confront",
+"alter"
+],
+"a": 2,
+"w": "confront (verb, B2): Face someone in a hostile way."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Someone tried to ______ the king by putting a drug in his food.",
+"o": [
+"disrupt",
+"evaluate",
+"manipulate",
+"poison"
+],
+"a": 3,
+"w": "poison (verb, B2): Give or expose to poison."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Never mix bleach with other cleaning products because the gas is ______.",
+"o": [
+"relentless",
+"toxic",
+"sensitive",
+"inconclusive"
+],
+"a": 1,
+"w": "toxic (adjective, B2): Poisonous."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The ______ behind the robbery was money; he needed to pay his debts.",
+"o": [
+"motive",
+"toxicologist",
+"herbicide",
+"immunologist"
+],
+"a": 0,
+"w": "motive (noun, B2): A reason for doing something."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "A good teacher knows how to ______ students to work hard.",
+"o": [
+"deprive",
+"evaluate",
+"motivate",
+"poison"
+],
+"a": 2,
+"w": "motivate (verb, B2): Give someone a reason for doing something."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The lawyer showed the court new ______ that proved his client was innocent.",
+"o": [
+"homicide",
+"aristocrat",
+"candidate",
+"evidence"
+],
+"a": 3,
+"w": "evidence (noun, AWL, B2): Information that proves something."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "A sore throat is often the first ______ of a cold.",
+"o": [
+"symptom",
+"homicide",
+"autopsy",
+"herbicide"
+],
+"a": 0,
+"w": "symptom (noun, B2): A sign of a disease."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "It was not an accident; the fire was ______ and someone started it on purpose.",
+"o": [
+"sophisticated",
+"remote",
+"inconclusive",
+"deliberate"
+],
+"a": 3,
+"w": "deliberate (adjective, B2): Intentional and planned."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The shopkeeper became ______ when the man kept looking at the cameras.",
+"o": [
+"toxic",
+"suspicious",
+"sophisticated",
+"relentless"
+],
+"a": 1,
+"w": "suspicious (adjective, B2): Causing doubt or concern."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The ______ tested the blood sample for poison.",
+"o": [
+"estate",
+"symptom",
+"toxicologist",
+"remorse"
+],
+"a": 2,
+"w": "toxicologist (noun, C1): A scientist who studies poisons."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The ______ is researching how the body's defences fight viruses.",
+"o": [
+"motive",
+"evidence",
+"estate",
+"immunologist"
+],
+"a": 3,
+"w": "immunologist (noun, C1): A scientist who studies immunity."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "______ scientists collected hair and fingerprints from the crime scene.",
+"o": [
+"weird",
+"toxic",
+"forensic",
+"inconclusive"
+],
+"a": 2,
+"w": "forensic (adjective, C1): Relating to scientific investigation of crimes."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "She studied ______, the science of diseases in body tissues and organs, before becoming a doctor.",
+"o": [
+"evidence",
+"pathology",
+"dispute",
+"herbicide"
+],
+"a": 1,
+"w": "pathology (noun, C1): The study of organs, tissues, and bodily fluids to diagnose diseases."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The farmer sprayed the crops with ______ to kill the insects.",
+"o": [
+"pesticide",
+"toxicologist",
+"estate",
+"symptom"
+],
+"a": 0,
+"w": "pesticide (noun, B2): A substance that kills insects."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "To kill the weeds, he sprayed the garden with ______.",
+"o": [
+"aristocrat",
+"homicide",
+"herbicide",
+"toxicologist"
+],
+"a": 2,
+"w": "herbicide (noun, C1): A substance that kills plants."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Hackers used very ______ software to break into the network.",
+"o": [
+"suspicious",
+"sophisticated",
+"deliberate",
+"weird"
+],
+"a": 1,
+"w": "sophisticated (adjective, C1): Highly developed and complex."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The scales are so ______ that they can detect the weight of a single hair.",
+"o": [
+"sensitive",
+"relentless",
+"deliberate",
+"massive"
+],
+"a": 0,
+"w": "sensitive (adjective, AWL, B2): Able to detect small changes."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The tests were ______, so doctors could not say what caused the illness.",
+"o": [
+"ultimate",
+"sophisticated",
+"massive",
+"inconclusive"
+],
+"a": 3,
+"w": "inconclusive (adjective, C1): Not leading to a definite result."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Our ______ aim is to protect the environment for future generations.",
+"o": [
+"suspicious",
+"inconclusive",
+"ultimate",
+"relentless"
+],
+"a": 2,
+"w": "ultimate (adjective, AWL, B2): Final."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The new law will ______ companies to reduce pollution.",
+"o": [
+"exhume",
+"compel",
+"poison",
+"contaminate"
+],
+"a": 1,
+"w": "compel (verb, C1): Force or drive someone to do something."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Their family lives in the ______ village, far from any town or road.",
+"o": [
+"remote",
+"relentless",
+"forensic",
+"sensitive"
+],
+"a": 0,
+"w": "remote (adjective, B2): Far away from cities."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The doctors carried out the ______ to find out how the man had died.",
+"o": [
+"candidate",
+"arsenic",
+"aristocrat",
+"autopsy"
+],
+"a": 3,
+"w": "autopsy (noun, C1): Examination of a dead body."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The two neighbours are in a long ______ over the boundary of their land.",
+"o": [
+"candidate",
+"symptom",
+"dispute",
+"remorse"
+],
+"a": 2,
+"w": "dispute (noun, B2): A disagreement or argument."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Water containing ______ is dangerous to drink because this poison builds up in the body.",
+"o": [
+"arsenic",
+"spectrometry",
+"evidence",
+"homicide"
+],
+"a": 0,
+"w": "arsenic (noun, C1): A poisonous chemical element."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The firefighters made ______ efforts to put out the fire, working all night without a break.",
+"o": [
+"remote",
+"relentless",
+"sensitive",
+"forensic"
+],
+"a": 1,
+"w": "relentless (adjective, C1): Continuous and determined."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The earthquake caused ______ damage to buildings across the city.",
+"o": [
+"forensic",
+"suspicious",
+"remote",
+"massive"
+],
+"a": 3,
+"w": "massive (adjective, B2): Very large in amount."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Heavy snow can ______ train services and cause long delays.",
+"o": [
+"disrupt",
+"deprive",
+"contaminate",
+"compel"
+],
+"a": 0,
+"w": "disrupt (verb, C1): Interrupt or cause to stop."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The family lives on a large country ______ with a huge garden and woods.",
+"o": [
+"remorse",
+"candidate",
+"pathology",
+"estate"
+],
+"a": 3,
+"w": "estate (noun, B2): A large area of land."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The duke was a wealthy ______ who owned castles and thousands of acres.",
+"o": [
+"symptom",
+"toxicologist",
+"aristocrat",
+"spectrometry"
+],
+"a": 2,
+"w": "aristocrat (noun, C1): A member of the highest social class."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Some newspapers ______ that the minister took bribes, but he denies it.",
+"o": [
+"manipulate",
+"allege",
+"disrupt",
+"deprive"
+],
+"a": 1,
+"w": "allege (verb, C1): Claim that someone has done something wrong."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The police asked a court for permission to ______ the body from the grave.",
+"o": [
+"contaminate",
+"evaluate",
+"exhume",
+"disrupt"
+],
+"a": 2,
+"w": "exhume (verb, C1): Dig up a buried body."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Sewage from the factory could ______ the river and kill the fish.",
+"o": [
+"contaminate",
+"manipulate",
+"compel",
+"evaluate"
+],
+"a": 0,
+"w": "contaminate (verb, C1): Make something impure."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Three ______ are competing for the position of mayor.",
+"o": [
+"herbicide",
+"estate",
+"dispute",
+"candidate"
+],
+"a": 3,
+"w": "candidate (noun, B2): A person or thing that might be suitable."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The judge asked the ______ to stand and listen to the charges.",
+"o": [
+"arsenic",
+"defendant",
+"estate",
+"symptom"
+],
+"a": 1,
+"w": "defendant (noun, C1): A person accused of a crime."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Scientists use mass ______ to identify the chemicals in a sample.",
+"o": [
+"candidate",
+"autopsy",
+"spectrometry",
+"pathology"
+],
+"a": 2,
+"w": "spectrometry (noun, C1): The measurement of spectra."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Poverty can ______ children of the chance to get a good education.",
+"o": [
+"motivate",
+"deprive",
+"exhume",
+"compel"
+],
+"a": 1,
+"w": "deprive (verb, C1): Take something away from."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The thief showed no ______ for what he had done and never said sorry.",
+"o": [
+"spectrometry",
+"homicide",
+"dispute",
+"remorse"
+],
+"a": 3,
+"w": "remorse (noun, C1): Deep regret for doing something wrong."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Dishonest salesmen try to ______ elderly customers into buying things they do not need.",
+"o": [
+"manipulate",
+"allege",
+"disrupt",
+"contaminate"
+],
+"a": 0,
+"w": "manipulate (verb, C1): Control people for personal advantage."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Last night I had the most ______ dream; I was flying over a city made of chocolate.",
+"o": [
+"sensitive",
+"weird",
+"sophisticated",
+"inconclusive"
+],
+"a": 1,
+"w": "weird (adjective, B2): Strange and unusual."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Doctors need to ______ the patient's condition carefully before choosing a treatment.",
+"o": [
+"compel",
+"motivate",
+"manipulate",
+"evaluate"
+],
+"a": 3,
+"w": "evaluate (verb, AWL, B2): Judge or assess."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The detectives are investigating the ______ of a young woman who was killed in her home.",
+"o": [
+"arsenic",
+"remorse",
+"homicide",
+"herbicide"
+],
+"a": 2,
+"w": "homicide (noun, C1): The killing of one person by another."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "Fossil fuels are a ______ resource, so they will eventually run out.",
+"o": [
+"renewed",
+"precise",
+"striking",
+"finite"
+],
+"a": 3,
+"w": "finite (adjective, AWL, B2): Limited in quantity; not infinite or inexhaustible."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "Scientists warn that the tiger is close to ______.",
+"o": [
+"combustibility",
+"extinction",
+"mortality",
+"microbiologist"
+],
+"a": 1,
+"w": "extinction (noun, AWL, B2): The complete disappearance of a species from the planet."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "It is hard to ______ the weather more than a week ahead.",
+"o": [
+"forecast",
+"avert",
+"prescribe",
+"depressurise"
+],
+"a": 0,
+"w": "forecast (verb, AWL, B2): To predict or estimate a future trend or event."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "Ugly billboards can ______ a historic city centre.",
+"o": [
+"disfigure",
+"dawn",
+"avert",
+"prescribe"
+],
+"a": 0,
+"w": "disfigure (verb, C1): To spoil the appearance or beauty of something."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "The ______ of the new law argued that it was unfair.",
+"o": [
+"mechanisms",
+"remains",
+"foodstuffs",
+"opponents"
+],
+"a": 3,
+"w": "opponents (noun, AWL, B2): People who are against something or disagree with a proposal."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "Wind and solar power are examples of ______.",
+"o": [
+"genes",
+"renewables",
+"remains",
+"downsides"
+],
+"a": 1,
+"w": "renewables (noun, AWL, B2): Energy sources that are naturally replenished, such as wind or solar power."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "The team cancelled the trip because they had ______ funds.",
+"o": [
+"onshore",
+"striking",
+"flammable",
+"insufficient"
+],
+"a": 3,
+"w": "insufficient (adjective, AWL, B2): Not enough in degree, amount, or quantity."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "The ______ increase in population will put pressure on housing.",
+"o": [
+"offshore",
+"cluttered",
+"finite",
+"projected"
+],
+"a": 3,
+"w": "projected (adjective, AWL, B2): Estimated or predicted for a future time."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "In a nuclear reactor, the splitting of atoms is called ______.",
+"o": [
+"spree",
+"archaeology",
+"fission",
+"unit"
+],
+"a": 2,
+"w": "fission (noun, C1): The process of splitting atomic nuclei, releasing large amounts of energy."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "The wind farm is not yet ______, but it will start work next month.",
+"o": [
+"severe",
+"resistant",
+"finite",
+"operational"
+],
+"a": 3,
+"w": "operational (adjective, AWL, B2): Functioning and ready for use."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "The city has introduced new rules for the ______ of plastic rubbish.",
+"o": [
+"combustibility",
+"vaccine",
+"carbon-dating",
+"disposal"
+],
+"a": 3,
+"w": "disposal (noun, AWL, B2): The act of getting rid of something, especially waste."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "This cupboard provides extra ______ space for books.",
+"o": [
+"storage",
+"epidemic",
+"trauma",
+"archaeology"
+],
+"a": 0,
+"w": "storage (noun, AWL, B2): The keeping or placing of something in a safe location for future use."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "Some people ______ great pleasure from helping others.",
+"o": [
+"transfer",
+"depressurise",
+"avert",
+"derive"
+],
+"a": 3,
+"w": "derive (verb, AWL, B2): To obtain or receive from a source."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "A rolling ball has ______ energy because it is in motion.",
+"o": [
+"operational",
+"kinetic",
+"time-consuming",
+"integral"
+],
+"a": 1,
+"w": "kinetic (adjective, B2): Relating to energy possessed by an object due to its motion."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "Buying food in bulk is more ______ than buying it every day.",
+"o": [
+"unchecked",
+"economical",
+"striking",
+"therapeutic"
+],
+"a": 1,
+"w": "economical (adjective, B2): Cost-effective; giving good value in relation to money spent."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "The battery's ______ is too short for long journeys.",
+"o": [
+"trauma",
+"microbiologist",
+"range",
+"storage"
+],
+"a": 2,
+"w": "range (noun, AWL, B2): The maximum distance a vehicle can travel before needing refuelling."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "Public support for the policy started to ______ after the scandal.",
+"o": [
+"wane",
+"boost",
+"derive",
+"extend"
+],
+"a": 0,
+"w": "wane (verb, B2): To gradually decrease or become weaker."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "The 2020s saw a ______ in the popularity of board games.",
+"o": [
+"resurgence",
+"mortality",
+"combustibility",
+"refrigerant"
+],
+"a": 0,
+"w": "resurgence (noun, C1): A return or increase of interest, activity, or popularity after a decline."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "He is ______ responsible for the mistake; nobody else was involved.",
+"o": [
+"solely",
+"rarely",
+"barely",
+"slightly"
+],
+"a": 0,
+"w": "solely (adverb, B2): Exclusively; only; not involving anything else."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "Using too much groundwater will ______ the region's water supply.",
+"o": [
+"transfer",
+"deplete",
+"disfigure",
+"depressurise"
+],
+"a": 1,
+"w": "deplete (verb, AWL, B2): To use up or exhaust; to reduce to a low level."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "LED bulbs have a much longer ______ than ordinary bulbs.",
+"o": [
+"extinction",
+"lifespan",
+"perpetrator",
+"toxicity"
+],
+"a": 1,
+"w": "lifespan (noun, B2): The length of time something functions or remains operational."
+},
+{
+"t": "VT14",
+"k": "v",
+"q": "Petrol engines work by the ______ of fuel inside the cylinders.",
+"o": [
+"combustion",
+"carbon-dating",
+"lifespan",
+"epidemic"
+],
+"a": 0,
+"w": "combustion (noun, AWL, B2): The process of burning."
+},
+{
+"t": "VT14",
+"k": "v",
+"q": "Transport and agriculture are two major ______ of the economy.",
+"o": [
+"ancestors",
+"opponents",
+"renewables",
+"sectors"
+],
+"a": 3,
+"w": "sectors (noun, AWL, B2): Distinct parts or divisions of an economy or activity."
+},
+{
+"t": "VT14",
+"k": "v",
+"q": "The two parts are ______, so you can use either one.",
+"o": [
+"interchangeable",
+"greenhouse",
+"ongoing",
+"offshore"
+],
+"a": 0,
+"w": "interchangeable (adjective, C1): Capable of being used in place of each other."
+},
+{
+"t": "VT14",
+"k": "v",
+"q": "She wore a ______ red dress that everyone noticed.",
+"o": [
+"immune",
+"ongoing",
+"unchecked",
+"striking"
+],
+"a": 3,
+"w": "striking (adjective, B2): Noticeable, dramatic, or easily attracting attention."
+},
+{
+"t": "VT14",
+"k": "v",
+"q": "The plan is not financially ______ without government support.",
+"o": [
+"preserved",
+"exponential",
+"viable",
+"precise"
+],
+"a": 2,
+"w": "viable (adjective, AWL, B2): Financially practical or sustainable."
+},
+{
+"t": "VT14",
+"k": "v",
+"q": "The number of users showed ______ growth, doubling every month.",
+"o": [
+"exponential",
+"time-consuming",
+"therapeutic",
+"resistant"
+],
+"a": 0,
+"w": "exponential (adjective, AWL, C1): Increase that becomes more rapid in proportion to the growing total size."
+},
+{
+"t": "VT14",
+"k": "v",
+"q": "The company is building a large ______ wind farm in the North Sea.",
+"o": [
+"economical",
+"exponential",
+"interchangeable",
+"offshore"
+],
+"a": 3,
+"w": "offshore (adjective/adverb, B2): Located or operating at sea, away from the coast."
+},
+{
+"t": "VT14",
+"k": "v",
+"q": "______ wind farms are built on land, not at sea.",
+"o": [
+"terrifying",
+"trivial",
+"onshore",
+"therapeutic"
+],
+"a": 2,
+"w": "onshore (adjective/adverb, B2): Located or operating on land, not at sea."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "The heat pump uses ______ to move heat from outside into the house.",
+"o": [
+"tsunami",
+"refrigerant",
+"combustibility",
+"artisan"
+],
+"a": 1,
+"w": "refrigerant (noun, C1): A fluid used in heat pumps that absorbs and releases heat."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "Good ______ insulation reduces heating bills.",
+"o": [
+"insufficient",
+"greenhouse",
+"penetrating",
+"thermal"
+],
+"a": 3,
+"w": "thermal (adjective, AWL, B2): Relating to the internal energy of a substance due to the motion of its atoms."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "The ______ squeezes the gas, which raises its pressure and temperature.",
+"o": [
+"outbreak",
+"compressor",
+"toxicity",
+"tsunami"
+],
+"a": 1,
+"w": "compressor (noun, C1): A device that increases the pressure of a gas or refrigerant."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "Workers have to ______ the pipe before they can repair it.",
+"o": [
+"avert",
+"forecast",
+"depressurise",
+"withstand"
+],
+"a": 2,
+"w": "depressurise (verb, C1): To reduce the pressure inside a closed system."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "Liquid petrol will ______ quickly in hot weather.",
+"o": [
+"assume",
+"ensue",
+"vaporize",
+"derive"
+],
+"a": 2,
+"w": "vaporize (verb, B2): To change from a liquid into a gas."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "Petrol is highly ______, so smoking is forbidden at the station.",
+"o": [
+"flammable",
+"trivial",
+"penetrating",
+"intensive"
+],
+"a": 0,
+"w": "flammable (adjective, B2): Easily set on fire; capable of burning rapidly."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "The ______ of the chemical makes it dangerous to fish and other wildlife.",
+"o": [
+"combustibility",
+"toxicity",
+"misuse",
+"installation"
+],
+"a": 1,
+"w": "toxicity (noun, C1): The degree to which a substance can harm living organisms."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "The city built walls to ______ the damage caused by floods.",
+"o": [
+"inundate",
+"extend",
+"mitigate",
+"withstand"
+],
+"a": 2,
+"w": "mitigate (verb, AWL, C1): To make less severe, harmful, or serious."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "The ______ of a material shows how easily it can catch fire and burn.",
+"o": [
+"misuse",
+"settlement",
+"combustibility",
+"occurrence"
+],
+"a": 2,
+"w": "combustibility (noun, C1): The ability of a substance to catch fire and burn."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "Methane is a powerful ______ gas that traps heat in the atmosphere.",
+"o": [
+"thermal",
+"unexpected",
+"unchecked",
+"greenhouse"
+],
+"a": 3,
+"w": "greenhouse (adjective, B2): Relating to gases such as carbon dioxide that trap heat in the atmosphere."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "______ of renewable energy argue that it will create new jobs.",
+"o": [
+"mechanisms",
+"downsides",
+"generators",
+"advocates"
+],
+"a": 3,
+"w": "advocates (noun, AWL, B2): People who publicly support or recommend a particular cause."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "Every plan has advantages, but we must also think about the ______.",
+"o": [
+"downsides",
+"hunter-gatherers",
+"natural causes",
+"foodstuffs"
+],
+"a": 0,
+"w": "downsides (noun, B2): Disadvantages or negative aspects of something."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "The kilowatt-hour is the standard ______ used to measure electricity.",
+"o": [
+"evacuation",
+"fission",
+"unit",
+"expectancy"
+],
+"a": 2,
+"w": "unit (noun, AWL, B2): The cost per single item or Theme of measurement."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "She switched to a cheaper energy ______ to save money on her bills.",
+"o": [
+"trend",
+"tariff",
+"mould",
+"unit"
+],
+"a": 1,
+"w": "tariff (noun, C1): A pricing plan or rate charged by a utility company for energy."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "The university won the research ______ it had applied for.",
+"o": [
+"grant",
+"tsunami",
+"anthropology",
+"misuse"
+],
+"a": 0,
+"w": "grant (noun, AWL, B2): A sum of money given by a government or organisation for a specific purpose."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "The ______ of the new heating system will take about a week.",
+"o": [
+"mortality",
+"installation",
+"evacuation",
+"misuse"
+],
+"a": 1,
+"w": "installation (noun, AWL, B2): The process of putting equipment into place and making it ready for use."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "The kitchen was ______ with dirty plates, bags and old newspapers.",
+"o": [
+"intensive",
+"cluttered",
+"economical",
+"greenhouse"
+],
+"a": 1,
+"w": "cluttered (adjective, B2): Messy or untidy, filled with too many objects."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Snow in the desert is a very rare ______.",
+"o": [
+"lifespan",
+"grant",
+"carbon-dating",
+"occurrence"
+],
+"a": 3,
+"w": "occurrence (noun, AWL, B2): An event or incident that happens."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Damp walls often lead to the growth of ______ in the bathroom.",
+"o": [
+"unit",
+"overuse",
+"mould",
+"tariff"
+],
+"a": 2,
+"w": "mould (noun, B2): A fungus that grows on organic matter, often visible as a fuzzy layer."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Her ______ visit surprised everyone because nobody knew she was coming.",
+"o": [
+"unexpected",
+"preserved",
+"finite",
+"intensive"
+],
+"a": 0,
+"w": "unexpected (adjective, AWL, B2): Not predicted or anticipated; surprising."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "They argued about ______ matters, like who sat where.",
+"o": [
+"economical",
+"trivial",
+"viable",
+"unchecked"
+],
+"a": 1,
+"w": "trivial (adjective, B2): Unimportant, minor, or easy to deal with."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Patients with ______ symptoms must go to hospital immediately.",
+"o": [
+"thermal",
+"severe",
+"precise",
+"onshore"
+],
+"a": 1,
+"w": "severe (adjective, AWL, B2): Very serious, intense, or harmful."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Children who have had the vaccine are ______ to the disease.",
+"o": [
+"mass-produced",
+"zoonotic",
+"economical",
+"immune"
+],
+"a": 3,
+"w": "immune (adjective, B2): Relating to the body's biological defence system against infection."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Eating fruit and vegetables can help ______ your health.",
+"o": [
+"dawn",
+"boost",
+"confirm",
+"ensue"
+],
+"a": 1,
+"w": "boost (verb, B2): To increase, raise, or improve something."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Better healthcare has raised average life ______ in many countries.",
+"o": [
+"likelihood",
+"resurgence",
+"expectancy",
+"evacuation"
+],
+"a": 2,
+"w": "expectancy (noun, B2): The average number of years a person is expected to live."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "This special glass is ______ to heat, so it will not crack in the oven.",
+"o": [
+"resistant",
+"offshore",
+"viable",
+"insufficient"
+],
+"a": 0,
+"w": "resistant (adjective, AWL, B2): Not affected or harmed by something; able to withstand."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Doctors are worried about the growing antibiotic ______.",
+"o": [
+"compressor",
+"archaeology",
+"lockdown",
+"resistance"
+],
+"a": 3,
+"w": "resistance (noun, AWL, B2): The ability of bacteria to survive and grow despite antibiotics."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Some mushrooms are ______ if you eat them, so never pick them.",
+"o": [
+"exponential",
+"deadly",
+"precise",
+"ongoing"
+],
+"a": 1,
+"w": "deadly (adjective, B2): Capable of causing death."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "A ______ is a bacterium that no longer responds to many antibiotics.",
+"o": [
+"compressor",
+"superbug",
+"carbon-dating",
+"refrigerant"
+],
+"a": 1,
+"w": "superbug (noun, C1): A strain of bacteria that has become resistant to multiple antibiotics."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "There is no known ______ for the common cold, only ways to ease the symptoms.",
+"o": [
+"cure",
+"fission",
+"extinction",
+"likelihood"
+],
+"a": 0,
+"w": "cure (noun, B2): A remedy or treatment that completely eliminates a disease."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "The ______ of pesticides has damaged the soil on many farms.",
+"o": [
+"intensity",
+"lifespan",
+"excavation",
+"overuse"
+],
+"a": 3,
+"w": "overuse (noun, AWL, B2): Excessive or too-frequent use of something."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "The manager was fired for the ______ of company money.",
+"o": [
+"incidence",
+"refrigerant",
+"misuse",
+"mortality"
+],
+"a": 2,
+"w": "misuse (noun, AWL, B2): Incorrect, inappropriate, or harmful use of something."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Only a qualified doctor can ______ this type of medication.",
+"o": [
+"prescribe",
+"vaporize",
+"forecast",
+"boost"
+],
+"a": 0,
+"w": "prescribe (verb, B2): To authorise or order a medical treatment or medication for a patient."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "I ______ you have already eaten, so I did not cook dinner.",
+"o": [
+"vaporize",
+"prescribe",
+"withstand",
+"assume"
+],
+"a": 3,
+"w": "assume (verb, AWL, B2): To believe something to be true without proof."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "The ______ of the disease began in a small village.",
+"o": [
+"installation",
+"determination",
+"cure",
+"outbreak"
+],
+"a": 3,
+"w": "outbreak (noun, B2): The sudden start of a disease or something unpleasant."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "The government is struggling to control the ______ that has infected thousands of people.",
+"o": [
+"mould",
+"perpetrator",
+"epidemic",
+"mortality"
+],
+"a": 2,
+"w": "epidemic (noun, AWL, B2): A widespread occurrence of an infectious disease in a commThemey."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "As a ______, she spends her days studying viruses and bacteria in the lab.",
+"o": [
+"refrigerant",
+"storage",
+"likelihood",
+"microbiologist"
+],
+"a": 3,
+"w": "microbiologist (noun, B2): A scientist who studies microscopic organisms such as bacteria and viruses."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "______, the little boy solved the difficult puzzle in under a minute.",
+"o": [
+"astonishingly",
+"namely",
+"likewise",
+"hence"
+],
+"a": 0,
+"w": "astonishingly (adverb, B2): In a way that is very surprising or shocking."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "Doctors need to ______ the cause of the illness before treating it.",
+"o": [
+"transfer",
+"wrought",
+"identify",
+"avert"
+],
+"a": 2,
+"w": "identify (verb, AWL, B2): To recognise or discover the exact nature of something."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "Being lost in the dark forest was absolutely ______.",
+"o": [
+"renewed",
+"terrifying",
+"precise",
+"viable"
+],
+"a": 1,
+"w": "terrifying (adjective, B2): Extremely frightening or alarming."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "Many ______ diseases, such as bird flu, pass from animals to humans.",
+"o": [
+"uninhabited",
+"exponential",
+"penetrating",
+"zoonotic"
+],
+"a": 3,
+"w": "zoonotic (adjective, C1): Able to be transmitted from animals to humans."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "Rats are the natural ______ of the bacteria without becoming ill themselves.",
+"o": [
+"fermentation",
+"fission",
+"reservoir",
+"mortality"
+],
+"a": 2,
+"w": "reservoir (noun, C1): An animal or organism that carries a pathogen without becoming ill itself."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "The disease can ______ from animals to people through close contact.",
+"o": [
+"depressurise",
+"transfer",
+"breach",
+"forecast"
+],
+"a": 1,
+"w": "transfer (verb, AWL, B2): To pass or spread from one living thing to another."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "Viruses and bacteria are examples of disease-causing ______.",
+"o": [
+"generators",
+"pathogens",
+"sectors",
+"mechanisms"
+],
+"a": 1,
+"w": "pathogens (noun, AWL, C1): Microorganisms that cause disease."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "The patient was moved to the ______ care unit.",
+"o": [
+"exponential",
+"precise",
+"intensive",
+"striking"
+],
+"a": 2,
+"w": "intensive (adjective, AWL, B2): Specialised hospital treatment for seriously ill or injured patients."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "Talks between the two countries are still ______, with no agreement yet.",
+"o": [
+"ongoing",
+"integral",
+"operational",
+"resistant"
+],
+"a": 0,
+"w": "ongoing (adjective, AWL, B2): Continuing to exist or develop; not yet finished."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "Children receive the ______ against measles at an early age.",
+"o": [
+"tsunami",
+"excavation",
+"perpetrator",
+"vaccine"
+],
+"a": 3,
+"w": "vaccine (noun, B2): A substance injected to stimulate the body's immune system against a disease."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "The disease has a high ______ rate among elderly patients.",
+"o": [
+"mortality",
+"spree",
+"lifespan",
+"perpetrator"
+],
+"a": 0,
+"w": "mortality (noun, AWL, B2): The proportion of deaths caused by a particular disease."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "If the disease is left ______, it could infect millions of people.",
+"o": [
+"operational",
+"unchecked",
+"cluttered",
+"thermal"
+],
+"a": 1,
+"w": "unchecked (adjective, C1): Not controlled or prevented from getting worse."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "After the holiday she returned to work with ______ energy.",
+"o": [
+"trivial",
+"projected",
+"interchangeable",
+"renewed"
+],
+"a": 3,
+"w": "renewed (adjective, B2): A new or revived feeling of wanting to learn about or do something."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "Schools closed for months during the ______ in 2020.",
+"o": [
+"fermentation",
+"lockdown",
+"vaccine",
+"carbon-dating"
+],
+"a": 1,
+"w": "lockdown (noun, B2): A period when people are required to stay at home as a safety measure."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "Cycling to work is the latest ______ in our city.",
+"o": [
+"fission",
+"range",
+"mortality",
+"trend"
+],
+"a": 3,
+"w": "trend (noun, AWL, B2): A general direction of change or a popular new pattern of behaviour."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "She went on a shopping ______ and spent her whole salary in one day.",
+"o": [
+"cure",
+"settlement",
+"spree",
+"excavation"
+],
+"a": 2,
+"w": "spree (noun, B2): A period of frenzied purchasing of goods caused by fear of shortages."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "Panic buyers can ______ supermarket shelves in a single afternoon.",
+"o": [
+"ensue",
+"avert",
+"mitigate",
+"strip"
+],
+"a": 3,
+"w": "strip (verb, B2): To completely remove or empty something."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "Basic ______ like flour, rice and sugar ran out quickly.",
+"o": [
+"foodstuffs",
+"mechanisms",
+"downsides",
+"natural causes"
+],
+"a": 0,
+"w": "foodstuffs (noun, B2): Basic items of food or provisions."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "It began to ______ on her that she had been wrong all along.",
+"o": [
+"withstand",
+"avert",
+"dawn",
+"confirm"
+],
+"a": 2,
+"w": "dawn (verb, B2): To suddenly realise or understand something."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "Tourists visited the ______ site to see the ancient ruins.",
+"o": [
+"precise",
+"archaeological",
+"cluttered",
+"penetrating"
+],
+"a": 1,
+"w": "archaeological (adjective, AWL, B2): Relating to physical remains or proof from past human activity."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "The ______ of grapes turns juice into wine.",
+"o": [
+"occurrence",
+"carbon-dating",
+"fermentation",
+"unit"
+],
+"a": 2,
+"w": "fermentation (noun, B2): The chemical process by which bacteria or yeast break down sugars."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "Each bowl was made by a local ______ using traditional methods.",
+"o": [
+"vaccine",
+"refrigerant",
+"artisan",
+"microbiologist"
+],
+"a": 2,
+"w": "artisan (noun, B2): A skilled worker who makes things by hand using traditional methods."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "Cheap, ______ furniture is made in factories rather than by hand.",
+"o": [
+"striking",
+"mass-produced",
+"ongoing",
+"archaeological"
+],
+"a": 1,
+"w": "mass-produced (adjective, B2): Made in large quantities using machinery."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "Filling in the long forms by hand was very ______.",
+"o": [
+"resistant",
+"time-consuming",
+"kinetic",
+"cluttered"
+],
+"a": 1,
+"w": "time-consuming (adjective, B2): Taking a lot of time to complete."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "Walking by the sea is very ______ and helps me relax.",
+"o": [
+"renewed",
+"kinetic",
+"flammable",
+"therapeutic"
+],
+"a": 3,
+"w": "therapeutic (adjective, B2): Having a healing or calming effect on mental or physical health."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "The ______ of the ancient tomb took several years.",
+"o": [
+"epicentre",
+"excavation",
+"resistance",
+"combustion"
+],
+"a": 1,
+"w": "excavation (noun, AWL, B2): The process of digging in the ground to find things from the past."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "Archaeologists discovered the ______ of a child buried 4,000 years ago.",
+"o": [
+"generators",
+"remains",
+"sectors",
+"genes"
+],
+"a": 1,
+"w": "remains (noun, B2): The dead body or bones of a person."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "The old house is ______ well kept for its age.",
+"o": [
+"remarkably",
+"rarely",
+"hardly",
+"scarcely"
+],
+"a": 0,
+"w": "remarkably (adverb, B2): Surprisingly or unusually (often used with adjectives)."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "The village is so well ______ that it looks as it did centuries ago.",
+"o": [
+"zoonotic",
+"exponential",
+"preserved",
+"unexpected"
+],
+"a": 2,
+"w": "preserved (adjective, B2): Maintained in good condition over a long period."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "Scientists used ______ to find out the age of the ancient wood.",
+"o": [
+"refrigerant",
+"mortality",
+"carbon-dating",
+"grant"
+],
+"a": 2,
+"w": "carbon-dating (noun, B2): A scientific method of determining the age of ancient organic materials."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "The ______ of the robbery was caught on camera.",
+"o": [
+"likelihood",
+"perpetrator",
+"lifespan",
+"epidemic"
+],
+"a": 1,
+"w": "perpetrator (noun, C1): A person who carries out a harmful, illegal, or immoral act."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "He wants to work in ______ and dig up ancient sites.",
+"o": [
+"archaeology",
+"trend",
+"toxicity",
+"epicentre"
+],
+"a": 0,
+"w": "archaeology (noun, AWL, B2): The study of human history and prehistory through excavation of sites."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "In ______ class, we studied the customs of tribes around the world.",
+"o": [
+"grant",
+"toxicity",
+"anthropology",
+"evacuation"
+],
+"a": 2,
+"w": "anthropology (noun, AWL, B2): The study of human societies, cultures, and development."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "Can you give me the ______ time of the accident, down to the minute?",
+"o": [
+"precise",
+"renewed",
+"preserved",
+"ongoing"
+],
+"a": 0,
+"w": "precise (adjective, AWL, B2): Exact or accurate."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "The ______ of the cause of death required further tests.",
+"o": [
+"determination",
+"cure",
+"microbiologist",
+"unit"
+],
+"a": 0,
+"w": "determination (noun, AWL, B2): The identification of something."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "The doctor examined the ______ injury caused by the sharp knife.",
+"o": [
+"penetrating",
+"terrifying",
+"resistant",
+"economical"
+],
+"a": 0,
+"w": "penetrating (adjective, C1): Piercing or entering (used of an injury)."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "The skull showed signs of severe ______ caused by a blow.",
+"o": [
+"evacuation",
+"misuse",
+"fission",
+"trauma"
+],
+"a": 3,
+"w": "trauma (noun, C1): A physical injury or wound."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "The doctor confirmed that she died of ______, not from an accident.",
+"o": [
+"natural causes",
+"pathogens",
+"hunter-gatherers",
+"remains"
+],
+"a": 0,
+"w": "natural causes (noun, B2): Death resulting from illness, old age, or disease rather than accident."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "Before farming, humans lived as ______, moving from place to place to find food.",
+"o": [
+"remains",
+"hunter-gatherers",
+"mechanisms",
+"opponents"
+],
+"a": 1,
+"w": "hunter-gatherers (noun, B2): People who live by hunting animals and gathering wild plants."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "They were stranded on a small, ______ island with no people.",
+"o": [
+"intensive",
+"deadly",
+"uninhabited",
+"precise"
+],
+"a": 2,
+"w": "uninhabited (adjective, B2): Having no people living there."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "Her ______ came from Spain, and she still visits their village.",
+"o": [
+"hunter-gatherers",
+"downsides",
+"ancestors",
+"natural causes"
+],
+"a": 2,
+"w": "ancestors (noun, B2): Family members from past generations, especially before grandparents."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "Over time, the small ______ near the coast grew into a busy port.",
+"o": [
+"settlement",
+"range",
+"combustion",
+"grant"
+],
+"a": 0,
+"w": "settlement (noun, AWL, B2): The act of people moving to and living in a new area."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "Children inherit ______ from both their mother and father.",
+"o": [
+"renewables",
+"generators",
+"genes",
+"downsides"
+],
+"a": 2,
+"w": "genes (noun, B2): Themes of heredity passed from parent to offspring."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "The ______ of the storm increased as it reached the coast.",
+"o": [
+"intensity",
+"expectancy",
+"disposal",
+"combustibility"
+],
+"a": 0,
+"w": "intensity (noun, AWL, B2): The measurable strength or magnitude of something, such as an earthquake."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "The town closest to the ______ suffered the worst damage.",
+"o": [
+"mould",
+"epicentre",
+"refrigerant",
+"reservoir"
+],
+"a": 1,
+"w": "epicentre (noun, B2): The point on the Earth's surface directly above where an earthquake starts."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "The earthquake ______ terrible destruction on the town.",
+"o": [
+"confirmed",
+"avoided",
+"withstood",
+"wrought"
+],
+"a": 3,
+"w": "wrought (verb, C1): Caused or done (formal usage)."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "The airline will ______ your booking by email.",
+"o": [
+"boost",
+"strip",
+"deplete",
+"confirm"
+],
+"a": 3,
+"w": "confirm (verb, AWL, B2): To officially verify that someone has died."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "These bridges are built to ______ extremely strong winds.",
+"o": [
+"withstand",
+"avert",
+"confirm",
+"inundate"
+],
+"a": 0,
+"w": "withstand (verb, B2): To remain undamaged or unaffected by something harmful or powerful."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Music is ______ to our culture and traditions.",
+"o": [
+"therapeutic",
+"resistant",
+"economical",
+"integral"
+],
+"a": 3,
+"w": "integral (adjective, AWL, C1): Essential or necessary part of something."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "The machine has a ______ system that switches it off if something goes wrong.",
+"o": [
+"failsafe",
+"trivial",
+"operational",
+"onshore"
+],
+"a": 0,
+"w": "failsafe (adjective, C1): Designed to automatically prevent or minimise harm if something goes wrong."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "The plant has several safety ______ to prevent accidents.",
+"o": [
+"mechanisms",
+"foodstuffs",
+"renewables",
+"downsides"
+],
+"a": 0,
+"w": "mechanisms (noun, AWL, C1): Systems designed to perform a function."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "When the power went out, backup ______ kept the hospital running.",
+"o": [
+"opponents",
+"ancestors",
+"renewables",
+"generators"
+],
+"a": 3,
+"w": "generators (noun, B2): Machines that produce electricity, often used as backup power sources."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Quick thinking by the pilot helped ______ a serious accident.",
+"o": [
+"prescribe",
+"derive",
+"avert",
+"boost"
+],
+"a": 2,
+"w": "avert (verb, C1): To successfully prevent or avoid a catastrophe."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Coastal towns were warned that a ______ was heading towards the shore.",
+"o": [
+"range",
+"occurrence",
+"tsunami",
+"combustion"
+],
+"a": 2,
+"w": "tsunami (noun, B2): A very large, destructive wave caused by an earthquake."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Rising rivers could ______ low-lying farmland within hours.",
+"o": [
+"inundate",
+"dawn",
+"forecast",
+"assume"
+],
+"a": 0,
+"w": "inundate (verb, C1): To flood or cover completely with water."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Floodwater could ______ the dam if the rain continues.",
+"o": [
+"breach",
+"withstand",
+"strip",
+"boost"
+],
+"a": 0,
+"w": "breach (verb, B2): To break through or make an opening in a barrier."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "If the dam fails, chaos will ______.",
+"o": [
+"inundate",
+"ensue",
+"deplete",
+"disfigure"
+],
+"a": 1,
+"w": "ensue (verb, AWL, B2): To happen or follow as a result of something."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Workers wore protective suits because of the high levels of ______.",
+"o": [
+"fermentation",
+"radiation",
+"tsunami",
+"installation"
+],
+"a": 1,
+"w": "radiation (noun, B2): Harmful radioactive particles or energy released into the environment."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Police ordered the immediate ______ of all homes near the river.",
+"o": [
+"combustion",
+"toxicity",
+"evacuation",
+"occurrence"
+],
+"a": 2,
+"w": "evacuation (noun, AWL, B2): An official instruction requiring people to leave an area for safety."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Officials decided to ______ the deadline by two weeks.",
+"o": [
+"disfigure",
+"vaporize",
+"mitigate",
+"extend"
+],
+"a": 3,
+"w": "extend (verb, AWL, B2): To make larger or broader to cover a wider area."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "The new law is highly ______, and people are divided about it.",
+"o": [
+"immune",
+"precise",
+"controversial",
+"flammable"
+],
+"a": 2,
+"w": "controversial (adjective, AWL, B2): Causing disagreement or debate between people with opposing views."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Wearing a seat belt reduces the ______ of serious injury.",
+"o": [
+"resistance",
+"lockdown",
+"likelihood",
+"artisan"
+],
+"a": 2,
+"w": "likelihood (noun, AWL, B2): The probability or chance that something will happen."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Doctors recorded a higher ______ of asthma in the polluted area.",
+"o": [
+"radiation",
+"combustibility",
+"incidence",
+"expectancy"
+],
+"a": 2,
+"w": "incidence (noun, AWL, C1): The rate or frequency at which something, especially a disease, occurs."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "Scientists believe we are on the ______ of a major breakthrough in cancer treatment.",
+"o": [
+"algorithm",
+"division",
+"cusp",
+"wisdom"
+],
+"a": 2,
+"w": "cusp (noun, C1): The point of entering a new stage or period of development."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "Some people spend so many hours on their phones that they become a ______ of their screens.",
+"o": [
+"target",
+"cusp",
+"division",
+"prisoner"
+],
+"a": 3,
+"w": "prisoner (noun, B2): Trapped by or unable to escape from something."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "______ in car factories means that robots now do many jobs that people used to do.",
+"o": [
+"wisdom",
+"automation",
+"sentience",
+"abuse"
+],
+"a": 1,
+"w": "automation (noun, AWL, B2): The use of machines or computers to do work previously done by people."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "Rising food prices affect poor families ______, because they spend most of their income on food.",
+"o": [
+"remarkably",
+"genuinely",
+"disproportionately",
+"mildly"
+],
+"a": 2,
+"w": "disproportionately (adverb, C1): To affect more strongly or severely than other groups."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "Most banks now have ______ phone lines, so you speak to a machine instead of a person.",
+"o": [
+"embedded",
+"automated",
+"lethal",
+"autonomous"
+],
+"a": 1,
+"w": "automated (adjective, AWL, B2): Operated by machines or computers without human intervention."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "A tiny chip is ______ in your bank card to keep your money safe.",
+"o": [
+"lethal",
+"superior",
+"embedded",
+"automated"
+],
+"a": 2,
+"w": "embedded (adjective, AWL, B2): Inserted or fixed firmly into a surrounding mass."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "It takes years to ______ a new language to a high level.",
+"o": [
+"filter",
+"mimic",
+"pose",
+"acquire"
+],
+"a": 3,
+"w": "acquire (verb, AWL, B2): To gain or obtain a new skill, ability, or possession."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "The new policy created a deep ______ between rich and poor neighbourhoods.",
+"o": [
+"cusp",
+"division",
+"algorithm",
+"prisoner"
+],
+"a": 1,
+"w": "division (noun, AWL, B2): A separation of people into different groups with unequal opportunities."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "Fake news websites ______ a serious threat to democracy.",
+"o": [
+"acquire",
+"filter",
+"pose",
+"enable"
+],
+"a": 2,
+"w": "pose (verb, B2): To present or create threats or risks for something."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "The ______ of photos on social media can make people believe things that never happened.",
+"o": [
+"wisdom",
+"upgrade",
+"cusp",
+"manipulation"
+],
+"a": 3,
+"w": "manipulation (noun, AWL, C1): The use of deceptive tactics to influence or control people."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "The company was fined for the ______ of its customers' personal data.",
+"o": [
+"sentience",
+"abuse",
+"wisdom",
+"cusp"
+],
+"a": 1,
+"w": "abuse (noun, AWL, B2): Harmful, unethical, or improper use of something."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "YouTube's ______ decides which videos appear on your home page.",
+"o": [
+"dystopia",
+"prisoner",
+"division",
+"algorithm"
+],
+"a": 3,
+"w": "algorithm (noun, B2): A set of step-by-step instructions followed by a computer to solve problems."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "Email programs ______ spam so it doesn't reach your inbox.",
+"o": [
+"converse",
+"acquire",
+"filter",
+"pose"
+],
+"a": 2,
+"w": "filter (verb, B2): To remove or block unwanted content or information."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "Several ______ of famous politicians went viral before experts proved the videos were fake.",
+"o": [
+"targets",
+"consequences",
+"deep fakes",
+"hobbies"
+],
+"a": 2,
+"w": "deep fakes (noun, C1): Realistic but fake videos or images created by artificial intelligence."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "My grandfather never went to university, but he is full of ______ from a long life.",
+"o": [
+"automation",
+"division",
+"abuse",
+"wisdom"
+],
+"a": 3,
+"w": "wisdom (noun, B2): The ability to make good judgments based on knowledge and experience."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "Some snakes carry enough venom to deliver a ______ bite.",
+"o": [
+"lethal",
+"automated",
+"recursive",
+"counterfactual"
+],
+"a": 0,
+"w": "lethal (adjective, B2): Sufficient to cause death; deadly."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "______ drones can fly and choose their route without a human pilot.",
+"o": [
+"autonomous",
+"regulatory",
+"embedded",
+"imperfect"
+],
+"a": 0,
+"w": "autonomous (adjective, AWL, C1): Able to operate or make decisions independently without human control."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "The army said the missiles only hit military ______, not homes.",
+"o": [
+"deep fakes",
+"targets",
+"hobbies",
+"consequences"
+],
+"a": 1,
+"w": "targets (noun, AWL, B2): Objects, locations, or people selected to be attacked or destroyed."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "The city has seen ______ growth in the number of cafÃ©s; ten new ones opened this month.",
+"o": [
+"recursive",
+"explosive",
+"genetic",
+"regulatory"
+],
+"a": 1,
+"w": "explosive (adjective, C1): Extremely rapid and dramatic."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "The Empty Quarter is a ______ desert that covers much of southern Arabia.",
+"o": [
+"counterfactual",
+"genetic",
+"regulatory",
+"vast"
+],
+"a": 3,
+"w": "vast (adjective, B2): Extremely large or wide-ranging."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "There are ______ ways to improve your English, from reading to watching films.",
+"o": [
+"numerous",
+"lethal",
+"superior",
+"embedded"
+],
+"a": 0,
+"w": "numerous (adjective, B2): Many; a large number."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "It is now ______ that smoking causes cancer.",
+"o": [
+"recursive",
+"widely accepted",
+"imperfect",
+"autonomous"
+],
+"a": 1,
+"w": "widely accepted (adjective, B2): Believed or agreed to be true by many."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "Advances in ______ have made phones more powerful than old supercomputers.",
+"o": [
+"pastry",
+"sentience",
+"wisdom",
+"computing"
+],
+"a": 3,
+"w": "computing (noun, B2): The ability of a computer to process information."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "The free software ______ made my laptop much faster.",
+"o": [
+"cusp",
+"upgrade",
+"division",
+"guarantee"
+],
+"a": 1,
+"w": "upgrade (noun, B2): An improvement or increase in quality, capability, or performance."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "Online banking apps ______ customers to pay bills from home.",
+"o": [
+"pose",
+"enable",
+"mimic",
+"browse"
+],
+"a": 1,
+"w": "enable (verb, AWL, B2): To make something possible or provide the means to do something."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "Parrots can ______ human voices so well that you might think a person is speaking.",
+"o": [
+"acquire",
+"enable",
+"filter",
+"mimic"
+],
+"a": 3,
+"w": "mimic (verb, B2): To copy or imitate the behaviour, speech, or actions of something."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "Many reviewers say this phone's camera is ______ to the cameras on more expensive models.",
+"o": [
+"superior",
+"numerous",
+"lethal",
+"explosive"
+],
+"a": 0,
+"w": "superior (adjective, B2): Higher in quality, ability, or importance than something else."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "The program works in a ______ way: every time it improves itself, it gets better at improving itself again.",
+"o": [
+"recursive",
+"regulatory",
+"genetic",
+"imperfect"
+],
+"a": 0,
+"w": "recursive (adjective, C1): A continuous process where a system repeatedly improves itself."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "There is no ______ that the train will arrive on time.",
+"o": [
+"algorithm",
+"upgrade",
+"target",
+"guarantee"
+],
+"a": 3,
+"w": "guarantee (noun, B2): No certainty or assurance that something will happen."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "Thanks to ______, scientists can build machines smaller than a human cell.",
+"o": [
+"sentience",
+"nanotechnology",
+"dystopia",
+"wisdom"
+],
+"a": 1,
+"w": "nanotechnology (noun, B2): The science of manipulating matter at the molecular or atomic level."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "Doctors used ______ testing to find out whether the baby would inherit the disease.",
+"o": [
+"numerous",
+"regulatory",
+"explosive",
+"genetic"
+],
+"a": 3,
+"w": "genetic (adjective, B2): Relating to the deliberate modification of an organism's genes."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "Some scientists argue that dolphins show ______: they can feel pain, fear and joy.",
+"o": [
+"sentience",
+"guarantee",
+"nanotechnology",
+"computing"
+],
+"a": 0,
+"w": "sentience (noun, C1): The ability to feel, perceive, or experience subjective awareness."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "A ______ body checks that new medicines are safe before they are sold.",
+"o": [
+"explosive",
+"recursive",
+"regulatory",
+"genetic"
+],
+"a": 2,
+"w": "regulatory (adjective, AWL, C1): Relating to an official organisation that makes and enforces rules."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "Asking what the world would be like if the Internet had never been invented is a ______ question.",
+"o": [
+"lethal",
+"superior",
+"counterfactual",
+"embedded"
+],
+"a": 2,
+"w": "counterfactual (adjective, C1): Relating to what might have happened if past events had occurred differently."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "If you don't study, you will have to face the ______ when the results come out.",
+"o": [
+"hobbies",
+"targets",
+"consequences",
+"deep fakes"
+],
+"a": 2,
+"w": "consequences (noun, AWL, B2): The results or effects of an action or event."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "With video calls, I can ______ with my cousins in Canada every week.",
+"o": [
+"browse",
+"mimic",
+"converse",
+"filter"
+],
+"a": 2,
+"w": "converse (verb, B2): To have a conversation or talk with one another."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "The film was only ______ funny; nobody laughed out loud.",
+"o": [
+"mildly",
+"disproportionately",
+"genuinely",
+"face-to-face"
+],
+"a": 0,
+"w": "mildly (adverb, B2): Moderately or somewhat, but not extremely."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "The hotel's ______ chef makes fresh croissants every morning.",
+"o": [
+"algorithm",
+"travel agent",
+"wisdom",
+"pastry"
+],
+"a": 3,
+"w": "pastry (noun, B2): A professional baker who specialises in making desserts, cakes, and pastries."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "Let's imagine a ______ situation: what would you do if you won a million riyals?",
+"o": [
+"hypothetical",
+"lethal",
+"automated",
+"superior"
+],
+"a": 0,
+"w": "hypothetical (adjective, AWL, B2): An imagined or theoretical situation that does not actually exist."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "I like to ______ online shops in the evening, even when I'm not planning to buy anything.",
+"o": [
+"browse",
+"pose",
+"enable",
+"converse"
+],
+"a": 0,
+"w": "browse (verb, B2): To scan or look through websites casually without a specific goal."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "Before the Internet, most families booked their holidays through a ______.",
+"o": [
+"travel agent",
+"dystopia",
+"pastry",
+"target"
+],
+"a": 0,
+"w": "travel agent (noun, B2): A person or business that arranges and sells flights, holidays, and other travel services."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "My brother spends every weekend on ______, playing with friends in other countries.",
+"o": [
+"wisdom",
+"nanotechnology",
+"online gaming",
+"social distancing"
+],
+"a": 2,
+"w": "online gaming (noun, B2): Playing video games over the Internet with other people remotely."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "Some problems are easier to solve ______ than by email.",
+"o": [
+"disproportionately",
+"genuinely",
+"face-to-face",
+"mildly"
+],
+"a": 2,
+"w": "face-to-face (adverb/adjective, B2): Directly with someone in the same physical location; not remotely."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "The novel describes a ______ where the government watches people every minute of the day.",
+"o": [
+"cusp",
+"guarantee",
+"dystopia",
+"pastry"
+],
+"a": 2,
+"w": "dystopia (noun, C1): An imagined society or place that is extremely bad, unfair, or frightening."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "Reading and swimming are my favourite ______.",
+"o": [
+"hobbies",
+"consequences",
+"deep fakes",
+"targets"
+],
+"a": 0,
+"w": "hobbies (noun, B2): Activities done regularly for pleasure and relaxation during free time."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "The new airport is ______; it can handle 100 million passengers a year.",
+"o": [
+"hypothetical",
+"counterfactual",
+"regulatory",
+"massive"
+],
+"a": 3,
+"w": "massive (adjective, B2): A very large or significant advantage or positive effect."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "The ______ of 2020 closed schools and airports around the world.",
+"o": [
+"global pandemic",
+"online gaming",
+"nanotechnology",
+"travel agent"
+],
+"a": 0,
+"w": "global pandemic (noun, B2): A disease outbreak that spreads across multiple countries or continents worldwide."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "During the pandemic, shops put signs on the floor to help with ______.",
+"o": [
+"travel agent",
+"social distancing",
+"global pandemic",
+"online gaming"
+],
+"a": 1,
+"w": "social distancing (noun, B2): The practice of maintaining physical space between people to prevent disease spread."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "When schools closed, ______ platforms let students attend classes from home.",
+"o": [
+"online learning",
+"face-to-face",
+"counterfactual",
+"explosive"
+],
+"a": 0,
+"w": "online learning (adjective, B2): Digital systems or websites that deliver educational content."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "The plan is ______, but it is the best one we have.",
+"o": [
+"imperfect",
+"numerous",
+"superior",
+"lethal"
+],
+"a": 0,
+"w": "imperfect (adjective, B2): Having faults or limitations."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "She was ______ happy for her friend when she heard the good news.",
+"o": [
+"solely",
+"face-to-face",
+"disproportionately",
+"genuinely"
+],
+"a": 3,
+"w": "genuinely (adverb, B2): Truly; really."
+}
+];
+
 </script>
 <script>
 (function () {
   "use strict";
   var LETTERS = ["A", "B", "C", "D"];
-  var COUNTS = [10, 20, 30, 0]; // 0 = all
+  var COUNTS = [10, 20, 30, 0];
+  var SECTION = {
+    g: { title: "Grammar Drill", kindNoun: "grammar", groups: ["Prep TOEFL", "Life"],
+         spec: [["Prep TOEFL", "Skills 1–30"], ["Life", "Units 5–8"], ["Exam pace", "45 s / question"]] },
+    v: { title: "Vocabulary Drill", kindNoun: "vocabulary", groups: ["Reading Explorer", "Integrated Materials"],
+         spec: [["Reading Explorer", "Units 5A–8B"], ["Integrated Materials", "Texts 12–23"], ["Exam pace", "45 s / question"]] }
+  };
+
+  TOPICS.forEach(function (t) { t.sec = "g"; });
+  VTOPICS.forEach(function (t) { t.sec = "v"; });
+  var ALLTOPICS = TOPICS.concat(VTOPICS);
   var TOPIC = {};
-  TOPICS.forEach(function (t) { TOPIC[t.id] = t; });
-  BANK.forEach(function (q, i) {
-    q.id = q.t + "." + i;
+  ALLTOPICS.forEach(function (t) { TOPIC[t.id] = t; });
+
+  function hash(s) { var x = 5381; for (var i = 0; i < s.length; i++) x = ((x << 5) + x + s.charCodeAt(i)) | 0; return (x >>> 0).toString(36); }
+  var ALL = BANK.concat(VBANK);
+  var BYID = {};
+  ALL.forEach(function (q) {
+    q.sec = TOPIC[q.t].sec;
+    q.id = q.t + "-" + hash(q.q);
     if (q.k === "e") {
       q.o = [];
       q.q.replace(/\[\[(.+?)\]\]/g, function (_, s) { q.o.push(s); return s; });
     }
+    BYID[q.id] = q;
   });
-  var BYID = {};
-  BANK.forEach(function (q) { BYID[q.id] = q; });
+  function inSec(sec) { return ALL.filter(function (q) { return q.sec === sec; }); }
 
-  // ---------- storage (per-viewer convenience only)
+  // ---------- storage
   function load(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 
   var hot = (window.claude && window.claude.hot) || null;
   var hotData = (hot && hot.data) || {};
 
-  var settings = hotData.settings || load("m2g.settings", null) || { topics: TOPICS.map(function (t) { return t.id; }), count: 20, mode: "practice" };
-  var mistakes = load("m2g.mistakes", []);
-  mistakes = mistakes.filter(function (id) { return BYID[id]; });
-  var state = hotData.state || null;
+  function defaults() {
+    return {
+      view: "g", mode: "practice",
+      g: { topics: TOPICS.map(function (t) { return t.id; }), count: 20 },
+      v: { topics: VTOPICS.map(function (t) { return t.id; }), count: 20 }
+    };
+  }
+  var settings = hotData.settings || load("m2.settings.v2", null) || defaults();
+  if (!settings.g || !settings.v) settings = defaults();
+  var records = load("m2.records.v2", {});
+  Object.keys(records).forEach(function (id) { if (!BYID[id]) delete records[id]; });
+  var quizzes = load("m2.quizzes.v2", []);
+  var states = hotData.states || { g: null, v: null };
+  var mfilter = "all";
+  var copyText = null, copied = false;
   var timer = null;
 
   function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function fmt(sec) { sec = Math.max(0, Math.round(sec)); var m = Math.floor(sec / 60), s = sec % 60; return m + ":" + (s < 10 ? "0" : "") + s; }
   function $(id) { return document.getElementById(id); }
+  function persist() { save("m2.settings.v2", settings); }
+
+  function activeMistakes(sec) {
+    return Object.keys(records).filter(function (id) {
+      var r = records[id];
+      return r.last === 0 && (!sec || BYID[id].sec === sec);
+    });
+  }
+
+  // ---------- cloud sync (claude.ai only; private to the signed-in viewer)
+  var cloud = { ref: null, on: false, busy: false, dirty: false, t: null };
+  function cloudBody() {
+    var act = activeMistakes();
+    var byLesson = {};
+    act.forEach(function (id) { var t = TOPIC[BYID[id].t]; var k = t.src + " " + t.label; byLesson[k] = (byLesson[k] || 0) + 1; });
+    return {
+      version: 2,
+      updated: new Date().toISOString(),
+      records: records,
+      quizzes: quizzes.slice(-40),
+      summary: { activeMistakes: act.length, byLesson: byLesson },
+      mistakes: act.slice(0, 150).map(function (id) {
+        var q = BYID[id], r = records[id], t = TOPIC[q.t];
+        return { section: q.sec === "g" ? "grammar" : "vocabulary", lesson: t.src + " " + t.label + " · " + t.name,
+          question: plainStem(q), yourAnswer: r.lp == null ? "no answer" : q.o[r.lp], correct: q.o[q.a], timesWrong: r.w };
+      })
+    };
+  }
+  function mergeRemote(data) {
+    if (!data) return;
+    var rr = data.records || {};
+    Object.keys(rr).forEach(function (id) {
+      if (!BYID[id]) return;
+      if (!records[id] || (rr[id].at || 0) > (records[id].at || 0)) records[id] = rr[id];
+    });
+    var seen = {};
+    quizzes = quizzes.concat(data.quizzes || []).filter(function (z) { if (!z || seen[z.at]) return false; seen[z.at] = 1; return true; })
+      .sort(function (a, b) { return a.at - b.at; }).slice(-40);
+    save("m2.records.v2", records); save("m2.quizzes.v2", quizzes);
+  }
+  function startCloud() {
+    if (!window.claude || typeof window.claude.use !== "function") return;
+    Promise.all([window.claude.use("db"), window.claude.use("user")]).then(function (caps) {
+      var db = caps[0], user = caps[1];
+      if (!db || !user) return null;
+      return user.id().then(function (id) {
+        if (!id) return null;
+        cloud.ref = db.doc("data/users/" + id + "/progress");
+        return cloud.ref.get().then(function (snap) {
+          if (snap.exists) mergeRemote(snap.data());
+          cloud.on = true;
+          queueSync();
+          paintAll();
+        });
+      });
+    }).catch(function () { cloud.ref = null; cloud.on = false; paintSync(); });
+  }
+  function queueSync() {
+    if (!cloud.ref) return;
+    cloud.dirty = true;
+    clearTimeout(cloud.t);
+    cloud.t = setTimeout(flushSync, 2500);
+  }
+  function flushSync() {
+    if (!cloud.ref || cloud.busy || !cloud.dirty) return;
+    cloud.busy = true; cloud.dirty = false;
+    cloud.ref.set(cloudBody()).then(function () { cloud.on = true; }, function (e) {
+      if (e && (e.code === "invalid_argument" || e.code === "revoked" || e.code === "not_granted")) { cloud.ref = null; cloud.on = false; }
+      else cloud.dirty = true;
+    }).then(function () { cloud.busy = false; paintSync(); if (cloud.dirty) { clearTimeout(cloud.t); cloud.t = setTimeout(flushSync, 8000); } });
+  }
+  function syncText() {
+    return cloud.on ? "Saved to your Claude account. Claude can read your mistakes." : "Saved on this device only.";
+  }
+  function paintSync() {
+    var n = $("syncNote");
+    if (n) { n.textContent = syncText(); n.classList.toggle("on", cloud.on); }
+    var m = $("mSync");
+    if (m) { m.textContent = syncText(); m.classList.toggle("on", cloud.on); }
+  }
+
+  function record(id, pick) {
+    var q = BYID[id], ok = pick === q.a;
+    var r = records[id] || { w: 0, r: 0, last: 1, lp: null, at: 0 };
+    if (ok) { r.r++; r.last = 1; } else { r.w++; r.last = 0; r.lp = pick === undefined ? null : pick; }
+    r.at = Date.now();
+    records[id] = r;
+    save("m2.records.v2", records);
+    queueSync();
+  }
+
+  // ---------- header + tabs
+  function paintChrome() {
+    var v = settings.view;
+    ["g", "v", "m"].forEach(function (k) { $("tab-" + k).setAttribute("aria-selected", String(v === k)); });
+    $("n-g").textContent = inSec("g").length;
+    $("n-v").textContent = inSec("v").length;
+    var am = activeMistakes().length;
+    $("n-m").hidden = am === 0;
+    $("n-m").textContent = am;
+    var sec = SECTION[v === "m" ? "g" : v];
+    $("pageTitle").textContent = v === "m" ? "My Mistakes" : sec.title;
+    var spec = v === "m"
+      ? [["Grammar", activeMistakes("g").length + " to fix"], ["Vocabulary", activeMistakes("v").length + " to fix"], ["Quizzes done", String(quizzes.length)]]
+      : sec.spec.concat([["Bank", inSec(v).length + " questions"]]);
+    $("spec").innerHTML = spec.map(function (p) { return "<div><dt>" + esc(p[0]) + "</dt><dd>" + esc(p[1]) + "</dd></div>"; }).join("");
+    $("layout").classList.toggle("solo", v === "m");
+    $("builder").hidden = v === "m";
+  }
 
   // ---------- builder
-  function countFor(tid) { return BANK.filter(function (q) { return q.t === tid; }).length; }
+  function cur() { return settings[settings.view]; }
+  function poolSize() { var s = cur(); return inSec(settings.view).filter(function (q) { return s.topics.indexOf(q.t) > -1; }).length; }
   function renderBuilder() {
-    $("bankCount").textContent = BANK.length + " questions";
-    [["grpToefl", "Prep TOEFL"], ["grpLife", "Life"]].forEach(function (g) {
-      var list = TOPICS.filter(function (t) { return t.src === g[1]; });
-      var html = '<div class="ghead"><b>' + g[1] + '</b><button type="button" class="linkbtn" data-toggle="' + g[1] + '">Select all</button></div>';
-      list.forEach(function (t) {
-        var on = settings.topics.indexOf(t.id) > -1;
-        html += '<label class="topic" for="tp-' + t.id + '"><input type="checkbox" id="tp-' + t.id + '" data-topic="' + t.id + '"' + (on ? " checked" : "") + '>' +
-          '<span class="tl">' + esc(t.label) + '<span class="tn">' + esc(t.name) + '</span></span><span class="tc">' + countFor(t.id) + '</span></label>';
+    if (settings.view === "m") return;
+    var sec = settings.view, s = cur(), conf = SECTION[sec];
+    var list = sec === "g" ? TOPICS : VTOPICS;
+    [["grpA", conf.groups[0]], ["grpB", conf.groups[1]]].forEach(function (g) {
+      var ts = list.filter(function (t) { return t.src === g[1]; });
+      var allOn = ts.every(function (t) { return s.topics.indexOf(t.id) > -1; });
+      var html = '<div class="ghead"><b>' + esc(g[1]) + '</b><button type="button" class="linkbtn" data-toggle="' + esc(g[1]) + '">' + (allOn ? "Clear" : "Select all") + "</button></div>";
+      ts.forEach(function (t) {
+        var on = s.topics.indexOf(t.id) > -1;
+        var n = ALL.filter(function (q) { return q.t === t.id; }).length;
+        html += '<label class="topic" for="tp-' + t.id + '"><input type="checkbox" id="tp-' + t.id + '" data-topic="' + t.id + '"' + (on ? " checked" : "") + ">" +
+          '<span class="tl">' + esc(t.label) + '<span class="tn">' + esc(t.name) + '</span></span><span class="tc">' + n + "</span></label>";
       });
       $(g[0]).innerHTML = html;
-      var allOn = list.every(function (t) { return settings.topics.indexOf(t.id) > -1; });
-      $(g[0]).querySelector("[data-toggle]").textContent = allOn ? "Clear" : "Select all";
     });
     $("countSeg").innerHTML = COUNTS.map(function (c) {
-      return '<button type="button" id="cnt-' + c + '" data-count="' + c + '" aria-pressed="' + (settings.count === c) + '">' + (c ? c : "All") + "</button>";
+      return '<button type="button" id="cnt-' + c + '" data-count="' + c + '" aria-pressed="' + (s.count === c) + '">' + (c ? c : "All") + "</button>";
     }).join("");
-    $("modePractice").setAttribute("aria-pressed", settings.mode === "practice");
-    $("modeExam").setAttribute("aria-pressed", settings.mode === "exam");
-    var pool = poolSize();
-    var n = settings.count ? Math.min(settings.count, pool) : pool;
+    $("modePractice").setAttribute("aria-pressed", String(settings.mode === "practice"));
+    $("modeExam").setAttribute("aria-pressed", String(settings.mode === "exam"));
+    var pool = poolSize(), n = s.count ? Math.min(s.count, pool) : pool;
     $("modeHint").textContent = settings.mode === "practice"
-      ? "See the answer and the rule after each question."
+      ? "See the answer and the " + (sec === "g" ? "rule" : "meaning") + " after each question."
       : "Answers stay hidden until the end. You get " + fmt(n * 45) + " for " + n + " questions.";
     $("startBtn").disabled = pool === 0;
     $("startBtn").textContent = pool === 0 ? "Pick at least one topic" : "Start " + n + "-question quiz";
-    $("mistakeBox").hidden = mistakes.length === 0;
-    $("mistakeText").textContent = mistakes.length + (mistakes.length === 1 ? " question" : " questions") + " you got wrong before, saved on this device.";
+    paintSync();
   }
-  function poolSize() { return BANK.filter(function (q) { return settings.topics.indexOf(q.t) > -1; }).length; }
-  function persistSettings() { save("m2g.settings", settings); }
 
   document.addEventListener("change", function (e) {
     var t = e.target;
     if (t.dataset && t.dataset.topic) {
-      var id = t.dataset.topic, i = settings.topics.indexOf(id);
-      if (t.checked && i < 0) settings.topics.push(id);
-      if (!t.checked && i > -1) settings.topics.splice(i, 1);
-      persistSettings(); renderBuilder();
+      var s = cur(), id = t.dataset.topic, i = s.topics.indexOf(id);
+      if (t.checked && i < 0) s.topics.push(id);
+      if (!t.checked && i > -1) s.topics.splice(i, 1);
+      persist(); renderBuilder();
     }
   });
   $("builder").addEventListener("click", function (e) {
     var b = e.target.closest("button");
     if (!b) return;
+    var s = cur();
     if (b.dataset.toggle) {
-      var list = TOPICS.filter(function (t) { return t.src === b.dataset.toggle; }).map(function (t) { return t.id; });
-      var allOn = list.every(function (id) { return settings.topics.indexOf(id) > -1; });
-      settings.topics = settings.topics.filter(function (id) { return list.indexOf(id) < 0; });
-      if (!allOn) settings.topics = settings.topics.concat(list);
-      persistSettings(); renderBuilder();
-    } else if (b.dataset.count !== undefined) {
-      settings.count = +b.dataset.count; persistSettings(); renderBuilder();
-    } else if (b.dataset.mode) {
-      settings.mode = b.dataset.mode; persistSettings(); renderBuilder();
-    } else if (b.id === "startBtn") {
-      start();
-      collapseOnPhone();
-    } else if (b.id === "mistakeBtn") {
-      start(mistakes.slice());
-      collapseOnPhone();
-    }
+      var list = (settings.view === "g" ? TOPICS : VTOPICS).filter(function (t) { return t.src === b.dataset.toggle; }).map(function (t) { return t.id; });
+      var allOn = list.every(function (id) { return s.topics.indexOf(id) > -1; });
+      s.topics = s.topics.filter(function (id) { return list.indexOf(id) < 0; });
+      if (!allOn) s.topics = s.topics.concat(list);
+      persist(); renderBuilder();
+    } else if (b.dataset.count !== undefined) { s.count = +b.dataset.count; persist(); renderBuilder(); }
+    else if (b.dataset.mode) { settings.mode = b.dataset.mode; persist(); renderBuilder(); }
+    else if (b.id === "startBtn") { start(settings.view); collapseOnPhone(); }
   });
   function collapseOnPhone() { if (window.matchMedia("(max-width: 880px)").matches) $("builder").open = false; }
 
+  document.querySelector(".tabs").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-view]");
+    if (!b) return;
+    settings.view = b.dataset.view; persist();
+    copyText = null; copied = false;
+    if (settings.view !== "m" && !states[settings.view]) start(settings.view, null, true);
+    paintAll();
+    tick();
+  });
+
   // ---------- quiz
-  function start(ids, quiet) {
-    var pool = ids ? ids.map(function (id) { return BYID[id]; }) : BANK.filter(function (q) { return settings.topics.indexOf(q.t) > -1; });
+  function st() { return settings.view === "m" ? null : states[settings.view]; }
+  function start(sec, ids, quiet, label) {
+    var s = settings[sec];
+    var pool = ids ? ids.map(function (id) { return BYID[id]; }).filter(Boolean)
+                   : inSec(sec).filter(function (q) { return s.topics.indexOf(q.t) > -1; });
     pool = shuffle(pool);
-    if (!ids && settings.count) pool = pool.slice(0, settings.count);
+    if (!ids && s.count) pool = pool.slice(0, s.count);
     if (!pool.length) return;
-    state = {
-      items: pool.map(function (q) { return { id: q.id, order: q.k === "c" ? shuffle([0, 1, 2, 3]) : [0, 1, 2, 3] }; }),
-      i: 0, picks: {}, mode: settings.mode, label: ids ? "Mistake review" : null,
+    states[sec] = {
+      items: pool.map(function (q) { return { id: q.id, order: q.k === "e" ? [0, 1, 2, 3] : shuffle([0, 1, 2, 3]) }; }),
+      i: 0, picks: {}, mode: settings.mode, label: label || null,
       started: Date.now(), limit: settings.mode === "exam" ? pool.length * 45 : 0, done: false, ended: 0
     };
-    render();
+    if (settings.view !== sec) { settings.view = sec; persist(); }
+    paintAll();
     tick();
     if (!quiet) $("sheet").scrollIntoView({ block: "start", behavior: "smooth" });
   }
-
-  function elapsed() { return ((state.done ? state.ended : Date.now()) - state.started) / 1000; }
-
+  function elapsed(S) { return ((S.done ? S.ended : Date.now()) - S.started) / 1000; }
   function tick() {
     clearInterval(timer);
-    if (!state || state.done) return;
+    var S = st();
+    if (!S || S.done) return;
     timer = setInterval(function () {
-      if (!state || state.done) { clearInterval(timer); return; }
-      if (state.mode === "exam" && state.limit - elapsed() <= 0) { finish(); return; }
+      var S2 = st();
+      if (!S2 || S2.done) { clearInterval(timer); return; }
+      if (S2.mode === "exam" && S2.limit - elapsed(S2) <= 0) { finish(); return; }
       paintClock();
     }, 1000);
   }
   function paintClock() {
-    var el = $("clock");
-    if (!el || !state) return;
-    if (state.mode === "exam") {
-      var left = state.limit - elapsed();
+    var el = $("clock"), S = st();
+    if (!el || !S) return;
+    if (S.mode === "exam") {
+      var left = S.limit - elapsed(S);
       el.innerHTML = "<small>Left</small>" + fmt(left);
       el.classList.toggle("low", left <= 60);
-    } else {
-      el.innerHTML = "<small>Time</small>" + fmt(elapsed());
-    }
+    } else el.innerHTML = "<small>Time</small>" + fmt(elapsed(S));
   }
+  function isRight(S, it) { return S.picks[it.id] === BYID[it.id].a; }
 
-  function isRight(item) { var q = BYID[item.id]; return state.picks[item.id] === q.a; }
-
-  function stemHTML(q, item, reveal) {
-    if (q.k === "c") {
-      var pick = state.picks[item.id];
-      var fill = pick === undefined ? '<span class="blank" aria-label="blank"></span>' : '<span class="blank filled">' + esc(q.o[pick]) + "</span>";
+  function plainStem(q) {
+    if (q.k === "e") { var n = 0; return q.q.replace(/\[\[(.+?)\]\]/g, function (_, s) { return "(" + LETTERS[n++] + ") " + s; }); }
+    return q.q;
+  }
+  function stemHTML(q, pick, reveal) {
+    if (q.k !== "e") {
+      var word = pick === undefined || pick === null ? "" : q.o[pick];
+      if (word && q.q.indexOf("______") === 0) word = word.charAt(0).toUpperCase() + word.slice(1);
+      var fill = word ? '<span class="blank filled">' + esc(word) + "</span>" : '<span class="blank" aria-label="blank"></span>';
       return esc(q.q).replace("______", fill);
     }
     var n = 0;
     return esc(q.q).replace(/\[\[(.+?)\]\]/g, function (_, s) {
-      var idx = n++;
-      var cls = "part";
-      if (state.picks[item.id] === idx) cls += " hl";
+      var idx = n++, cls = "part";
+      if (pick === idx) cls += " hl";
       if (reveal && idx === q.a) cls += " badpart";
       return '<span class="' + cls + '">' + s + "<sub>" + LETTERS[idx] + "</sub></span>";
     });
   }
+  function instr(q) {
+    return q.k === "c" ? "Choose the answer that completes the sentence"
+      : q.k === "e" ? "Choose the underlined part that is NOT correct"
+      : "Choose the word that completes the sentence";
+  }
 
-  function render() {
-    var sh = $("sheet");
-    if (!state) { sh.innerHTML = ""; return; }
-    if (state.done) { renderResults(); return; }
-    var item = state.items[state.i], q = BYID[item.id], t = TOPIC[q.t];
-    var pick = state.picks[item.id];
-    var locked = state.mode === "practice" && pick !== undefined;
-    var total = state.items.length;
-
-    var grid = state.items.map(function (it, k) {
-      var cls = "cell";
-      var p = state.picks[it.id];
-      if (p !== undefined) cls += state.mode === "practice" ? (isRight(it) ? " ok" : " no") : " done";
-      if (k === state.i) cls += " cur";
+  function renderQuiz() {
+    var S = st(), sh = $("sheet");
+    if (!S) { sh.innerHTML = ""; return; }
+    if (S.done) { renderResults(); return; }
+    var item = S.items[S.i], q = BYID[item.id], t = TOPIC[q.t];
+    var pick = S.picks[item.id];
+    var locked = S.mode === "practice" && pick !== undefined;
+    var total = S.items.length;
+    var grid = S.items.map(function (it, k) {
+      var cls = "cell", p = S.picks[it.id];
+      if (p !== undefined) cls += S.mode === "practice" ? (isRight(S, it) ? " ok" : " no") : " done";
+      if (k === S.i) cls += " cur";
       return '<button type="button" class="' + cls + '" data-go="' + k + '" aria-label="Question ' + (k + 1) + '">' + (k + 1) + "</button>";
     }).join("");
-
     var opts = item.order.map(function (oi, pos) {
       var cls = "opt", tag = "";
       if (pick === oi) cls += " picked";
@@ -757,141 +5887,206 @@ const BANK = [
       var label = q.k === "e" ? LETTERS[oi] : LETTERS[pos];
       return '<li><button type="button" class="' + cls + '" data-pick="' + oi + '"' + (locked ? " disabled" : "") + '><span class="bub">' + label + '</span><span class="otext">' + esc(q.o[oi]) + "</span>" + tag + "</button></li>";
     }).join("");
-
     var why = "";
     if (locked) {
       var ok = pick === q.a;
-      why = '<div class="why ' + (ok ? "ok" : "no") + '"><b>' + (ok ? "Correct" : "Not quite") + " · Rule</b><p>" + esc(q.w) + "</p></div>";
+      why = '<div class="why ' + (ok ? "ok" : "no") + '"><b>' + (ok ? "Correct" : "Not quite") + " · " + (q.sec === "g" ? "Rule" : "Meaning") + "</b><p>" + esc(q.w || q.o[q.a]) + "</p></div>";
     }
-
-    var last = state.i === total - 1;
-    var answered = Object.keys(state.picks).length;
-    var nextLabel = last ? "See results" : "Next";
-    var nextDisabled = state.mode === "practice" && !locked;
-
+    var last = S.i === total - 1, answered = Object.keys(S.picks).length;
     sh.innerHTML =
-      '<div class="sheet-head"><div class="meta"><span class="qnum">Q ' + (state.i + 1) + " / " + total + '</span><span class="chip">' + esc(t.src + " · " + t.label) + "</span>" +
-      (state.label ? '<span class="chip">' + esc(state.label) + "</span>" : "") + '</div><div class="clock" id="clock"></div></div>' +
+      '<div class="sheet-head"><div class="meta"><span class="qnum">Q ' + (S.i + 1) + " / " + total + '</span><span class="chip">' + esc(t.src + " · " + t.label) + "</span>" +
+      (S.label ? '<span class="chip">' + esc(S.label) + "</span>" : "") + '</div><div class="clock" id="clock"></div></div>' +
       '<nav class="grid" aria-label="Answer sheet">' + grid + "</nav>" +
-      '<div class="qbody"><p class="instr">' + (q.k === "c" ? "Choose the answer that completes the sentence" : "Choose the underlined part that is NOT correct") + " · " + esc(t.name) + "</p>" +
-      '<p class="stem">' + stemHTML(q, item, locked) + "</p>" +
+      '<div class="qbody"><p class="instr">' + instr(q) + " · " + esc(t.name) + "</p>" +
+      '<p class="stem">' + stemHTML(q, pick, locked) + "</p>" +
       '<ol class="opts">' + opts + "</ol>" + why + "</div>" +
       '<div class="foot"><span class="keys"><kbd>A</kbd>–<kbd>D</kbd> to answer · <kbd>Enter</kbd> next · <kbd>←</kbd> back</span><div class="acts">' +
-      '<button type="button" class="btn ghost" id="prevBtn"' + (state.i === 0 ? " disabled" : "") + ">Back</button>" +
-      (state.mode === "exam" && !last ? '<button type="button" class="btn ghost" id="endBtn">Finish (' + answered + "/" + total + ")</button>" : "") +
-      '<button type="button" class="btn" id="nextBtn"' + (nextDisabled ? " disabled" : "") + ">" + nextLabel + "</button></div></div>";
+      '<button type="button" class="btn ghost" id="prevBtn"' + (S.i === 0 ? " disabled" : "") + ">Back</button>" +
+      (S.mode === "exam" && !last ? '<button type="button" class="btn ghost" id="endBtn">Finish (' + answered + "/" + total + ")</button>" : "") +
+      '<button type="button" class="btn" id="nextBtn"' + (S.mode === "practice" && !locked ? " disabled" : "") + ">" + (last ? "See results" : "Next") + "</button></div></div>";
     paintClock();
   }
 
   function pickAnswer(oi) {
-    var item = state.items[state.i], q = BYID[item.id];
-    if (state.mode === "practice" && state.picks[item.id] !== undefined) return;
-    state.picks[item.id] = oi;
-    if (state.mode === "practice") recordMistake(q.id, oi === q.a);
-    render();
+    var S = st(); if (!S || S.done) return;
+    var item = S.items[S.i];
+    if (S.mode === "practice" && S.picks[item.id] !== undefined) return;
+    S.picks[item.id] = oi;
+    if (S.mode === "practice") { record(item.id, oi); paintChrome(); }
+    renderQuiz();
   }
-  function recordMistake(id, ok) {
-    var i = mistakes.indexOf(id);
-    if (!ok && i < 0) mistakes.push(id);
-    if (ok && i > -1) mistakes.splice(i, 1);
-    save("m2g.mistakes", mistakes);
-  }
-  function go(k) { if (k >= 0 && k < state.items.length) { state.i = k; render(); } }
-  function next() {
-    if (state.i === state.items.length - 1) finish(); else go(state.i + 1);
-  }
+  function go(k) { var S = st(); if (S && k >= 0 && k < S.items.length) { S.i = k; renderQuiz(); } }
+  function next() { var S = st(); if (!S) return; if (S.i === S.items.length - 1) finish(); else go(S.i + 1); }
   function finish() {
-    if (!state || state.done) return;
-    state.done = true; state.ended = Date.now();
+    var S = st();
+    if (!S || S.done) return;
+    S.done = true; S.ended = Date.now();
     clearInterval(timer);
-    if (state.mode === "exam") state.items.forEach(function (it) { recordMistake(it.id, isRight(it)); });
-    renderResults();
-    renderBuilder();
+    if (S.mode === "exam") S.items.forEach(function (it) { record(it.id, S.picks[it.id]); });
+    var right = S.items.filter(function (it) { return isRight(S, it); }).length;
+    var lessons = {};
+    S.items.forEach(function (it) { var t = TOPIC[BYID[it.id].t]; lessons[t.src + " " + t.label] = 1; });
+    quizzes.push({ at: S.ended, section: settings.view === "g" ? "grammar" : "vocabulary", mode: S.mode, total: S.items.length, right: right,
+      seconds: Math.round(elapsed(S)), lessons: Object.keys(lessons) });
+    quizzes = quizzes.slice(-40);
+    save("m2.quizzes.v2", quizzes);
+    queueSync();
+    paintAll();
     $("sheet").scrollIntoView({ block: "start", behavior: "smooth" });
   }
 
   function renderResults() {
-    var items = state.items, total = items.length;
-    var right = items.filter(isRight).length;
+    var S = st(), items = S.items, total = items.length;
+    var right = items.filter(function (it) { return isRight(S, it); }).length;
     var pct = Math.round(right / total * 100);
     var byTopic = {};
-    items.forEach(function (it) {
-      var tid = BYID[it.id].t;
-      byTopic[tid] = byTopic[tid] || { r: 0, n: 0 };
-      byTopic[tid].n++; if (isRight(it)) byTopic[tid].r++;
-    });
-    var bars = TOPICS.filter(function (t) { return byTopic[t.id]; }).map(function (t) {
-      var b = byTopic[t.id], p = Math.round(b.r / b.n * 100);
-      var cls = p >= 80 ? "" : p >= 50 ? " mid" : " low";
+    items.forEach(function (it) { var tid = BYID[it.id].t; byTopic[tid] = byTopic[tid] || { r: 0, n: 0 }; byTopic[tid].n++; if (isRight(S, it)) byTopic[tid].r++; });
+    var bars = ALLTOPICS.filter(function (t) { return byTopic[t.id]; }).map(function (t) {
+      var b = byTopic[t.id], p = Math.round(b.r / b.n * 100), cls = p >= 80 ? "" : p >= 50 ? " mid" : " low";
       return '<div class="bar"><div class="bl">' + esc(t.src + " " + t.label) + " <span>" + esc(t.name) + '</span></div><div class="bv">' + b.r + "/" + b.n + '</div><div class="track"><div class="fill' + cls + '" style="width:' + Math.max(p, 2) + '%"></div></div></div>';
     }).join("");
-    var wrong = items.filter(function (it) { return !isRight(it); });
-    var missed = wrong.map(function (it) {
-      var q = BYID[it.id], t = TOPIC[q.t], p = state.picks[it.id];
-      var yours = p === undefined ? "No answer" : (q.k === "e" ? LETTERS[p] + " · " : "") + q.o[p];
-      var corr = (q.k === "e" ? LETTERS[q.a] + " · " : "") + q.o[q.a];
-      return '<li><span class="chip" style="justify-self:start">' + esc(t.src + " · " + t.label) + '</span><p class="stem">' + stemHTML(q, it, true) + '</p><div class="ans"><span class="y">' + esc(yours) + '</span><span class="c">' + esc(corr) + '</span></div><p class="rule">' + esc(q.w) + "</p></li>";
-    }).join("");
-    var verdict = pct >= 85 ? "Exam ready on these topics." : pct >= 65 ? "Solid. Review the rules you missed." : "Go back over the lessons below, then try again.";
-    var paceNote = state.mode === "exam" ? "Timed exam · " + fmt(elapsed()) + " used of " + fmt(state.limit) : "Practice · " + fmt(elapsed()) + " · about " + Math.round(elapsed() / total) + " s per question (exam pace is 45 s)";
-
+    var wrong = items.filter(function (it) { return !isRight(S, it); });
+    var missed = wrong.map(function (it) { return missedItem(BYID[it.id], S.picks[it.id], null); }).join("");
+    var verdict = pct >= 85 ? "Exam ready on these topics." : pct >= 65 ? "Solid. Review what you missed." : "Go back over the lessons below, then try again.";
+    var el = elapsed(S);
+    var paceNote = S.mode === "exam" ? "Timed exam · " + fmt(el) + " used of " + fmt(S.limit) : "Practice · " + fmt(el) + " · about " + Math.round(el / total) + " s per question (exam pace is 45 s)";
     $("sheet").innerHTML =
-      '<div class="sheet-head"><div class="meta"><span class="qnum">Results</span><span class="chip">' + (state.label ? esc(state.label) : total + " questions") + "</span></div></div>" +
+      '<div class="sheet-head"><div class="meta"><span class="qnum">Results</span><span class="chip">' + (S.label ? esc(S.label) : total + " questions") + "</span></div></div>" +
       '<div class="res"><div class="score"><div class="big">' + right + "<small>/" + total + '</small></div><div class="verdict"><strong>' + pct + "% · " + verdict + "</strong><span>" + esc(paceNote) + "</span></div></div>" +
       '<div class="ractions">' + (wrong.length ? '<button type="button" class="btn" id="retryBtn">Retry the ' + wrong.length + " I missed</button>" : "") +
-      '<button type="button" class="btn ' + (wrong.length ? "ghost" : "") + '" id="againBtn">New quiz with the same settings</button></div>' +
+      '<button type="button" class="btn ' + (wrong.length ? "ghost" : "") + '" id="againBtn">New quiz</button>' +
+      '<button type="button" class="btn ghost" data-view="m" id="toMistakes">All my mistakes</button></div>' +
       '<section class="bars"><h2>By lesson</h2>' + bars + "</section>" +
       (wrong.length ? '<section style="display:grid;gap:12px"><h2>Questions to review</h2><ol class="missed">' + missed + "</ol></section>" : '<p class="note">No mistakes. Try a timed exam or add more topics.</p>') +
       "</div>";
   }
 
+  function missedItem(q, pick, times) {
+    var t = TOPIC[q.t];
+    var yours = pick === undefined || pick === null ? "No answer" : (q.k === "e" ? LETTERS[pick] + " · " : "") + q.o[pick];
+    var corr = (q.k === "e" ? LETTERS[q.a] + " · " : "") + q.o[q.a];
+    return '<li><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="chip">' + esc(t.src + " · " + t.label) + "</span>" +
+      (times ? '<span class="times">wrong ' + times + "×</span>" : "") + '</div><p class="stem">' + stemHTML(q, q.k === "e" ? pick : q.a, true) +
+      '</p><div class="ans"><span class="y">' + esc(yours) + '</span><span class="c">' + esc(corr) + '</span></div><p class="rule">' + esc(q.w || "") + "</p></li>";
+  }
+
+  // ---------- my mistakes
+  function buildCopy(ids) {
+    var d = new Date();
+    var lines = ["ENGL020 Major 2 · my mistakes (" + ids.length + ") · " + d.toDateString(), ""];
+    ["g", "v"].forEach(function (sec) {
+      var list = ids.filter(function (id) { return BYID[id].sec === sec; });
+      if (!list.length) return;
+      lines.push(sec === "g" ? "GRAMMAR" : "VOCABULARY");
+      list.forEach(function (id, i) {
+        var q = BYID[id], r = records[id], t = TOPIC[q.t];
+        lines.push((i + 1) + ". [" + t.src + " " + t.label + "] " + plainStem(q));
+        var yours = r.lp == null ? "no answer" : (q.k === "e" ? "(" + LETTERS[r.lp] + ") " : "") + q.o[r.lp];
+        var corr = (q.k === "e" ? "(" + LETTERS[q.a] + ") " : "") + q.o[q.a];
+        lines.push("   My answer: " + yours + " | Correct: " + corr + " | wrong " + r.w + "x");
+      });
+      lines.push("");
+    });
+    return lines.join("\n");
+  }
+  function renderMistakes() {
+    var sh = $("sheet");
+    var ids = activeMistakes(mfilter === "all" ? null : mfilter);
+    ids.sort(function (a, b) { return (records[b].w - records[a].w) || (records[b].at - records[a].at); });
+    var ng = activeMistakes("g").length, nv = activeMistakes("v").length;
+    var head =
+      '<div class="mhead"><div class="meta"><span class="sync' + (cloud.on ? " on" : "") + '" id="mSync">' + esc(syncText()) + "</span></div>" +
+      "<p>A question stays here until you answer it correctly. " + (cloud.on ? "Ask Claude to look at your mistakes and it can read this list." : "To show Claude, press Copy for Claude and paste the text into your chat.") + "</p>" +
+      '<div class="mtabs">' +
+      ['all', 'g', 'v'].map(function (k) {
+        var n = k === "all" ? ng + nv : k === "g" ? ng : nv;
+        return '<button type="button" class="mfilter" data-mf="' + k + '" aria-pressed="' + (mfilter === k) + '">' + (k === "all" ? "All" : k === "g" ? "Grammar" : "Vocabulary") + " · " + n + "</button>";
+      }).join("") + "</div>" +
+      (ids.length ? '<div class="ractions"><button type="button" class="btn" id="mPractise">Practise these ' + ids.length + '</button><button type="button" class="btn ghost" id="mCopy">Copy for Claude</button></div>' : "") +
+      (copyText ? '<div class="copybox">' + (copied ? '<span class="toast">Copied. Paste it into your chat with Claude.</span>' : '<span class="hint">Your browser blocked copying. Select all the text below and copy it.</span>') +
+        '<textarea id="copyArea" readonly>' + esc(copyText) + "</textarea></div>" : "") +
+      "</div>";
+    if (!ids.length) {
+      sh.innerHTML = head + '<div class="empty"><p>' + (quizzes.length || Object.keys(records).length ? "Nothing to fix here. Every question you got wrong has since been answered correctly." : "No mistakes yet. Do a quiz, and any question you get wrong will appear here.") +
+        '</p><button type="button" class="btn" data-view="g">Go to grammar</button></div>';
+      return;
+    }
+    var groups = {};
+    ids.forEach(function (id) { var tid = BYID[id].t; (groups[tid] = groups[tid] || []).push(id); });
+    var body = ALLTOPICS.filter(function (t) { return groups[t.id]; }).map(function (t) {
+      return '<section class="mgroup"><h2>' + esc(t.src + " " + t.label) + " <span>" + groups[t.id].length + " · " + esc(t.name) + '</span></h2><ol class="missed">' +
+        groups[t.id].map(function (id) { var r = records[id]; return missedItem(BYID[id], r.lp, r.w); }).join("") + "</ol></section>";
+    }).join("");
+    sh.innerHTML = head + '<div class="mlist">' + body + "</div>";
+  }
+
   $("sheet").addEventListener("click", function (e) {
     var b = e.target.closest("button");
-    if (!b || !state) return;
+    if (!b) return;
+    if (b.dataset.view) { settings.view = b.dataset.view; persist(); copyText = null; if (settings.view !== "m" && !states[settings.view]) start(settings.view, null, true); paintAll(); tick(); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    if (b.dataset.mf) { mfilter = b.dataset.mf; copyText = null; renderMistakes(); return; }
+    if (b.id === "mPractise") {
+      var ids = shuffle(activeMistakes(mfilter === "all" ? null : mfilter));
+      var g = ids.filter(function (id) { return BYID[id].sec === "g"; }), v = ids.filter(function (id) { return BYID[id].sec === "v"; });
+      if (g.length && (mfilter !== "v")) start("g", g, false, "Mistake review"); else if (v.length) start("v", v, false, "Mistake review");
+      return;
+    }
+    if (b.id === "mCopy") {
+      var text = buildCopy(activeMistakes(mfilter === "all" ? null : mfilter));
+      copyText = text; copied = false;
+      var done = function (ok) { copied = ok; renderMistakes(); if (!ok) { var ta = $("copyArea"); if (ta) { ta.focus(); ta.select(); } } };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+        else done(false);
+      } catch (err) { done(false); }
+      return;
+    }
+    var S = st(); if (!S) return;
     if (b.dataset.pick !== undefined) pickAnswer(+b.dataset.pick);
     else if (b.dataset.go !== undefined) go(+b.dataset.go);
     else if (b.id === "nextBtn") next();
-    else if (b.id === "prevBtn") go(state.i - 1);
+    else if (b.id === "prevBtn") go(S.i - 1);
     else if (b.id === "endBtn") finish();
-    else if (b.id === "retryBtn") start(state.items.filter(function (it) { return !isRight(it); }).map(function (it) { return it.id; }));
-    else if (b.id === "againBtn") start();
+    else if (b.id === "retryBtn") start(settings.view, S.items.filter(function (it) { return !isRight(S, it); }).map(function (it) { return it.id; }), false, "Retry");
+    else if (b.id === "againBtn") start(settings.view);
   });
 
   document.addEventListener("keydown", function (e) {
-    if (!state || state.done || e.altKey || e.ctrlKey || e.metaKey) return;
+    var S = st();
+    if (!S || S.done || e.altKey || e.ctrlKey || e.metaKey) return;
     var tag = (e.target.tagName || "").toLowerCase();
     if (tag === "input" || tag === "textarea") return;
-    var k = e.key.toLowerCase();
-    var map = { a: 0, b: 1, c: 2, d: 3, "1": 0, "2": 1, "3": 2, "4": 3 };
-    if (k in map) {
-      var item = state.items[state.i];
-      pickAnswer(item.order[map[k]]);
-      e.preventDefault();
-    } else if (k === "enter" || k === "arrowright") {
+    var k = e.key.toLowerCase(), map = { a: 0, b: 1, c: 2, d: 3, "1": 0, "2": 1, "3": 2, "4": 3 };
+    if (k in map) { pickAnswer(S.items[S.i].order[map[k]]); e.preventDefault(); }
+    else if (k === "enter" || k === "arrowright") {
       var nb = $("nextBtn");
       if (nb && !nb.disabled && !(k === "enter" && tag === "button" && e.target.id !== "nextBtn")) { next(); e.preventDefault(); }
-    } else if (k === "arrowleft") { go(state.i - 1); e.preventDefault(); }
+    } else if (k === "arrowleft") { go(S.i - 1); e.preventDefault(); }
   });
 
-  if (hot && typeof hot.snapshot === "function") {
-    try { hot.snapshot(function () { return { settings: settings, state: state }; }); } catch (e) {}
+  function paintAll() {
+    paintChrome();
+    renderBuilder();
+    if (settings.view === "m") renderMistakes(); else renderQuiz();
+    paintSync();
   }
 
+  if (hot && typeof hot.snapshot === "function") {
+    try { hot.snapshot(function () { return { settings: settings, states: states }; }); } catch (e) {}
+  }
   function boot() {
-    renderBuilder();
     if (!window.matchMedia("(min-width: 881px)").matches) $("builder").open = false;
-    if (state && state.items) { render(); tick(); }
-    else start(null, true);
+    if (settings.view !== "m" && !states[settings.view]) start(settings.view, null, true);
+    else { paintAll(); tick(); }
+    startCloud();
   }
   if (hot && typeof hot.ready === "function") {
     hot.ready(function (d) {
       if (d && d.settings) settings = d.settings;
-      if (d && d.state) state = d.state;
+      if (d && d.states) states = d.states;
       boot();
     });
-  } else {
-    boot();
-  }
+  } else boot();
 })();
 </script>
 
