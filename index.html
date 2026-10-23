@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Major 2 Grammar Drill</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: an exam answer sheet. Booklet-cover header, builder panel on the left, one question sheet on the right with an answer grid on top. */
+:root {
+  --paper: #E9EDF2;
+  --sheet: #FFFFFF;
+  --ink: #17202B;
+  --muted: #586472;
+  --rule: #CFD7E0;
+  --form: #2456A4;
+  --form-soft: #E2EAF6;
+  --ok: #1D7447;
+  --ok-soft: #E1F1E8;
+  --bad: #B3261E;
+  --bad-soft: #FAE6E3;
+  --mark: #F3DC66;
+  --on-solid: #FFFFFF;
+  --display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #10151B; --sheet: #182029; --ink: #E5EAF0; --muted: #98A4B2; --rule: #2C3643;
+    --form: #86ABEA; --form-soft: #1E2B40; --ok: #5DC08B; --ok-soft: #15301F; --bad: #F08A7E; --bad-soft: #3A1C19;
+    --mark: #6E5F1C; --on-solid: #0E141A; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #10151B; --sheet: #182029; --ink: #E5EAF0; --muted: #98A4B2; --rule: #2C3643;
+  --form: #86ABEA; --form-soft: #1E2B40; --ok: #5DC08B; --ok-soft: #15301F; --bad: #F08A7E; --bad-soft: #3A1C19;
+  --mark: #6E5F1C; --on-solid: #0E141A; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 15px/1.5 var(--display); font-variation-settings: "wdth" 100; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--form); outline-offset: 2px; }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 24px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+
+/* booklet cover */
+.cover { background: var(--sheet); border: 1px solid var(--rule); border-top: 6px solid var(--form); border-radius: 6px; padding: 18px 22px; display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: end; justify-content: space-between; }
+.eyebrow { font: 600 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--form); }
+h1 { margin: 6px 0 0; font-family: var(--display); font-variation-settings: "wdth" 72; font-weight: 800; font-size: clamp(30px, 5vw, 46px); line-height: .95; letter-spacing: -.01em; text-transform: uppercase; text-wrap: balance; }
+.spec { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0; }
+.spec div { display: grid; gap: 2px; }
+.spec dt { font: 600 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.spec dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 880px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+
+/* builder */
+.builder { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; }
+.builder > summary { list-style: none; cursor: pointer; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-variation-settings: "wdth" 85; text-transform: uppercase; letter-spacing: .04em; font-size: 13px; }
+.builder > summary::-webkit-details-marker { display: none; }
+.builder > summary .chev { font: 600 12px var(--mono); color: var(--muted); }
+.builder[open] > summary .chev { transform: rotate(180deg); }
+.bbody { padding: 0 16px 16px; display: grid; gap: 16px; }
+.group { display: grid; gap: 4px; }
+.ghead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; border-bottom: 1px solid var(--rule); padding-bottom: 4px; margin-bottom: 2px; }
+.ghead b { font: 600 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--form); }
+.linkbtn { background: none; border: 0; padding: 2px 0; color: var(--muted); font-size: 12px; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.topic { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 5px 0; cursor: pointer; }
+.topic input { margin: 3px 0 0; accent-color: var(--form); width: 15px; height: 15px; }
+.topic .tl { font-weight: 600; font-size: 13.5px; line-height: 1.25; }
+.topic .tn { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; line-height: 1.3; }
+.topic .tc { font: 500 11.5px var(--mono); color: var(--muted); padding-top: 2px; font-variant-numeric: tabular-nums; }
+.fld { display: grid; gap: 6px; }
+.fld > span { font: 600 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.seg button { border: 0; background: var(--sheet); padding: 8px 4px; cursor: pointer; font-weight: 600; font-size: 13px; border-left: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+.seg button:first-child { border-left: 0; }
+.seg button[aria-pressed="true"] { background: var(--form); color: var(--on-solid); }
+.hint { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.btn { border: 1px solid var(--ink); background: var(--ink); color: var(--sheet); border-radius: 6px; padding: 10px 16px; font-weight: 700; cursor: pointer; letter-spacing: .02em; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.wide { width: 100%; }
+.mistakes { border: 1px dashed var(--rule); border-radius: 6px; padding: 10px 12px; display: grid; gap: 8px; }
+
+/* sheet */
+.sheet { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; min-width: 0; }
+.sheet-head { padding: 14px 20px; border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 10px 18px; justify-content: space-between; align-items: center; }
+.meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.chip { font: 600 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--form); background: var(--form-soft); padding: 6px 8px; border-radius: 4px; }
+.qnum { font: 600 13px var(--mono); font-variant-numeric: tabular-nums; }
+.clock { font: 600 14px var(--mono); font-variant-numeric: tabular-nums; display: flex; gap: 6px; align-items: center; }
+.clock small { font: 500 10.5px var(--mono); color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.clock.low { color: var(--bad); }
+
+.grid { display: flex; flex-wrap: wrap; gap: 4px; padding: 12px 20px; border-bottom: 1px solid var(--rule); }
+.cell { width: 28px; height: 26px; border: 1px solid var(--rule); border-radius: 4px; background: var(--sheet); font: 500 11px var(--mono); color: var(--muted); cursor: pointer; padding: 0; font-variant-numeric: tabular-nums; }
+.cell.done { background: var(--form-soft); color: var(--form); border-color: var(--form-soft); }
+.cell.ok { background: var(--ok); border-color: var(--ok); color: var(--on-solid); }
+.cell.no { background: var(--bad); border-color: var(--bad); color: var(--on-solid); }
+.cell.cur { outline: 2px solid var(--ink); outline-offset: 1px; color: var(--ink); }
+
+.qbody { padding: 22px 20px 8px; display: grid; gap: 18px; }
+.instr { margin: 0; font: 600 11px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.stem { margin: 0; font-family: var(--body); font-size: clamp(19px, 2.4vw, 23px); line-height: 1.55; max-width: 62ch; text-wrap: pretty; }
+.blank { display: inline-block; min-width: 4.5em; border-bottom: 2px solid var(--ink); transform: translateY(-3px); height: 1em; }
+.blank.filled { min-width: 0; border-bottom-color: var(--form); height: auto; transform: none; padding: 0 2px; color: var(--form); font-weight: 600; }
+.part { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; padding: 0 1px; }
+.part sub { font: 600 11px var(--mono); color: var(--form); margin-left: 2px; vertical-align: -0.35em; text-decoration: none; display: inline-block; }
+.part.hl { background: linear-gradient(transparent 55%, var(--mark) 55%); }
+.part.badpart { text-decoration-color: var(--bad); color: var(--bad); }
+
+.opts { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.opt { display: flex; gap: 14px; align-items: center; width: 100%; text-align: left; padding: 11px 14px; border: 1px solid var(--rule); background: var(--sheet); border-radius: 6px; cursor: pointer; font-family: var(--body); font-size: 17px; line-height: 1.35; }
+.opt:hover:not(:disabled) { border-color: var(--form); }
+.opt:disabled { cursor: default; }
+.bub { width: 30px; height: 30px; flex: none; border-radius: 50%; border: 1.5px solid var(--form); color: var(--form); display: grid; place-items: center; font: 600 13px var(--mono); }
+.opt .otext { min-width: 0; overflow-wrap: anywhere; }
+.opt.picked { border-color: var(--ink); }
+.opt.picked .bub { background: var(--ink); border-color: var(--ink); color: var(--sheet); }
+.opt.right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.right .bub { background: var(--ok); border-color: var(--ok); color: var(--on-solid); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.wrong .bub { background: var(--bad); border-color: var(--bad); color: var(--on-solid); }
+.opt .tag { margin-left: auto; font: 600 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; flex: none; }
+.opt.right .tag { color: var(--ok); }
+.opt.wrong .tag { color: var(--bad); }
+
+.why { border-left: 3px solid var(--form); background: var(--form-soft); padding: 12px 14px; border-radius: 0 6px 6px 0; display: grid; gap: 4px; max-width: 70ch; }
+.why b { font: 600 10.5px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--form); }
+.why.ok { border-left-color: var(--ok); background: var(--ok-soft); }
+.why.ok b { color: var(--ok); }
+.why.no { border-left-color: var(--bad); background: var(--bad-soft); }
+.why.no b { color: var(--bad); }
+.why p { margin: 0; }
+
+.foot { padding: 14px 20px 18px; display: flex; gap: 10px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+.keys { font-size: 12px; color: var(--muted); }
+.keys kbd { font: 500 11px var(--mono); border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 3px; padding: 0 4px; }
+.foot .acts { display: flex; gap: 8px; margin-left: auto; }
+
+/* results */
+.res { padding: 22px 20px; display: grid; gap: 22px; }
+.score { display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: end; }
+.big { font-family: var(--display); font-variation-settings: "wdth" 70; font-weight: 800; font-size: clamp(56px, 10vw, 88px); line-height: .85; font-variant-numeric: tabular-nums; }
+.big small { font-size: .42em; color: var(--muted); font-weight: 700; }
+.verdict { display: grid; gap: 4px; }
+.verdict strong { font-size: 18px; }
+.verdict span { color: var(--muted); font-variant-numeric: tabular-nums; }
+.bars { display: grid; gap: 10px; }
+.bar { display: grid; grid-template-columns: minmax(0, 1fr) 64px; gap: 4px 12px; align-items: center; }
+.bar .bl { font-size: 13.5px; font-weight: 600; }
+.bar .bl span { font-weight: 400; color: var(--muted); }
+.bar .bv { font: 600 12.5px var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+.bar .track { grid-column: 1 / -1; height: 8px; background: var(--paper); border-radius: 4px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--ok); border-radius: 4px; }
+.bar .fill.mid { background: var(--form); }
+.bar .fill.low { background: var(--bad); }
+h2 { margin: 0; font-variation-settings: "wdth" 80; font-weight: 800; font-size: 15px; text-transform: uppercase; letter-spacing: .05em; }
+.missed { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.missed li { border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; display: grid; gap: 8px; }
+.missed .stem { font-size: 17px; }
+.ans { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13.5px; }
+.ans .y { color: var(--bad); }
+.ans .c { color: var(--ok); font-weight: 600; }
+.ans .y::before, .ans .c::before { font: 600 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; margin-right: 6px; }
+.ans .y::before { content: "You"; }
+.ans .c::before { content: "Answer"; }
+.missed .rule { margin: 0; color: var(--muted); font-size: 13.5px; }
+.ractions { display: flex; gap: 8px; flex-wrap: wrap; }
+.note { margin: 0; color: var(--muted); font-size: 12.5px; }
+
+@media (max-width: 520px) {
+  .sheet-head, .grid, .qbody, .foot, .res { padding-left: 14px; padding-right: 14px; }
+  .keys { display: none; }
+  .opt { font-size: 16px; padding: 10px 12px; gap: 12px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .opt, .cell, .seg button { transition: background-color .15s, border-color .15s, color .15s; }
+}
+</style>
+
+<div class="wrap">
+  <header class="cover">
+    <div>
+      <div class="eyebrow">ENGL020 · Major 2 · Use of English</div>
+      <h1>Grammar Drill</h1>
+    </div>
+    <dl class="spec">
+      <div><dt>Prep TOEFL</dt><dd>Skills 1–30</dd></div>
+      <div><dt>Life</dt><dd>Units 5–8</dd></div>
+      <div><dt>Exam pace</dt><dd>45 s / question</dd></div>
+      <div><dt>Bank</dt><dd id="bankCount">–</dd></div>
+    </dl>
+  </header>
+
+  <div class="layout">
+    <details class="builder" id="builder" open>
+      <summary>Build a quiz <span class="chev">▾</span></summary>
+      <div class="bbody">
+        <div class="group" id="grpToefl"></div>
+        <div class="group" id="grpLife"></div>
+        <div class="fld">
+          <span>Questions</span>
+          <div class="seg" id="countSeg" role="group" aria-label="Number of questions"></div>
+        </div>
+        <div class="fld">
+          <span>Mode</span>
+          <div class="seg" id="modeSeg" role="group" aria-label="Mode">
+            <button type="button" id="modePractice" data-mode="practice">Practice</button>
+            <button type="button" id="modeExam" data-mode="exam">Timed exam</button>
+          </div>
+          <p class="hint" id="modeHint"></p>
+        </div>
+        <button class="btn wide" type="button" id="startBtn">Start quiz</button>
+        <div class="mistakes" id="mistakeBox" hidden>
+          <p class="hint" id="mistakeText"></p>
+          <button class="btn ghost wide" type="button" id="mistakeBtn">Practise my mistakes</button>
+        </div>
+      </div>
+    </details>
+
+    <main class="sheet" id="sheet" aria-live="polite"></main>
+  </div>
+</div>
+
+<script>
+const TOPICS = [
+  { id: "S1",  src: "Prep TOEFL", label: "Skills 1–5",   name: "Subjects & verbs, appositives, prepositions, -ing / V3 adjectives" },
+  { id: "S6",  src: "Prep TOEFL", label: "Skills 6–8",   name: "Joining clauses: coordinate conjunctions & adverb connectors" },
+  { id: "S9",  src: "Prep TOEFL", label: "Skills 9–12",  name: "Noun clauses & relative clauses" },
+  { id: "S13", src: "Prep TOEFL", label: "Skills 13–14", name: "Reduced relative & reduced adverb clauses" },
+  { id: "S15", src: "Prep TOEFL", label: "Skills 15–19", name: "Inversion" },
+  { id: "S20", src: "Prep TOEFL", label: "Skills 20–23", name: "Subject–verb agreement" },
+  { id: "S24", src: "Prep TOEFL", label: "Skills 24–26", name: "Parallel structure" },
+  { id: "S27", src: "Prep TOEFL", label: "Skills 27–29", name: "Comparatives & superlatives" },
+  { id: "S30", src: "Prep TOEFL", label: "Skills 30–32", name: "Verb forms after modals, be and have" },
+  { id: "L5",  src: "Life", label: "Unit 5", name: "Verb + -ing or to + infinitive" },
+  { id: "L6",  src: "Life", label: "Unit 6", name: "Negative forms & question forms" },
+  { id: "L7",  src: "Life", label: "Unit 7", name: "Zero & first conditionals, time linkers, used to / would / be used to" },
+  { id: "L8",  src: "Life", label: "Unit 8", name: "Second, third & mixed conditionals, wish & if only" }
+];
+
+// k: "c" = complete the sentence (blank is ______), "e" = find the error ([[...]] marks parts A–D)
+// a: index of the correct option. w: the rule.
+const BANK = [
+  // ---------- Skills 1–5
+  { t: "S1", k: "c", q: "______ in the Arctic during the winter months.",
+    o: ["The temperature drops sharply", "Dropping sharply the temperature", "The sharp drop of the temperature", "Because the temperature drops sharply"], a: 0,
+    w: "Every sentence needs a subject and a verb. Only A gives both. D starts with because, so it is a dependent clause with no main clause." },
+  { t: "S1", k: "c", q: "In 1903, the Wright brothers ______ the first powered flight.",
+    o: ["making", "made", "who made", "to make"], a: 1,
+    w: "The subject the Wright brothers needs a main verb. -ing forms, to + V1 and who-clauses cannot be the main verb." },
+  { t: "S1", k: "e", q: "The bridge [[constructed]] in 1932 and [[is]] still [[used]] by [[thousands]] of drivers every day.",
+    a: 0, w: "The bridge did not construct anything; it was constructed. A passive verb needs be + V3: was constructed." },
+  { t: "S1", k: "c", q: "______, Riyadh is home to more than seven million people.",
+    o: ["It is the capital of Saudi Arabia", "The capital of Saudi Arabia", "The capital of Saudi Arabia is", "Because the capital of Saudi Arabia"], a: 1,
+    w: "An appositive is a noun phrase that describes the subject with no verb of its own. A and C add a second verb and create a comma splice." },
+  { t: "S1", k: "c", q: "Marie Curie, ______, won two Nobel Prizes.",
+    o: ["she was a physicist and chemist", "was a physicist and chemist", "a physicist and chemist", "who a physicist and chemist"], a: 2,
+    w: "Between the commas you need an appositive: a noun phrase with no subject or verb. who would need a verb (who was…)." },
+  { t: "S1", k: "c", q: "Despite ______, the match continued.",
+    o: ["it was raining heavily", "the heavy rain", "the rain was heavy", "rained heavily"], a: 1,
+    w: "Despite is a preposition. A preposition is followed by a noun (its object), never by a full clause." },
+  { t: "S1", k: "c", q: "With his new phone, ______ photos of the whole trip.",
+    o: ["took Ken", "Ken took", "taking Ken", "Ken taking"], a: 1,
+    w: "his new phone is the object of the preposition with. It is never the subject, so the sentence still needs its own subject + verb: Ken took." },
+  { t: "S1", k: "c", q: "The results of the experiment were ______, so the scientists repeated it.",
+    o: ["confused", "confusing", "confuse", "confusion"], a: 1,
+    w: "Use -ing adjectives for the thing that causes the feeling. The results caused confusion, so they were confusing." },
+  { t: "S1", k: "c", q: "The students felt ______ after the three-hour exam.",
+    o: ["exhausting", "exhaust", "exhausted", "exhaustion"], a: 2,
+    w: "Use V3 adjectives for the person who has the feeling. The students had the feeling, so they felt exhausted." },
+  { t: "S1", k: "e", q: "The [[stealing]] car [[was found]] two days later [[near]] the [[abandoned]] factory.",
+    a: 0, w: "The car did not steal anything; someone stole it. Passive meaning needs the V3 adjective: the stolen car." },
+  { t: "S1", k: "e", q: "Visitors to the museum can see a [[fascinated]] collection of [[ancient]] coins [[found]] in [[the]] desert.",
+    a: 0, w: "The collection causes fascination, so it needs the -ing adjective: a fascinating collection." },
+
+  // ---------- Skills 6–8
+  { t: "S6", k: "c", q: "The flight was delayed for three hours, ______ the passengers were given free meals.",
+    o: ["so", "because", "although", "despite"], a: 0,
+    w: "A comma + coordinate conjunction (FANBOYS) can join two clauses. so shows the result. despite cannot take a clause." },
+  { t: "S6", k: "e", q: "Ali wanted to study medicine, [[and]] his grades [[were not]] high [[enough]], [[so]] he chose engineering.",
+    a: 0, w: "The second idea contrasts with the first, so the conjunction must be but, not and." },
+  { t: "S6", k: "c", q: "______ the storm reached the coast, thousands of people had already left their homes.",
+    o: ["By the time", "During", "Because of", "Since of"], a: 0,
+    w: "A clause follows, so you need an adverb connector such as by the time. During and because of are prepositions and take only nouns." },
+  { t: "S6", k: "c", q: "The match was cancelled ______ the pitch was flooded.",
+    o: ["because of", "due to", "because", "owing"], a: 2,
+    w: "Because is followed by a clause (subject + verb). Because of and due to are followed by a noun." },
+  { t: "S6", k: "c", q: "______ he studied hard, he failed the exam.",
+    o: ["Despite", "Although", "However", "In spite"], a: 1,
+    w: "Although joins a contrast clause to a main clause. Despite takes a noun. However cannot join two clauses with only a comma." },
+  { t: "S6", k: "c", q: "You will not be allowed into the exam hall ______ you bring your ID card.",
+    o: ["if", "unless", "whether", "despite"], a: 1,
+    w: "unless = if … not. You will not be allowed in if you do not bring your ID." },
+  { t: "S6", k: "e", q: "[[Even]] though the car [[was]] old, [[but]] it [[ran]] perfectly.",
+    a: 2, w: "Use one connector per pair of clauses. Even though already joins them, so but must go." },
+
+  // ---------- Skills 9–12
+  { t: "S9", k: "c", q: "Nobody knows ______.",
+    o: ["where did he go", "where he went", "where went he", "did he go where"], a: 1,
+    w: "A noun clause uses statement word order: question word + subject + verb. There is no did and no inversion." },
+  { t: "S9", k: "c", q: "______ the pyramids were built is still debated by historians.",
+    o: ["How", "How did", "It is how", "The way how"], a: 0,
+    w: "The noun clause how the pyramids were built is the subject of is debated. It uses statement word order." },
+  { t: "S9", k: "e", q: "The teacher asked us [[what]] [[did we think]] [[about]] the [[article]].",
+    a: 1, w: "In a noun clause, use statement word order: what we thought." },
+  { t: "S9", k: "c", q: "The fact ______ water expands when it freezes explains why pipes burst in winter.",
+    o: ["which", "what", "that", "of"], a: 2,
+    w: "The fact that + full clause. that introduces a noun clause that explains the fact." },
+  { t: "S9", k: "c", q: "The engineer ______ designed the bridge received an award.",
+    o: ["which", "who", "whom", "whose"], a: 1,
+    w: "Use who for people when the relative pronoun is the subject of its clause (who designed)." },
+  { t: "S9", k: "c", q: "The student ______ laptop was stolen reported it to security.",
+    o: ["who", "whom", "which", "whose"], a: 3,
+    w: "whose shows possession: the student's laptop becomes whose laptop." },
+  { t: "S9", k: "e", q: "The book [[that]] I borrowed [[it]] from the library [[is]] [[overdue]].",
+    a: 1, w: "that is already the object of borrowed. Do not repeat the object with it." },
+  { t: "S9", k: "c", q: "Jeddah, ______ is on the Red Sea, is an important port.",
+    o: ["that", "which", "where", "it"], a: 1,
+    w: "This is a non-defining relative clause between commas. Use which, never that, and the pronoun is the subject of is." },
+
+  // ---------- Skills 13–14
+  { t: "S13", k: "c", q: "The man ______ next to the window is my uncle.",
+    o: ["sits", "sitting", "is sitting", "sat he"], a: 1,
+    w: "This is a reduced relative clause: who is sitting becomes sitting. A full verb would give the sentence two main verbs." },
+  { t: "S13", k: "c", q: "Most of the cars ______ in this factory are exported.",
+    o: ["producing", "produce", "produced", "are produced"], a: 2,
+    w: "The cars are produced, which is passive. which are produced reduces to the V3 form: produced." },
+  { t: "S13", k: "c", q: "The documents ______ on the desk belong to the manager.",
+    o: ["left", "leaving", "are left", "they left"], a: 0,
+    w: "The documents were left there, which is passive. The reduced relative clause is the V3 form: left." },
+  { t: "S13", k: "c", q: "While ______ to work, Ken saw an accident.",
+    o: ["drives", "driving", "he driving", "drove"], a: 1,
+    w: "While he was driving reduces to while driving. The subject of both clauses is Ken." },
+  { t: "S13", k: "e", q: "[[After]] [[finish]] the exam, the students [[went]] [[home]].",
+    a: 1, w: "After a reduced adverb connector, use the -ing form: after finishing." },
+  { t: "S13", k: "c", q: "______ in 1932, the bridge is still in use today.",
+    o: ["Building", "Built", "It was built", "Was built"], a: 1,
+    w: "The bridge was built, which is passive. The reduced clause uses V3. C makes a comma splice and D has no subject." },
+
+  // ---------- Skills 15–19
+  { t: "S15", k: "c", q: "Never ______ such a beautiful sunset.",
+    o: ["I have seen", "have I seen", "I saw", "seen I have"], a: 1,
+    w: "Negative words at the start (never, seldom, rarely) cause inversion: helping verb + subject." },
+  { t: "S15", k: "c", q: "Not only ______ the exam, but she also got the highest mark.",
+    o: ["she passed", "did she pass", "she did pass", "passed she"], a: 1,
+    w: "Not only at the start causes inversion. With a past simple verb, use did + subject + V1." },
+  { t: "S15", k: "c", q: "Rarely ______ late for Professor Smith's class.",
+    o: ["students arrive", "do students arrive", "students do arrive", "arrive students do"], a: 1,
+    w: "Rarely is a negative word, so it needs question word order: do + subject + V1." },
+  { t: "S15", k: "c", q: "So heavy ______ that the roads were closed.",
+    o: ["the snow was", "was the snow", "did the snow", "the snow"], a: 1,
+    w: "Resultative inversion: so + adjective at the start, then verb + subject (was the snow), then that." },
+  { t: "S15", k: "c", q: "Beside the river ______ a small village.",
+    o: ["lie", "lies", "lying", "does lie"], a: 1,
+    w: "Locative inversion: a place phrase at the start, then verb + subject. The subject a small village is singular, so lies." },
+  { t: "S15", k: "c", q: "Here ______ the bus to the airport.",
+    o: ["come", "comes", "coming", "does come"], a: 1,
+    w: "After here or there, the verb comes before a noun subject. The subject the bus is singular: comes." },
+  { t: "S15", k: "c", q: "______ you need any help, please call me.",
+    o: ["Should", "Would", "Had", "Were"], a: 0,
+    w: "A first conditional with inversion: Should you need = If you need." },
+  { t: "S15", k: "c", q: "______ known about the traffic, we would have left earlier.",
+    o: ["If had we", "Had we", "We had", "Have we"], a: 1,
+    w: "A third conditional with inversion: Had we known = If we had known. Drop if and put had first." },
+  { t: "S15", k: "c", q: "______ I in your position, I would accept the offer.",
+    o: ["Was", "Were", "Had", "Should"], a: 1,
+    w: "A second conditional with inversion: Were I = If I were." },
+  { t: "S15", k: "c", q: "In summer, Riyadh is hotter than ______ Jeddah.",
+    o: ["is", "does", "has", "it"], a: 0,
+    w: "Inversion with comparatives: than + verb + subject (than is Jeddah). The verb repeats be from is hotter." },
+
+  // ---------- Skills 20–23
+  { t: "S20", k: "c", q: "A box of old photographs ______ found in the attic.",
+    o: ["were", "was", "have been", "are"], a: 1,
+    w: "The subject is box. of old photographs is the object of a preposition and never controls the verb." },
+  { t: "S20", k: "e", q: "Each of the students [[have]] [[to submit]] [[a]] research paper [[by]] Thursday.",
+    a: 0, w: "Each is singular, so the verb is has. of the students does not change that." },
+  { t: "S20", k: "e", q: "Everyone in the two classes [[are]] [[excited]] [[about]] the [[trip]].",
+    a: 0, w: "Indefinite pronouns such as everyone, nobody and somebody are singular: everyone is." },
+  { t: "S20", k: "c", q: "Most of the information on these websites ______ out of date.",
+    o: ["are", "is", "were", "have"], a: 1,
+    w: "After most / some / all / half of, the verb follows the noun. information is uncountable, so the verb is singular: is." },
+  { t: "S20", k: "c", q: "Most of the students ______ the exam difficult.",
+    o: ["finds", "find", "finding", "has found"], a: 1,
+    w: "After most of, the verb follows the noun. students is plural, so find." },
+  { t: "S20", k: "e", q: "The man [[who]] [[lives]] next to my parents [[own]] three [[restaurants]].",
+    a: 2, w: "A relative clause separates the subject from the verb. The subject is The man, so the verb is owns." },
+  { t: "S20", k: "c", q: "Seldom ______ the buses in this city on time.",
+    o: ["is", "are", "does", "has"], a: 1,
+    w: "Seldom causes inversion, so the subject comes after the verb. the buses is plural: are." },
+
+  // ---------- Skills 24–26
+  { t: "S24", k: "e", q: "The job requires [[speaking]] English, [[writing]] reports, and [[to manage]] a [[small]] team.",
+    a: 2, w: "Parallel structure: speaking, writing, and managing. Keep every item in the list in the same form." },
+  { t: "S24", k: "c", q: "The new phone is light, fast, and ______.",
+    o: ["it is cheap", "cheaply", "cheap", "cheapness"], a: 2,
+    w: "Parallel structure: light, fast and cheap are all adjectives." },
+  { t: "S24", k: "c", q: "She is not only intelligent ______ hard-working.",
+    o: ["and also", "but also", "or", "nor"], a: 1,
+    w: "These paired conjunctions go together: not only … but also, either … or, neither … nor, both … and." },
+  { t: "S24", k: "e", q: "You can pay [[either]] by card [[nor]] [[in]] cash at the [[front]] desk.",
+    a: 1, w: "either goes with or. neither goes with nor." },
+  { t: "S24", k: "e", q: "He drove [[slowly]], [[carefully]], and [[patient]] [[through]] the storm.",
+    a: 2, w: "Parallel adverbs: slowly, carefully, and patiently." },
+  { t: "S24", k: "c", q: "The course teaches students how to read critically, write clearly, and ______ confidently.",
+    o: ["speaking", "to speak", "speak", "spoken"], a: 2,
+    w: "how to read, write, and speak: every verb in the list follows the same to, so each one is V1." },
+
+  // ---------- Skills 27–29
+  { t: "S27", k: "e", q: "Mount Everest is [[the]] [[higher]] mountain [[in]] the [[world]].",
+    a: 1, w: "When you compare one thing with a whole group (in the world), use the superlative: the highest." },
+  { t: "S27", k: "e", q: "This car is [[more]] [[faster]] [[than]] [[my]] old one.",
+    a: 0, w: "Never use more with an -er adjective. Use faster than or more expensive than, never more faster." },
+  { t: "S27", k: "c", q: "The more you practise, ______.",
+    o: ["the better you become", "you become better", "better you become", "the more better you become"], a: 0,
+    w: "The pattern is the + comparative + S + V, the + comparative + S + V. Both halves start with the." },
+  { t: "S27", k: "c", q: "This is ______ book I have ever read.",
+    o: ["the most interesting", "more interesting than", "most interesting", "the more interesting"], a: 0,
+    w: "A superlative with that / I have ever … always takes the: the most interesting." },
+  { t: "S27", k: "e", q: "Bahrain is [[much]] [[smaller]] [[as]] Saudi [[Arabia]].",
+    a: 2, w: "A comparative is always followed by than: smaller than." },
+  { t: "S27", k: "c", q: "The faster the car, ______.",
+    o: ["the higher the risk", "higher the risk", "the risk higher", "the risk is the higher"], a: 0,
+    w: "The short pattern is the + adj + N, the + adj + N: the faster the car, the higher the risk." },
+
+  // ---------- Skills 30–32
+  { t: "S30", k: "e", q: "Students [[should]] [[brought]] [[their]] calculators [[to]] the exam.",
+    a: 1, w: "After a modal (should, can, will, might…), always use V1: should bring." },
+  { t: "S30", k: "e", q: "Ken [[has]] [[went]] to Spain [[three]] [[times]].",
+    a: 1, w: "When have is a helping verb, follow it with V3: has gone." },
+  { t: "S30", k: "e", q: "That [[is mean]] the meeting [[has]] [[been]] [[cancelled]].",
+    a: 0, w: "Do not put be before an active simple verb. That means is correct; That is mean is not." },
+  { t: "S30", k: "e", q: "The first mosque in the city [[was]] [[build]] [[over]] two hundred years [[ago]].",
+    a: 1, w: "The passive is be + V3: was built." },
+  { t: "S30", k: "e", q: "The results [[will]] [[announced]] [[on]] the university [[website]] tomorrow.",
+    a: 1, w: "The results do not announce; they are announced. After will, use be + V3: will be announced." },
+  { t: "S30", k: "e", q: "I [[am enjoy]] studying [[in]] the library [[because]] it [[is]] quiet.",
+    a: 0, w: "After be you can use an adjective, a noun, -ing or V3, but not V1. Write I enjoy." },
+
+  // ---------- Life Unit 5
+  { t: "L5", k: "c", q: "I can't afford ______ a new car this year.",
+    o: ["buying", "to buy", "buy", "bought"], a: 1, w: "afford + to + infinitive." },
+  { t: "L5", k: "c", q: "Would you mind ______ the window?",
+    o: ["to open", "opening", "open", "to opening"], a: 1, w: "mind + -ing." },
+  { t: "L5", k: "c", q: "She refused ______ the contract.",
+    o: ["signing", "to sign", "sign", "signed"], a: 1, w: "refuse + to + infinitive." },
+  { t: "L5", k: "c", q: "He keeps ______ me the same question.",
+    o: ["to ask", "asking", "ask", "asked"], a: 1, w: "keep + -ing (= continue doing something again and again)." },
+  { t: "L5", k: "c", q: "They decided ______ the trip because of the weather.",
+    o: ["cancelling", "to cancel", "cancel", "cancelled"], a: 1, w: "decide + to + infinitive." },
+  { t: "L5", k: "c", q: "I remember ______ this film when I was a child. I loved it.",
+    o: ["to watch", "watching", "watch", "watched"], a: 1,
+    w: "remember + -ing = have a memory of something you did before." },
+  { t: "L5", k: "c", q: "Please remember ______ the lights before you leave.",
+    o: ["turning off", "to turn off", "turn off", "turned off"], a: 1,
+    w: "remember + to + infinitive = don't forget to do something in the future." },
+  { t: "L5", k: "c", q: "My doctor said I had to stop ______, so I threw away all my cigarettes.",
+    o: ["to smoke", "smoking", "smoke", "smoked"], a: 1,
+    w: "stop + -ing = end an activity. stop + to + infinitive = stop one thing in order to do another." },
+  { t: "L5", k: "c", q: "We regret ______ you that your application has been unsuccessful.",
+    o: ["telling", "to tell", "tell", "told"], a: 1,
+    w: "regret + to + infinitive is used to give bad news formally. regret + -ing = feel sorry about something you did." },
+  { t: "L5", k: "c", q: "Learning a language means ______ a little every day.",
+    o: ["to practise", "practising", "practise", "practised"], a: 1,
+    w: "mean + -ing = involve. mean + to + infinitive = intend." },
+  { t: "L5", k: "c", q: "I didn't mean ______ you. I'm sorry.",
+    o: ["upsetting", "to upset", "upset", "upsets"], a: 1,
+    w: "mean + to + infinitive = intend." },
+
+  // ---------- Life Unit 6
+  { t: "L6", k: "c", q: "Could you tell me where ______?",
+    o: ["is the station", "the station is", "does the station", "the station is it"], a: 1,
+    w: "An indirect question uses statement word order after Could you tell me / Do you know." },
+  { t: "L6", k: "c", q: "Do you know ______?",
+    o: ["what time it is", "what time is it", "what is the time", "is it what time"], a: 0,
+    w: "An indirect question uses statement word order: what time it is." },
+  { t: "L6", k: "c", q: "Who ______ the window? It was open when I arrived.",
+    o: ["did open", "opened", "did opened", "has opened it"], a: 1,
+    w: "When who is the subject of the question, do not use do / did. Use the normal verb form: Who opened?" },
+  { t: "L6", k: "c", q: "Which bus ______ to the city centre?",
+    o: ["does go", "goes", "going", "go"], a: 1,
+    w: "Which bus is the subject of the question, so there is no does: Which bus goes?" },
+  { t: "L6", k: "c", q: "______ you ever been to Japan?",
+    o: ["Did", "Have", "Were", "Do"], a: 1,
+    w: "ever + been is present perfect, so the question needs Have + subject + V3." },
+  { t: "L6", k: "c", q: "She ______ like flying, so she always takes the train.",
+    o: ["isn't", "doesn't", "don't", "not"], a: 1,
+    w: "The present simple negative is don't / doesn't + V1. With he, she and it, use doesn't." },
+  { t: "L6", k: "c", q: "______ you hear the alarm? It rang three times!",
+    o: ["Didn't", "Don't", "Haven't", "Weren't"], a: 0,
+    w: "A negative question shows surprise. The alarm rang in the past and hear is V1, so Didn't you hear …?" },
+  { t: "L6", k: "c", q: "None of my friends ______ to the party.",
+    o: ["didn't come", "came", "not came", "haven't come"], a: 1,
+    w: "None is already negative. Don't add a second negative: None of my friends came." },
+  { t: "L6", k: "c", q: "I asked him why ______ late.",
+    o: ["was he", "he was", "did he", "he did be"], a: 1,
+    w: "A reported or indirect question uses statement word order: why he was late." },
+
+  // ---------- Life Unit 7
+  { t: "L7", k: "c", q: "If you heat ice, it ______.",
+    o: ["melts", "will melted", "would melt", "melted"], a: 0,
+    w: "Zero conditional for facts that are always true: If + present, present." },
+  { t: "L7", k: "c", q: "If it ______ tomorrow, we'll stay at home.",
+    o: ["will rain", "rains", "rained", "would rain"], a: 1,
+    w: "First conditional: If + present simple, will + V1. Never put will in the if-clause." },
+  { t: "L7", k: "c", q: "I'll call you as soon as I ______ at the airport.",
+    o: ["will arrive", "arrive", "arrived", "would arrive"], a: 1,
+    w: "After time linkers (when, as soon as, before, after, until) use the present simple for the future." },
+  { t: "L7", k: "c", q: "Don't go out ______ you finish your homework.",
+    o: ["until", "as soon as", "when", "while"], a: 0,
+    w: "until = up to the time that. You can go out only after you finish." },
+  { t: "L7", k: "c", q: "______ I get home, I usually make a cup of tea.",
+    o: ["Unless", "Until", "As soon as", "By"], a: 2,
+    w: "as soon as = immediately when. It fits a usual routine." },
+  { t: "L7", k: "c", q: "We'll miss the train ______ we leave now.",
+    o: ["if", "unless", "when", "as soon as"], a: 1,
+    w: "unless = if … not: we'll miss it if we don't leave now." },
+  { t: "L7", k: "c", q: "When I was a child, I ______ walk to school every day.",
+    o: ["would", "was used to", "am used to", "get used to"], a: 0,
+    w: "would + V1 describes repeated past actions. be used to and get used to are followed by -ing, not V1." },
+  { t: "L7", k: "c", q: "I ______ live in Dammam, but now I live in Riyadh.",
+    o: ["use to", "used to", "am used to", "would"], a: 1,
+    w: "used to + V1 describes past states and habits. would cannot be used with state verbs such as live, have or know." },
+  { t: "L7", k: "c", q: "I ______ have a car when I was a student.",
+    o: ["didn't use to", "didn't used to", "wouldn't", "wasn't used to"], a: 0,
+    w: "In negatives and questions, use did + use to (no -d): didn't use to. would is not used for states such as have." },
+  { t: "L7", k: "c", q: "After two years in London, she is used to ______ on the left.",
+    o: ["drive", "driving", "drove", "be driving"], a: 1,
+    w: "be used to + -ing = be familiar with something. Here to is a preposition, so the verb after it is -ing." },
+  { t: "L7", k: "c", q: "It took me a long time to get used to ______ up at 5 a.m.",
+    o: ["wake", "waking", "woke", "to wake"], a: 1,
+    w: "get used to + -ing = become familiar with something over time." },
+
+  // ---------- Life Unit 8
+  { t: "L8", k: "c", q: "If I ______ more money, I would travel around the world.",
+    o: ["have", "had", "would have", "will have"], a: 1,
+    w: "Second conditional for imaginary present or future situations: If + past simple, would + V1." },
+  { t: "L8", k: "c", q: "If I were you, I ______ that email.",
+    o: ["won't send", "wouldn't send", "didn't send", "hadn't sent"], a: 1,
+    w: "Second conditional advice: If I were you, I would / wouldn't + V1." },
+  { t: "L8", k: "c", q: "If he ______ so tired all the time, he would enjoy life more.",
+    o: ["isn't", "weren't", "hadn't been", "won't be"], a: 1,
+    w: "Second conditional: If + past simple. With be, were is used for all persons." },
+  { t: "L8", k: "c", q: "If she had studied harder, she ______ the exam.",
+    o: ["would pass", "would have passed", "will pass", "had passed"], a: 1,
+    w: "Third conditional for the imaginary past: If + had + V3, would have + V3." },
+  { t: "L8", k: "c", q: "If I had taken that job in Dubai, I ______ rich now.",
+    o: ["would be", "would have been", "will be", "am"], a: 0,
+    w: "Mixed conditional: a past condition (had taken) with a present result (now), so would + V1." },
+  { t: "L8", k: "c", q: "If we hadn't missed the bus, we ______ late for class now.",
+    o: ["wouldn't be", "wouldn't have been", "won't be", "aren't"], a: 0,
+    w: "Mixed conditional: a past cause with a present result, signalled by now. Use would + V1." },
+  { t: "L8", k: "c", q: "I wish I ______ how to swim.",
+    o: ["know", "knew", "have known", "would know"], a: 1,
+    w: "wish + past simple = you want the present to be different." },
+  { t: "L8", k: "c", q: "I wish I ______ to that concert last night. Everyone said it was amazing.",
+    o: ["went", "had gone", "would go", "go"], a: 1,
+    w: "wish + past perfect (had + V3) = regret about the past." },
+  { t: "L8", k: "c", q: "If only my neighbour ______ playing loud music every night!",
+    o: ["would stop", "stops", "has stopped", "will stop"], a: 0,
+    w: "wish / if only + would + V1 = you are annoyed and want someone else to change their behaviour." }
+];
+
+</script>
+<script>
+(function () {
+  "use strict";
+  var LETTERS = ["A", "B", "C", "D"];
+  var COUNTS = [10, 20, 30, 0]; // 0 = all
+  var TOPIC = {};
+  TOPICS.forEach(function (t) { TOPIC[t.id] = t; });
+  BANK.forEach(function (q, i) {
+    q.id = q.t + "." + i;
+    if (q.k === "e") {
+      q.o = [];
+      q.q.replace(/\[\[(.+?)\]\]/g, function (_, s) { q.o.push(s); return s; });
+    }
+  });
+  var BYID = {};
+  BANK.forEach(function (q) { BYID[q.id] = q; });
+
+  // ---------- storage (per-viewer convenience only)
+  function load(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+  var hot = (window.claude && window.claude.hot) || null;
+  var hotData = (hot && hot.data) || {};
+
+  var settings = hotData.settings || load("m2g.settings", null) || { topics: TOPICS.map(function (t) { return t.id; }), count: 20, mode: "practice" };
+  var mistakes = load("m2g.mistakes", []);
+  mistakes = mistakes.filter(function (id) { return BYID[id]; });
+  var state = hotData.state || null;
+  var timer = null;
+
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function fmt(sec) { sec = Math.max(0, Math.round(sec)); var m = Math.floor(sec / 60), s = sec % 60; return m + ":" + (s < 10 ? "0" : "") + s; }
+  function $(id) { return document.getElementById(id); }
+
+  // ---------- builder
+  function countFor(tid) { return BANK.filter(function (q) { return q.t === tid; }).length; }
+  function renderBuilder() {
+    $("bankCount").textContent = BANK.length + " questions";
+    [["grpToefl", "Prep TOEFL"], ["grpLife", "Life"]].forEach(function (g) {
+      var list = TOPICS.filter(function (t) { return t.src === g[1]; });
+      var html = '<div class="ghead"><b>' + g[1] + '</b><button type="button" class="linkbtn" data-toggle="' + g[1] + '">Select all</button></div>';
+      list.forEach(function (t) {
+        var on = settings.topics.indexOf(t.id) > -1;
+        html += '<label class="topic" for="tp-' + t.id + '"><input type="checkbox" id="tp-' + t.id + '" data-topic="' + t.id + '"' + (on ? " checked" : "") + '>' +
+          '<span class="tl">' + esc(t.label) + '<span class="tn">' + esc(t.name) + '</span></span><span class="tc">' + countFor(t.id) + '</span></label>';
+      });
+      $(g[0]).innerHTML = html;
+      var allOn = list.every(function (t) { return settings.topics.indexOf(t.id) > -1; });
+      $(g[0]).querySelector("[data-toggle]").textContent = allOn ? "Clear" : "Select all";
+    });
+    $("countSeg").innerHTML = COUNTS.map(function (c) {
+      return '<button type="button" id="cnt-' + c + '" data-count="' + c + '" aria-pressed="' + (settings.count === c) + '">' + (c ? c : "All") + "</button>";
+    }).join("");
+    $("modePractice").setAttribute("aria-pressed", settings.mode === "practice");
+    $("modeExam").setAttribute("aria-pressed", settings.mode === "exam");
+    var pool = poolSize();
+    var n = settings.count ? Math.min(settings.count, pool) : pool;
+    $("modeHint").textContent = settings.mode === "practice"
+      ? "See the answer and the rule after each question."
+      : "Answers stay hidden until the end. You get " + fmt(n * 45) + " for " + n + " questions.";
+    $("startBtn").disabled = pool === 0;
+    $("startBtn").textContent = pool === 0 ? "Pick at least one topic" : "Start " + n + "-question quiz";
+    $("mistakeBox").hidden = mistakes.length === 0;
+    $("mistakeText").textContent = mistakes.length + (mistakes.length === 1 ? " question" : " questions") + " you got wrong before, saved on this device.";
+  }
+  function poolSize() { return BANK.filter(function (q) { return settings.topics.indexOf(q.t) > -1; }).length; }
+  function persistSettings() { save("m2g.settings", settings); }
+
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t.dataset && t.dataset.topic) {
+      var id = t.dataset.topic, i = settings.topics.indexOf(id);
+      if (t.checked && i < 0) settings.topics.push(id);
+      if (!t.checked && i > -1) settings.topics.splice(i, 1);
+      persistSettings(); renderBuilder();
+    }
+  });
+  $("builder").addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.toggle) {
+      var list = TOPICS.filter(function (t) { return t.src === b.dataset.toggle; }).map(function (t) { return t.id; });
+      var allOn = list.every(function (id) { return settings.topics.indexOf(id) > -1; });
+      settings.topics = settings.topics.filter(function (id) { return list.indexOf(id) < 0; });
+      if (!allOn) settings.topics = settings.topics.concat(list);
+      persistSettings(); renderBuilder();
+    } else if (b.dataset.count !== undefined) {
+      settings.count = +b.dataset.count; persistSettings(); renderBuilder();
+    } else if (b.dataset.mode) {
+      settings.mode = b.dataset.mode; persistSettings(); renderBuilder();
+    } else if (b.id === "startBtn") {
+      start();
+      collapseOnPhone();
+    } else if (b.id === "mistakeBtn") {
+      start(mistakes.slice());
+      collapseOnPhone();
+    }
+  });
+  function collapseOnPhone() { if (window.matchMedia("(max-width: 880px)").matches) $("builder").open = false; }
+
+  // ---------- quiz
+  function start(ids, quiet) {
+    var pool = ids ? ids.map(function (id) { return BYID[id]; }) : BANK.filter(function (q) { return settings.topics.indexOf(q.t) > -1; });
+    pool = shuffle(pool);
+    if (!ids && settings.count) pool = pool.slice(0, settings.count);
+    if (!pool.length) return;
+    state = {
+      items: pool.map(function (q) { return { id: q.id, order: q.k === "c" ? shuffle([0, 1, 2, 3]) : [0, 1, 2, 3] }; }),
+      i: 0, picks: {}, mode: settings.mode, label: ids ? "Mistake review" : null,
+      started: Date.now(), limit: settings.mode === "exam" ? pool.length * 45 : 0, done: false, ended: 0
+    };
+    render();
+    tick();
+    if (!quiet) $("sheet").scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+
+  function elapsed() { return ((state.done ? state.ended : Date.now()) - state.started) / 1000; }
+
+  function tick() {
+    clearInterval(timer);
+    if (!state || state.done) return;
+    timer = setInterval(function () {
+      if (!state || state.done) { clearInterval(timer); return; }
+      if (state.mode === "exam" && state.limit - elapsed() <= 0) { finish(); return; }
+      paintClock();
+    }, 1000);
+  }
+  function paintClock() {
+    var el = $("clock");
+    if (!el || !state) return;
+    if (state.mode === "exam") {
+      var left = state.limit - elapsed();
+      el.innerHTML = "<small>Left</small>" + fmt(left);
+      el.classList.toggle("low", left <= 60);
+    } else {
+      el.innerHTML = "<small>Time</small>" + fmt(elapsed());
+    }
+  }
+
+  function isRight(item) { var q = BYID[item.id]; return state.picks[item.id] === q.a; }
+
+  function stemHTML(q, item, reveal) {
+    if (q.k === "c") {
+      var pick = state.picks[item.id];
+      var fill = pick === undefined ? '<span class="blank" aria-label="blank"></span>' : '<span class="blank filled">' + esc(q.o[pick]) + "</span>";
+      return esc(q.q).replace("______", fill);
+    }
+    var n = 0;
+    return esc(q.q).replace(/\[\[(.+?)\]\]/g, function (_, s) {
+      var idx = n++;
+      var cls = "part";
+      if (state.picks[item.id] === idx) cls += " hl";
+      if (reveal && idx === q.a) cls += " badpart";
+      return '<span class="' + cls + '">' + s + "<sub>" + LETTERS[idx] + "</sub></span>";
+    });
+  }
+
+  function render() {
+    var sh = $("sheet");
+    if (!state) { sh.innerHTML = ""; return; }
+    if (state.done) { renderResults(); return; }
+    var item = state.items[state.i], q = BYID[item.id], t = TOPIC[q.t];
+    var pick = state.picks[item.id];
+    var locked = state.mode === "practice" && pick !== undefined;
+    var total = state.items.length;
+
+    var grid = state.items.map(function (it, k) {
+      var cls = "cell";
+      var p = state.picks[it.id];
+      if (p !== undefined) cls += state.mode === "practice" ? (isRight(it) ? " ok" : " no") : " done";
+      if (k === state.i) cls += " cur";
+      return '<button type="button" class="' + cls + '" data-go="' + k + '" aria-label="Question ' + (k + 1) + '">' + (k + 1) + "</button>";
+    }).join("");
+
+    var opts = item.order.map(function (oi, pos) {
+      var cls = "opt", tag = "";
+      if (pick === oi) cls += " picked";
+      if (locked) {
+        if (oi === q.a) { cls += " right"; tag = '<span class="tag">Correct</span>'; }
+        else if (pick === oi) { cls += " wrong"; tag = '<span class="tag">Your answer</span>'; }
+      }
+      var label = q.k === "e" ? LETTERS[oi] : LETTERS[pos];
+      return '<li><button type="button" class="' + cls + '" data-pick="' + oi + '"' + (locked ? " disabled" : "") + '><span class="bub">' + label + '</span><span class="otext">' + esc(q.o[oi]) + "</span>" + tag + "</button></li>";
+    }).join("");
+
+    var why = "";
+    if (locked) {
+      var ok = pick === q.a;
+      why = '<div class="why ' + (ok ? "ok" : "no") + '"><b>' + (ok ? "Correct" : "Not quite") + " · Rule</b><p>" + esc(q.w) + "</p></div>";
+    }
+
+    var last = state.i === total - 1;
+    var answered = Object.keys(state.picks).length;
+    var nextLabel = last ? "See results" : "Next";
+    var nextDisabled = state.mode === "practice" && !locked;
+
+    sh.innerHTML =
+      '<div class="sheet-head"><div class="meta"><span class="qnum">Q ' + (state.i + 1) + " / " + total + '</span><span class="chip">' + esc(t.src + " · " + t.label) + "</span>" +
+      (state.label ? '<span class="chip">' + esc(state.label) + "</span>" : "") + '</div><div class="clock" id="clock"></div></div>' +
+      '<nav class="grid" aria-label="Answer sheet">' + grid + "</nav>" +
+      '<div class="qbody"><p class="instr">' + (q.k === "c" ? "Choose the answer that completes the sentence" : "Choose the underlined part that is NOT correct") + " · " + esc(t.name) + "</p>" +
+      '<p class="stem">' + stemHTML(q, item, locked) + "</p>" +
+      '<ol class="opts">' + opts + "</ol>" + why + "</div>" +
+      '<div class="foot"><span class="keys"><kbd>A</kbd>–<kbd>D</kbd> to answer · <kbd>Enter</kbd> next · <kbd>←</kbd> back</span><div class="acts">' +
+      '<button type="button" class="btn ghost" id="prevBtn"' + (state.i === 0 ? " disabled" : "") + ">Back</button>" +
+      (state.mode === "exam" && !last ? '<button type="button" class="btn ghost" id="endBtn">Finish (' + answered + "/" + total + ")</button>" : "") +
+      '<button type="button" class="btn" id="nextBtn"' + (nextDisabled ? " disabled" : "") + ">" + nextLabel + "</button></div></div>";
+    paintClock();
+  }
+
+  function pickAnswer(oi) {
+    var item = state.items[state.i], q = BYID[item.id];
+    if (state.mode === "practice" && state.picks[item.id] !== undefined) return;
+    state.picks[item.id] = oi;
+    if (state.mode === "practice") recordMistake(q.id, oi === q.a);
+    render();
+  }
+  function recordMistake(id, ok) {
+    var i = mistakes.indexOf(id);
+    if (!ok && i < 0) mistakes.push(id);
+    if (ok && i > -1) mistakes.splice(i, 1);
+    save("m2g.mistakes", mistakes);
+  }
+  function go(k) { if (k >= 0 && k < state.items.length) { state.i = k; render(); } }
+  function next() {
+    if (state.i === state.items.length - 1) finish(); else go(state.i + 1);
+  }
+  function finish() {
+    if (!state || state.done) return;
+    state.done = true; state.ended = Date.now();
+    clearInterval(timer);
+    if (state.mode === "exam") state.items.forEach(function (it) { recordMistake(it.id, isRight(it)); });
+    renderResults();
+    renderBuilder();
+    $("sheet").scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+
+  function renderResults() {
+    var items = state.items, total = items.length;
+    var right = items.filter(isRight).length;
+    var pct = Math.round(right / total * 100);
+    var byTopic = {};
+    items.forEach(function (it) {
+      var tid = BYID[it.id].t;
+      byTopic[tid] = byTopic[tid] || { r: 0, n: 0 };
+      byTopic[tid].n++; if (isRight(it)) byTopic[tid].r++;
+    });
+    var bars = TOPICS.filter(function (t) { return byTopic[t.id]; }).map(function (t) {
+      var b = byTopic[t.id], p = Math.round(b.r / b.n * 100);
+      var cls = p >= 80 ? "" : p >= 50 ? " mid" : " low";
+      return '<div class="bar"><div class="bl">' + esc(t.src + " " + t.label) + " <span>" + esc(t.name) + '</span></div><div class="bv">' + b.r + "/" + b.n + '</div><div class="track"><div class="fill' + cls + '" style="width:' + Math.max(p, 2) + '%"></div></div></div>';
+    }).join("");
+    var wrong = items.filter(function (it) { return !isRight(it); });
+    var missed = wrong.map(function (it) {
+      var q = BYID[it.id], t = TOPIC[q.t], p = state.picks[it.id];
+      var yours = p === undefined ? "No answer" : (q.k === "e" ? LETTERS[p] + " · " : "") + q.o[p];
+      var corr = (q.k === "e" ? LETTERS[q.a] + " · " : "") + q.o[q.a];
+      return '<li><span class="chip" style="justify-self:start">' + esc(t.src + " · " + t.label) + '</span><p class="stem">' + stemHTML(q, it, true) + '</p><div class="ans"><span class="y">' + esc(yours) + '</span><span class="c">' + esc(corr) + '</span></div><p class="rule">' + esc(q.w) + "</p></li>";
+    }).join("");
+    var verdict = pct >= 85 ? "Exam ready on these topics." : pct >= 65 ? "Solid. Review the rules you missed." : "Go back over the lessons below, then try again.";
+    var paceNote = state.mode === "exam" ? "Timed exam · " + fmt(elapsed()) + " used of " + fmt(state.limit) : "Practice · " + fmt(elapsed()) + " · about " + Math.round(elapsed() / total) + " s per question (exam pace is 45 s)";
+
+    $("sheet").innerHTML =
+      '<div class="sheet-head"><div class="meta"><span class="qnum">Results</span><span class="chip">' + (state.label ? esc(state.label) : total + " questions") + "</span></div></div>" +
+      '<div class="res"><div class="score"><div class="big">' + right + "<small>/" + total + '</small></div><div class="verdict"><strong>' + pct + "% · " + verdict + "</strong><span>" + esc(paceNote) + "</span></div></div>" +
+      '<div class="ractions">' + (wrong.length ? '<button type="button" class="btn" id="retryBtn">Retry the ' + wrong.length + " I missed</button>" : "") +
+      '<button type="button" class="btn ' + (wrong.length ? "ghost" : "") + '" id="againBtn">New quiz with the same settings</button></div>' +
+      '<section class="bars"><h2>By lesson</h2>' + bars + "</section>" +
+      (wrong.length ? '<section style="display:grid;gap:12px"><h2>Questions to review</h2><ol class="missed">' + missed + "</ol></section>" : '<p class="note">No mistakes. Try a timed exam or add more topics.</p>') +
+      "</div>";
+  }
+
+  $("sheet").addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b || !state) return;
+    if (b.dataset.pick !== undefined) pickAnswer(+b.dataset.pick);
+    else if (b.dataset.go !== undefined) go(+b.dataset.go);
+    else if (b.id === "nextBtn") next();
+    else if (b.id === "prevBtn") go(state.i - 1);
+    else if (b.id === "endBtn") finish();
+    else if (b.id === "retryBtn") start(state.items.filter(function (it) { return !isRight(it); }).map(function (it) { return it.id; }));
+    else if (b.id === "againBtn") start();
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (!state || state.done || e.altKey || e.ctrlKey || e.metaKey) return;
+    var tag = (e.target.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea") return;
+    var k = e.key.toLowerCase();
+    var map = { a: 0, b: 1, c: 2, d: 3, "1": 0, "2": 1, "3": 2, "4": 3 };
+    if (k in map) {
+      var item = state.items[state.i];
+      pickAnswer(item.order[map[k]]);
+      e.preventDefault();
+    } else if (k === "enter" || k === "arrowright") {
+      var nb = $("nextBtn");
+      if (nb && !nb.disabled && !(k === "enter" && tag === "button" && e.target.id !== "nextBtn")) { next(); e.preventDefault(); }
+    } else if (k === "arrowleft") { go(state.i - 1); e.preventDefault(); }
+  });
+
+  if (hot && typeof hot.snapshot === "function") {
+    try { hot.snapshot(function () { return { settings: settings, state: state }; }); } catch (e) {}
+  }
+
+  function boot() {
+    renderBuilder();
+    if (!window.matchMedia("(min-width: 881px)").matches) $("builder").open = false;
+    if (state && state.items) { render(); tick(); }
+    else start(null, true);
+  }
+  if (hot && typeof hot.ready === "function") {
+    hot.ready(function (d) {
+      if (d && d.settings) settings = d.settings;
+      if (d && d.state) state = d.state;
+      boot();
+    });
+  } else {
+    boot();
+  }
+})();
+</script>
+
+</html>
