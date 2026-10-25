@@ -195,10 +195,17 @@ h2 { margin: 0; font-variation-settings: "wdth" 80; font-weight: 800; font-size:
 .tab .dot { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--bad); color: var(--on-solid); font: 600 11px/20px var(--mono); text-align: center; }
 .layout.solo { grid-template-columns: minmax(0, 1fr); }
 @media (max-width: 520px) {
-  .tabs { gap: 4px; flex-wrap: nowrap; }
-  .tab { flex: 1 1 auto; justify-content: center; padding: 9px 8px; font-size: 12px; letter-spacing: .02em; }
+  .tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .tab { justify-content: center; padding: 10px 8px; font-size: 12px; letter-spacing: .02em; }
   .tab .n { display: none; }
 }
+.mocks { padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.mockcard { border: 1px solid var(--rule); border-radius: 6px; padding: 18px; display: grid; gap: 10px; align-content: start; }
+.mockcard h2 { font-size: 22px; font-variation-settings: "wdth" 72; }
+.mockcard .hint { font-size: 13.5px; }
+.mockcard .last { font: 600 12px var(--mono); color: var(--form); }
+.stem.sentence { font-size: clamp(17px, 2vw, 19px); font-weight: 600; font-family: var(--display); }
+.why .topic { font: 500 12px/1.4 var(--mono); color: var(--muted); }
 .sync { display: inline-flex; gap: 6px; align-items: center; font: 600 11px/1.2 var(--mono); letter-spacing: .04em; color: var(--muted); }
 .sync::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
 .sync.on { color: var(--ok); }
@@ -232,6 +239,7 @@ h2 { margin: 0; font-variation-settings: "wdth" 80; font-weight: 800; font-size:
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button type="button" class="tab" role="tab" id="tab-g" data-view="g">Grammar <span class="n" id="n-g"></span></button>
     <button type="button" class="tab" role="tab" id="tab-v" data-view="v">Vocabulary <span class="n" id="n-v"></span></button>
+    <button type="button" class="tab" role="tab" id="tab-x" data-view="x">Mock exam <span class="n" id="n-x"></span></button>
     <button type="button" class="tab" role="tab" id="tab-m" data-view="m">My mistakes <span class="dot" id="n-m" hidden></span></button>
   </nav>
 
@@ -5557,6 +5565,1761 @@ const VBANK = [
 }
 ];
 
+const MBANK = [
+{
+"t": "VR8",
+"k": "v",
+"q": "Lord Ken's family has lived on the same ______ in Yorkshire since 1745: a huge house, three farms and a private lake.",
+"a": 0,
+"mock": "1",
+"n": 1,
+"o": [
+"estate",
+"archipelago",
+"framework",
+"excavation"
+],
+"w": "estate (noun, B2): A large area of land."
+},
+{
+"t": "L6",
+"k": "c",
+"q": "Do you happen to know ______ to the airport from here?",
+"a": 0,
+"mock": "1",
+"n": 2,
+"o": [
+"how long it takes to get",
+"how long does it take to get",
+"how long will it take getting",
+"how long takes it to get"
+],
+"w": "After Do you know / Do you happen to know, use statement word order: question word + subject + verb. No does and no inversion: how long it takes."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "Scientists believe the virus is ______: it first passed from bats to humans at a market.",
+"a": 0,
+"mock": "1",
+"n": 3,
+"o": [
+"zoonotic",
+"kinetic",
+"ceramic",
+"thermal"
+],
+"w": "zoonotic (adjective, C1): Able to be transmitted from animals to humans."
+},
+{
+"t": "L6",
+"k": "c",
+"q": "Ali: I can't stand horror films.\nBader: ______ They give me nightmares.",
+"a": 0,
+"mock": "1",
+"n": 4,
+"o": [
+"Neither can I.",
+"So can I.",
+"Neither I can.",
+"I can't either too."
+],
+"w": "To agree with a negative sentence, use Neither + helping verb + subject, with the verb before the subject: Neither can I. So can I agrees with a positive sentence (I can swim. So can I.)."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Minutes after the undersea earthquake, a ______ hit the coast, destroying everything within two kilometres of the beach.",
+"a": 0,
+"mock": "1",
+"n": 5,
+"o": [
+"tsunami",
+"stampede",
+"lockdown",
+"spree"
+],
+"w": "tsunami (noun, B2): A very large, destructive wave caused by an earthquake."
+},
+{
+"t": "S20",
+"k": "c",
+"q": "The box of chocolates that my aunt gave me ______ already been opened.",
+"a": 0,
+"mock": "1",
+"n": 6,
+"o": [
+"has",
+"have",
+"are",
+"were"
+],
+"w": "The subject is box (singular). of chocolates and the relative clause that my aunt gave me do not change the verb: has."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Before you pay, ______ that the website is genuine: look for the padlock symbol next to the address.",
+"a": 0,
+"mock": "1",
+"n": 7,
+"o": [
+"verify",
+"inscribe",
+"underwrite",
+"counterfeit"
+],
+"w": "verify (verb, AWL, B2): Check that something is true."
+},
+{
+"t": "L7",
+"k": "c",
+"q": "Lama: Is it OK if I leave my car here?\nGuard: Sorry, madam. If you ______ here, you'll get a fine.",
+"a": 0,
+"mock": "1",
+"n": 8,
+"o": [
+"park",
+"will park",
+"parked",
+"would park"
+],
+"w": "First conditional for a real future possibility: If + present simple, will + V1. Never use will in the if-clause."
+},
+{
+"t": "S15",
+"k": "s",
+"q": "Which sentence is CORRECT?",
+"a": 0,
+"mock": "1",
+"n": 9,
+"o": [
+"Never before had the city seen such heavy rain.",
+"Seldom Ken arrives on time for class.",
+"Rarely the students are allowed to leave early.",
+"Only after the exam we realised our mistake."
+],
+"w": "A negative or limiting word at the start (never, seldom, rarely, only after) needs inversion: helping verb + subject. Only this sentence inverts: had the city seen. The others need does Ken arrive, are the students allowed, did we realise."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "When news of the storm broke, shoppers ______ the supermarket shelves of bread and water within an hour.",
+"a": 0,
+"mock": "1",
+"n": 10,
+"o": [
+"stripped",
+"breached",
+"inundated",
+"wrought"
+],
+"w": "strip (verb, B2): To completely remove or empty something."
+},
+{
+"t": "L5",
+"k": "c",
+"q": "Zainab ______ going to the dentist.",
+"a": 0,
+"mock": "1",
+"n": 11,
+"o": [
+"hated",
+"refused",
+"decided",
+"hoped"
+],
+"w": "hate can be followed by -ing. refuse, decide and hope are followed by to + infinitive (refused to go, decided to go, hoped to go)."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "The doctor ______ a course of antibiotics and told me to take one tablet three times a day.",
+"a": 0,
+"mock": "1",
+"n": 12,
+"o": [
+"prescribed",
+"inherited",
+"deprived",
+"exhumed"
+],
+"w": "prescribe (verb, B2): To authorise or order a medical treatment or medication for a patient."
+},
+{
+"t": "S1",
+"k": "c",
+"q": "The Empire State Building, one of the most famous skyscrapers in New York, ______ completed in 1931.",
+"a": 0,
+"mock": "1",
+"n": 13,
+"o": [
+"was",
+"---- (nothing)",
+"were",
+"has been"
+],
+"w": "The part between the commas is an appositive. The subject is The Empire State Building (singular), and in 1931 is a finished past time, so the past passive: was completed."
+},
+{
+"t": "L8",
+"k": "c",
+"q": "I wish I ______ so much money on clothes last month. Now I can't pay my rent!",
+"a": 0,
+"mock": "1",
+"n": 14,
+"o": [
+"hadn't spent",
+"didn't spend",
+"wouldn't spend",
+"don't spend"
+],
+"w": "wish + past perfect (had + V3) = regret about the past. last month shows the past."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "Archaeologists digging under a car park in Leicester in 2012 found human ______, which DNA tests later showed belonged to King Richard III.",
+"a": 0,
+"mock": "1",
+"n": 15,
+"o": [
+"remains",
+"ancestors",
+"artisans",
+"genes"
+],
+"w": "remains (noun, B2): The dead body or bones of a person."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Tests on the victim's hair revealed high levels of ______, a poison that was popular with murderers in Victorian times.",
+"a": 0,
+"mock": "1",
+"n": 16,
+"o": [
+"arsenic",
+"alloy",
+"ceramic",
+"mould"
+],
+"w": "arsenic (noun, C1): A poisonous chemical element."
+},
+{
+"t": "S27",
+"k": "e",
+"q": "Mount Kilimanjaro, [[standing at]] 5,895 metres, [[is]] the [[most high]] mountain [[in Africa]].",
+"a": 2,
+"mock": "1",
+"n": 17,
+"w": "high takes -est: the highest mountain. Never use most with a short adjective that takes -er / -est."
+},
+{
+"t": "S1",
+"k": "c",
+"q": "The oldest university in the world that is still operating, ______ University of al-Qarawiyyin was founded in Fez, Morocco, in 859.",
+"a": 0,
+"mock": "1",
+"n": 18,
+"o": [
+"the",
+"it is the",
+"which is the",
+"that is the"
+],
+"w": "The phrase before the comma is an appositive that describes the subject. The blank only starts the subject: the University of al-Qarawiyyin. it is, which is and that is add an extra verb."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "Most smartphone batteries have a ______ of about three years; after that, they hold much less charge.",
+"a": 0,
+"mock": "1",
+"n": 19,
+"o": [
+"lifespan",
+"range",
+"storage",
+"tariff"
+],
+"w": "lifespan (noun, B2): The length of time something functions or remains operational."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Every ______ in the Riyadh Marathon receives a medal, whether they finish first or last.",
+"a": 0,
+"mock": "1",
+"n": 20,
+"o": [
+"competitor",
+"aggressor",
+"perpetrator",
+"defendant"
+],
+"w": "competitor (noun, B2): A person who competes with others."
+},
+{
+"t": "S15",
+"k": "c",
+"q": "Next to the old mosque in Hofuf ______ a small cafÃ© that sells the best dates in the region.",
+"a": 0,
+"mock": "1",
+"n": 21,
+"o": [
+"stands",
+"stand",
+"standing",
+"located"
+],
+"w": "Locative inversion: place phrase + verb + subject. The subject a small cafÃ© is singular: stands. standing and located are not full verbs."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "AlUla is home to some of the most important cultural ______ sites in Saudi Arabia.",
+"a": 0,
+"mock": "1",
+"n": 22,
+"o": [
+"heritage",
+"consensus",
+"framework",
+"remainder"
+],
+"w": "heritage (noun, B2): Traditions and qualities passed down."
+},
+{
+"t": "L7",
+"k": "c",
+"q": "My grandfather ______ to school on a donkey, or at least that's what he tells us!",
+"a": 0,
+"mock": "1",
+"n": 23,
+"o": [
+"used to ride",
+"was used to ride",
+"would used to ride",
+"is used to ride"
+],
+"w": "used to + V1 = a past habit. be used to is followed by -ing (was used to riding), and would is never followed by used to."
+},
+{
+"t": "S13",
+"k": "c",
+"q": "Students ______ in the dormitories must register their cars with campus security.",
+"a": 0,
+"mock": "1",
+"n": 24,
+"o": [
+"living",
+"are living",
+"lived",
+"who living"
+],
+"w": "Reduced relative clause: Students who are living â€¦ becomes Students living â€¦. The main verb is must register."
+},
+{
+"t": "S24",
+"k": "e",
+"q": "[[Being]] a keen cook, Zainab [[enjoys]] both making bread [[and also]] [[baking]] cakes.",
+"a": 2,
+"mock": "1",
+"n": 25,
+"w": "both always pairs with and on its own: both making bread and baking cakes. Adding also (or using as well as) after both is wrong."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "Petrol is highly ______, so phones and cigarettes are banned at petrol stations.",
+"a": 0,
+"mock": "1",
+"n": 26,
+"o": [
+"flammable",
+"immune",
+"durable",
+"economical"
+],
+"w": "flammable (adjective, B2): Easily set on fire; capable of burning rapidly."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "The car park is fully ______: a camera reads your number plate and the barrier opens by itself.",
+"a": 0,
+"mock": "1",
+"n": 27,
+"o": [
+"automated",
+"embedded",
+"intact",
+"tangible"
+],
+"w": "automated (adjective, AWL, B2): Operated by machines or computers without human intervention."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The village is so ______ that the nearest shop is a two-hour drive away.",
+"a": 0,
+"mock": "1",
+"n": 28,
+"o": [
+"remote",
+"mutual",
+"crucial",
+"stable"
+],
+"w": "remote (adjective, B2): Far away from cities."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Ancient Arab sailors used the stars to ______ across the Indian Ocean.",
+"a": 0,
+"mock": "1",
+"n": 29,
+"o": [
+"navigate",
+"scatter",
+"descend",
+"mutate"
+],
+"w": "navigate (verb, B2): Find the way."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The judge noted that the defendant had shown no ______ for his crime and had not even apologised to the victim's family.",
+"a": 0,
+"mock": "1",
+"n": 30,
+"o": [
+"remorse",
+"compassion",
+"motive",
+"symptom"
+],
+"w": "remorse (noun, C1): Deep regret for doing something wrong."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "The new law is highly ______: half the country supports it and the other half is protesting in the streets.",
+"a": 0,
+"mock": "1",
+"n": 31,
+"o": [
+"controversial",
+"hypothetical",
+"interchangeable",
+"imperceptible"
+],
+"w": "controversial (adjective, AWL, B2): Causing disagreement or debate between people with opposing views."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "The robot can ______ human facial expressions so well that some visitors thought it was a real person.",
+"a": 0,
+"mock": "1",
+"n": 32,
+"o": [
+"mimic",
+"enable",
+"acquire",
+"filter"
+],
+"w": "mimic (verb, B2): To copy or imitate the behaviour, speech, or actions of something."
+},
+{
+"t": "L8",
+"k": "c",
+"q": "If I ______ a doctor now.",
+"a": 0,
+"mock": "1",
+"n": 33,
+"o": [
+"had studied harder at school, I'd be",
+"studied harder at school, I'd be",
+"had studied harder at school, I'd have been",
+"study harder at school, I'll be"
+],
+"w": "Mixed conditional: a past condition (at school, so had + V3) with a present result (now, so would + V1)."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The customer became ______ when the manager refused to give him a refund; he started shouting and pushing people.",
+"a": 0,
+"mock": "1",
+"n": 34,
+"o": [
+"belligerent",
+"anonymous",
+"devout",
+"prospective"
+],
+"w": "belligerent (adjective, C1): Hostile and aggressive."
+},
+{
+"t": "L7",
+"k": "c",
+"q": "Hurry up! If we ______ the last bus!",
+"a": 0,
+"mock": "1",
+"n": 35,
+"o": [
+"don't leave now, we'll miss",
+"won't leave now, we'll miss",
+"wouldn't leave now, we'd miss",
+"don't leave now, we miss"
+],
+"w": "First conditional for a real danger in the future: If + present simple, will + V1. No will in the if-clause."
+},
+{
+"t": "L5",
+"k": "s",
+"q": "Which sentence is NOT CORRECT?",
+"a": 0,
+"mock": "1",
+"n": 36,
+"o": [
+"Ken stopped to smoke ten years ago, and he feels much healthier now.",
+"Ali forgot to lock the door, so the thief walked straight in.",
+"Lama will never forget seeing the Kaaba for the first time.",
+"Bader tried to open the jar, but the lid was stuck."
+],
+"w": "stop + -ing = give up a habit: Ken stopped smoking. stop + to + infinitive means stop one action in order to do another, which makes no sense here."
+},
+{
+"t": "L5",
+"k": "c",
+"q": "Ken ______ to help me move house this weekend.",
+"a": 0,
+"mock": "1",
+"n": 37,
+"o": [
+"offered",
+"suggested",
+"enjoyed",
+"avoided"
+],
+"w": "offer + to + infinitive. suggest, enjoy and avoid are followed by -ing."
+},
+{
+"t": "L6",
+"k": "c",
+"q": "Bader: ______?\nAli: Tall, with a long beard and glasses.",
+"a": 0,
+"mock": "1",
+"n": 38,
+"o": [
+"What does your new teacher look like",
+"How does your new teacher look like",
+"What your new teacher looks like",
+"What is your new teacher look like"
+],
+"w": "To ask about appearance: What does â€¦ look like? Never How â€¦ look like. A direct question needs does + subject + V1."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Bronze, an ______ of copper and tin, was so important that a whole period of history is named after it.",
+"a": 0,
+"mock": "1",
+"n": 39,
+"o": [
+"alloy",
+"artifact",
+"equivalent",
+"analogy"
+],
+"w": "alloy (noun, C1): A metal made by mixing metals."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "If the fire is left ______, it could reach the houses on the edge of the forest by tonight.",
+"a": 0,
+"mock": "1",
+"n": 40,
+"o": [
+"unchecked",
+"intact",
+"unexpected",
+"uninhabited"
+],
+"w": "unchecked (adjective, C1): Not controlled or prevented from getting worse."
+},
+{
+"t": "S20",
+"k": "e",
+"q": "Everybody [[in]] the two classes [[that]] I teach on Sundays [[and]] Tuesdays [[have]] passed the midterm.",
+"a": 3,
+"mock": "1",
+"n": 41,
+"w": "Everybody is singular, however many people it means: Everybody â€¦ has passed. The words between the subject and the verb do not change this."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The fire was not an accident. Investigators said it was ______, started by someone who wanted to claim the insurance money.",
+"a": 0,
+"mock": "1",
+"n": 42,
+"o": [
+"deliberate",
+"remote",
+"relentless",
+"sensitive"
+],
+"w": "deliberate (adjective, B2): Intentional and planned."
+},
+{
+"t": "L8",
+"k": "c",
+"q": "Lama: I'm so nervous about tomorrow's presentation.\nZainab: Relax! If I ______ so much.",
+"a": 0,
+"mock": "1",
+"n": 43,
+"o": [
+"were you, I wouldn't worry",
+"am you, I won't worry",
+"had been you, I wouldn't have worried",
+"would be you, I wouldn't worry"
+],
+"w": "Advice uses the second conditional: If I were you, I would / wouldn't + V1. The presentation is tomorrow, so not the third conditional."
+},
+{
+"t": "S20",
+"k": "c",
+"q": "In the photo, a group of tourists ______ outside the museum, waiting for it to open.",
+"a": 0,
+"mock": "1",
+"n": 44,
+"o": [
+"is standing",
+"are standing",
+"have stood",
+"standing"
+],
+"w": "The head of the subject is group (singular), so the verb is singular: is standing. of tourists is the object of a preposition and does not control the verb."
+},
+{
+"t": "L8",
+"k": "c",
+"q": "Ali: You were lucky the shop still had your size!\nBader: I know. If I ______ this morning, they would have sold out.",
+"a": 0,
+"mock": "1",
+"n": 45,
+"o": [
+"hadn't gone",
+"didn't go",
+"wasn't go",
+"wouldn't go"
+],
+"w": "Third conditional for an imaginary past: If + had + V3, would have + V3."
+},
+{
+"t": "L7",
+"k": "c",
+"q": "Lama: How's the new job? It must be hard getting up at 5 a.m.\nZainab: It was at first, but I'm slowly ______ used to it.",
+"a": 0,
+"mock": "1",
+"n": 46,
+"o": [
+"getting",
+"get",
+"be",
+"got"
+],
+"w": "get used to = become familiar with something over time. After I'm (I am), use the -ing form: I'm getting used to it."
+},
+{
+"t": "S13",
+"k": "c",
+"q": "Do not open the doors until ______ to do so by the driver.",
+"a": 0,
+"mock": "1",
+"n": 47,
+"o": [
+"told",
+"telling",
+"you told",
+"they told"
+],
+"w": "Reduced adverb clause: until you are told (passive) becomes until told."
+},
+{
+"t": "S15",
+"k": "c",
+"q": "______ the fire alarm sound, leave the building by the nearest exit.",
+"a": 0,
+"mock": "1",
+"n": 48,
+"o": [
+"Should",
+"Had",
+"Were",
+"If"
+],
+"w": "Conditional inversion: Should + subject + V1 = If + subject + present. If the fire alarm sound is wrong because it would need sounds."
+},
+{
+"t": "VT14",
+"k": "v",
+"q": "Without government support, the solar farm is not financially ______: it would lose money every year.",
+"a": 0,
+"mock": "1",
+"n": 49,
+"o": [
+"viable",
+"kinetic",
+"striking",
+"interchangeable"
+],
+"w": "viable (adjective, AWL, B2): Financially practical or sustainable."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "The safe ______ of nuclear waste is one of the biggest problems facing the nuclear industry.",
+"a": 0,
+"mock": "1",
+"n": 50,
+"o": [
+"disposal",
+"fission",
+"extinction",
+"resurgence"
+],
+"w": "disposal (noun, AWL, B2): The act of getting rid of something, especially waste."
+},
+{
+"t": "S9",
+"k": "c",
+"q": "Dr Fatima, ______ husband teaches in the Chemistry Department, has just won a research award.",
+"a": 0,
+"mock": "1",
+"n": 51,
+"o": [
+"whose",
+"who",
+"whom",
+"that"
+],
+"w": "whose shows possession: Dr Fatima's husband becomes whose husband."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Quick thinking by the pilot, who landed the plane on a motorway, ______ what could have been a terrible disaster.",
+"a": 0,
+"mock": "1",
+"n": 52,
+"o": [
+"averted",
+"wrought",
+"ensued",
+"inundated"
+],
+"w": "avert (verb, C1): To successfully prevent or avoid a catastrophe."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Twenty years after his death, a court ordered the police to ______ the body so that new DNA tests could be carried out.",
+"a": 0,
+"mock": "1",
+"n": 53,
+"o": [
+"exhume",
+"contaminate",
+"deprive",
+"evade"
+],
+"w": "exhume (verb, C1): Dig up a buried body."
+},
+{
+"t": "S6",
+"k": "c",
+"q": "Lama likes ______ likes going to the cinema even more.",
+"a": 0,
+"mock": "1",
+"n": 54,
+"o": [
+"shopping, but she",
+"shopping, however she",
+"shopping, she",
+"shopping she also"
+],
+"w": "Two clauses joined with a comma need a coordinate conjunction (FANBOYS): , but she. however is not a conjunction, and a comma alone is a comma splice."
+},
+{
+"t": "S1",
+"k": "c",
+"q": "We visited Al Faisaliah Tower, ______ building with an amazing view of Riyadh.",
+"a": 0,
+"mock": "1",
+"n": 55,
+"o": [
+"a tall",
+"it's a tall",
+"which a tall",
+"because a tall"
+],
+"w": "After the comma you need an appositive (a noun phrase with no verb) that describes the tower: a tall building. it's a tall would make a comma splice."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "Team-building trips help to improve the ______ of a group, so everyone works together better.",
+"a": 0,
+"mock": "1",
+"n": 56,
+"o": [
+"cohesion",
+"stampede",
+"ritual",
+"anxiety"
+],
+"w": "cohesion (noun, C1): The state of sticking together."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "The lift has a ______ brake that stops it automatically if the cable breaks.",
+"a": 0,
+"mock": "1",
+"n": 57,
+"o": [
+"failsafe",
+"thermal",
+"flammable",
+"trivial"
+],
+"w": "failsafe (adjective, C1): Designed to automatically prevent or minimise harm if something goes wrong."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "The shop gave me a two-year ______ on the washing machine, so they will repair it for free if it breaks.",
+"a": 0,
+"mock": "1",
+"n": 58,
+"o": [
+"guarantee",
+"tariff",
+"grant",
+"venture"
+],
+"w": "guarantee (noun, B2): No certainty or assurance that something will happen."
+},
+{
+"t": "S27",
+"k": "e",
+"q": "The Kingdom Centre [[is]] one of [[the tallest]] buildings in Riyadh, [[but]] it is not as tall [[than]] the PIF Tower.",
+"a": 3,
+"mock": "1",
+"n": 59,
+"w": "The structure is as â€¦ as: not as tall as. than goes with comparatives such as taller than."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "New rules make it illegal to ______ other drivers by following them too closely or flashing your lights at them.",
+"a": 0,
+"mock": "1",
+"n": 60,
+"o": [
+"harass",
+"deter",
+"cooperate",
+"alter"
+],
+"w": "harass (verb, C1): Subject to aggressive pressure or intimidation."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "The gang used a laser printer to ______ 100-riyal notes, but the police caught them within a week.",
+"a": 0,
+"mock": "2",
+"n": 1,
+"o": [
+"counterfeit",
+"inscribe",
+"underwrite",
+"authorize"
+],
+"w": "counterfeit (verb, C1): Make fake money or goods."
+},
+{
+"t": "L6",
+"k": "c",
+"q": "I'd like to know ______ so late last night.",
+"a": 0,
+"mock": "2",
+"n": 2,
+"o": [
+"why you came home",
+"why did you come home",
+"why you did come home",
+"why came you home"
+],
+"w": "An indirect question uses statement word order: why + subject + verb. No did and no inversion: why you came home."
+},
+{
+"t": "VT16",
+"k": "v",
+"q": "Don't waste the manager's time with ______ complaints about the colour of the coffee cups.",
+"a": 0,
+"mock": "2",
+"n": 3,
+"o": [
+"trivial",
+"severe",
+"deadly",
+"resistant"
+],
+"w": "trivial (adjective, B2): Unimportant, minor, or easy to deal with."
+},
+{
+"t": "L6",
+"k": "c",
+"q": "Zainab: I didn't understand a word of that lecture.\nLama: ______ It was all about quantum physics!",
+"a": 0,
+"mock": "2",
+"n": 4,
+"o": [
+"Neither did I.",
+"So did I.",
+"Me too didn't.",
+"Either did I."
+],
+"w": "To agree with a negative past sentence, use Neither + did + I. So did I agrees with a positive sentence."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "Many buildings in Tokyo are designed to ______ even very strong earthquakes.",
+"a": 0,
+"mock": "2",
+"n": 5,
+"o": [
+"withstand",
+"inundate",
+"breach",
+"ensue"
+],
+"w": "withstand (verb, B2): To remain undamaged or unaffected by something harmful or powerful."
+},
+{
+"t": "S20",
+"k": "c",
+"q": "The results of the survey ______ that most students prefer morning classes.",
+"a": 0,
+"mock": "2",
+"n": 6,
+"o": [
+"show",
+"shows",
+"is showing",
+"has shown"
+],
+"w": "The subject is results (plural). of the survey does not change the verb: show."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "Using DNA, scientists were able to ______ the family's origins back to a small village in Yemen.",
+"a": 0,
+"mock": "2",
+"n": 7,
+"o": [
+"trace",
+"scatter",
+"stretch",
+"endure"
+],
+"w": "trace (verb, B2): Find or follow someone or something."
+},
+{
+"t": "L7",
+"k": "c",
+"q": "If water ______ 100Â°C, it boils.",
+"a": 0,
+"mock": "2",
+"n": 8,
+"o": [
+"reaches",
+"will reach",
+"reached",
+"would reach"
+],
+"w": "Zero conditional for a scientific fact: If + present simple, present simple."
+},
+{
+"t": "S15",
+"k": "s",
+"q": "Which sentence is CORRECT?",
+"a": 0,
+"mock": "2",
+"n": 9,
+"o": [
+"Under the bridge slept two homeless men.",
+"Not until midnight the guests went home.",
+"Hardly I had sat down when the phone rang.",
+"So tired Ali was that he fell asleep in class."
+],
+"w": "Locative inversion (place + verb + subject) is correct: Under the bridge slept two men. The others start with not until, hardly and so tired, which all need inversion: did the guests go, had I sat, was Ali."
+},
+{
+"t": "VT18",
+"k": "v",
+"q": "Many people find gardening ______: an hour with the plants and all their stress disappears.",
+"a": 0,
+"mock": "2",
+"n": 10,
+"o": [
+"therapeutic",
+"mass-produced",
+"archaeological",
+"cluttered"
+],
+"w": "therapeutic (adjective, B2): Having a healing or calming effect on mental or physical health."
+},
+{
+"t": "L5",
+"k": "c",
+"q": "Lama ______ waiting in long queues.",
+"a": 0,
+"mock": "2",
+"n": 11,
+"o": [
+"avoided",
+"refused",
+"wanted",
+"planned"
+],
+"w": "avoid + -ing. refuse, want and plan are followed by to + infinitive."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "A high temperature and a dry cough are common ______ of flu.",
+"a": 0,
+"mock": "2",
+"n": 12,
+"o": [
+"symptoms",
+"motives",
+"disputes",
+"estates"
+],
+"w": "symptom (noun, B2): A sign of a disease."
+},
+{
+"t": "S1",
+"k": "c",
+"q": "Petra, the ancient rock-cut city in southern Jordan, ______ by the Nabataeans more than 2,000 years ago.",
+"a": 0,
+"mock": "2",
+"n": 13,
+"o": [
+"was built",
+"built",
+"were built",
+"has built"
+],
+"w": "The appositive sits between the commas. The subject Petra is singular, and the city did not build anything, so the past passive: was built."
+},
+{
+"t": "L8",
+"k": "c",
+"q": "If only my brother ______ borrowing my car without asking! It drives me crazy.",
+"a": 0,
+"mock": "2",
+"n": 14,
+"o": [
+"would stop",
+"stops",
+"will stop",
+"had stop"
+],
+"w": "wish / if only + would + V1 = you are annoyed by someone's behaviour and want them to change."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "The ______ of the ancient city has taken archaeologists more than ten years, and they are still digging.",
+"a": 0,
+"mock": "2",
+"n": 15,
+"o": [
+"excavation",
+"evacuation",
+"settlement",
+"installation"
+],
+"w": "excavation (noun, AWL, B2): The process of digging in the ground to find things from the past."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "An ______ showed that the man had died of a heart attack, not from poison.",
+"a": 0,
+"mock": "2",
+"n": 16,
+"o": [
+"autopsy",
+"estate",
+"aristocrat",
+"alloy"
+],
+"w": "autopsy (noun, C1): Examination of a dead body."
+},
+{
+"t": "S27",
+"k": "e",
+"q": "Of all the dishes [[on]] the menu, the kabsa [[was]] the [[more delicious]] one [[we]] tried.",
+"a": 2,
+"mock": "2",
+"n": 17,
+"w": "Of all â€¦ compares one thing with a whole group, so use the superlative: the most delicious."
+},
+{
+"t": "S1",
+"k": "c",
+"q": "The largest hot desert in the world, ______ Sahara covers most of North Africa.",
+"a": 0,
+"mock": "2",
+"n": 18,
+"o": [
+"the",
+"it is the",
+"which is the",
+"that the"
+],
+"w": "The phrase before the comma is an appositive. The blank only starts the subject: the Sahara. Adding it is or which is gives the sentence an extra verb."
+},
+{
+"t": "VT13",
+"k": "v",
+"q": "My old car used so much petrol! The new one is far more ______: I only fill it up once a month.",
+"a": 0,
+"mock": "2",
+"n": 19,
+"o": [
+"economical",
+"kinetic",
+"exponential",
+"offshore"
+],
+"w": "economical (adjective, B2): Cost-effective; giving good value in relation to money spent."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "The university holds an open day every spring for ______ students and their parents.",
+"a": 0,
+"mock": "2",
+"n": 20,
+"o": [
+"prospective",
+"belligerent",
+"volatile",
+"devout"
+],
+"w": "prospective (adjective, C1): Likely to be or happen."
+},
+{
+"t": "S15",
+"k": "c",
+"q": "At the top of the hill ______ the ruins of an old Ottoman fort.",
+"a": 0,
+"mock": "2",
+"n": 21,
+"o": [
+"lie",
+"lies",
+"lying",
+"is lain"
+],
+"w": "Locative inversion: place phrase + verb + subject. The subject the ruins is plural, so lie."
+},
+{
+"t": "VR5",
+"k": "v",
+"q": "The project needs an ______ amount of money: around 500 billion dollars.",
+"a": 0,
+"mock": "2",
+"n": 22,
+"o": [
+"immense",
+"intact",
+"oral",
+"analogous"
+],
+"w": "immense (adjective, B2): Extremely large."
+},
+{
+"t": "L7",
+"k": "c",
+"q": "Ali grew up in Abha, so he ______ the cold winters.",
+"a": 0,
+"mock": "2",
+"n": 23,
+"o": [
+"is used to",
+"used to",
+"would",
+"uses to"
+],
+"w": "be used to + noun = be familiar with something. used to needs a verb after it (used to live), so it cannot go straight before the cold winters."
+},
+{
+"t": "S13",
+"k": "c",
+"q": "Goods ______ in Saudi Arabia carry a 'Made in KSA' label.",
+"a": 0,
+"mock": "2",
+"n": 24,
+"o": [
+"produced",
+"are produced",
+"producing",
+"which producing"
+],
+"w": "Reduced relative clause: Goods which are produced (passive) becomes Goods produced. The main verb is carry."
+},
+{
+"t": "S24",
+"k": "e",
+"q": "The job [[requires]] good communication skills, [[the ability]] to work [[in a team]], and [[being able]] to meet deadlines.",
+"a": 3,
+"mock": "2",
+"n": 25,
+"w": "The list is made of noun phrases: good communication skills, the ability to work in a team, and the ability to meet deadlines. being able breaks the parallel structure."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "Scientists are testing the ______ of the new pesticide to make sure it doesn't harm bees.",
+"a": 0,
+"mock": "2",
+"n": 26,
+"o": [
+"toxicity",
+"combustibility",
+"installation",
+"tariff"
+],
+"w": "toxicity (noun, C1): The degree to which a substance can harm living organisms."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "Instagram's ______ seems to know exactly what I want to see: it keeps showing me videos of cats.",
+"a": 0,
+"mock": "2",
+"n": 27,
+"o": [
+"algorithm",
+"automation",
+"cusp",
+"division"
+],
+"w": "algorithm (noun, B2): A set of step-by-step instructions followed by a computer to solve problems."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Because of the sandstorm, the lecture was moved online and held as a ______ meeting.",
+"a": 0,
+"mock": "2",
+"n": 28,
+"o": [
+"virtual",
+"tangible",
+"ceramic",
+"durable"
+],
+"w": "virtual (adjective, B2): Existing in a digital, not physical, form."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Years of night shifts ______ him of sleep and damaged his health.",
+"a": 0,
+"mock": "2",
+"n": 29,
+"o": [
+"deprived",
+"compelled",
+"disrupted",
+"contaminated"
+],
+"w": "deprive (verb, C1): Take something away from."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "When someone shouted 'Fire!', there was a ______ towards the exits and several people were injured.",
+"a": 0,
+"mock": "2",
+"n": 30,
+"o": [
+"stampede",
+"pilgrimage",
+"ritual",
+"harmony"
+],
+"w": "stampede (noun, C1): A sudden rush of a large crowd."
+},
+{
+"t": "VT23",
+"k": "v",
+"q": "In the film, the world has become a ______ where robots control everything and humans live in fear.",
+"a": 0,
+"mock": "2",
+"n": 31,
+"o": [
+"dystopia",
+"heritage",
+"remainder",
+"framework"
+],
+"w": "dystopia (noun, C1): An imagined society or place that is extremely bad, unfair, or frightening."
+},
+{
+"t": "VT22",
+"k": "v",
+"q": "Many people think home-made bread is far ______ to the bread you buy in supermarkets.",
+"a": 0,
+"mock": "2",
+"n": 32,
+"o": [
+"superior",
+"numerous",
+"explosive",
+"genetic"
+],
+"w": "superior (adjective, B2): Higher in quality, ability, or importance than something else."
+},
+{
+"t": "L8",
+"k": "c",
+"q": "If Bader ______ in Dammam now.",
+"a": 0,
+"mock": "2",
+"n": 33,
+"o": [
+"hadn't got that job in Riyadh, he'd still be living",
+"didn't get that job in Riyadh, he'd still have lived",
+"hadn't got that job in Riyadh, he'd still have been living",
+"doesn't get that job in Riyadh, he'll still live"
+],
+"w": "Mixed conditional: a past condition (had + V3) with a present result (now, so would + V1 or would be + -ing)."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The security guard became ______ when he saw a man walking around the car park and looking into every car.",
+"a": 0,
+"mock": "2",
+"n": 34,
+"o": [
+"suspicious",
+"anonymous",
+"evident",
+"inconclusive"
+],
+"w": "suspicious (adjective, B2): Causing doubt or concern."
+},
+{
+"t": "L7",
+"k": "c",
+"q": "Call me as soon as you ______ at the hotel.",
+"a": 0,
+"mock": "2",
+"n": 35,
+"o": [
+"arrive",
+"will arrive",
+"would arrive",
+"arrived"
+],
+"w": "After time linkers (as soon as, when, until, before, after), use the present simple for the future."
+},
+{
+"t": "L5",
+"k": "s",
+"q": "Which sentence is NOT CORRECT?",
+"a": 0,
+"mock": "2",
+"n": 36,
+"o": [
+"Ali remembers to visit Makkah as a little boy.",
+"We regret to tell you that the flight has been cancelled.",
+"Lama went on talking even after the teacher asked her to stop.",
+"If you can't sleep, try drinking a glass of warm milk."
+],
+"w": "remember + -ing = have a memory of something you did: Ali remembers visiting Makkah. remember + to + infinitive is for things you must not forget to do."
+},
+{
+"t": "L5",
+"k": "c",
+"q": "Ken ______ working late on Thursdays.",
+"a": 0,
+"mock": "2",
+"n": 37,
+"o": [
+"doesn't mind",
+"agreed",
+"refused",
+"hopes"
+],
+"w": "mind + -ing. agree, refuse and hope are followed by to + infinitive."
+},
+{
+"t": "L6",
+"k": "c",
+"q": "Zainab: ______ to the party?\nLama: About thirty people, I think.",
+"a": 0,
+"mock": "2",
+"n": 38,
+"o": [
+"How many people came",
+"How many people did came",
+"How many people they came",
+"How many came people"
+],
+"w": "How many people is the subject of the question, so there is no did: How many people came?"
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "Waste from the factory ______ the river, and thousands of fish died.",
+"a": 0,
+"mock": "2",
+"n": 39,
+"o": [
+"contaminated",
+"manipulated",
+"evaluated",
+"motivated"
+],
+"w": "contaminate (verb, C1): Make something impure."
+},
+{
+"t": "VT19",
+"k": "v",
+"q": "The ice kept the body so well ______ that scientists could still see the man's tattoos 5,000 years later.",
+"a": 0,
+"mock": "2",
+"n": 40,
+"o": [
+"preserved",
+"uninhabited",
+"penetrating",
+"cluttered"
+],
+"w": "preserved (adjective, B2): Maintained in good condition over a long period."
+},
+{
+"t": "S20",
+"k": "e",
+"q": "Each of the new laptops [[that]] the university [[bought]] last term [[come]] with [[a]] three-year guarantee.",
+"a": 2,
+"mock": "2",
+"n": 41,
+"w": "Each is singular: Each â€¦ comes. of the new laptops and the relative clause do not change the verb."
+},
+{
+"t": "VR7",
+"k": "v",
+"q": "His grandmother is a ______ Muslim who never misses a prayer and reads the Quran every morning.",
+"a": 0,
+"mock": "2",
+"n": 42,
+"o": [
+"devout",
+"theatrical",
+"volatile",
+"contemporary"
+],
+"w": "devout (adjective, C1): Deeply religious."
+},
+{
+"t": "L8",
+"k": "c",
+"q": "Bader: I'm never going to be rich.\nAli: That's not true! If you ______ some money.",
+"a": 0,
+"mock": "2",
+"n": 43,
+"o": [
+"didn't spend so much on video games, you'd save",
+"don't spend so much on video games, you'd save",
+"didn't spend so much on video games, you'll save",
+"wouldn't spend so much on video games, you'd save"
+],
+"w": "Second conditional about a present habit: If + past simple, would + V1. Never put would in the if-clause."
+},
+{
+"t": "S20",
+"k": "c",
+"q": "A herd of camels ______ across the road, so we had to wait.",
+"a": 0,
+"mock": "2",
+"n": 44,
+"o": [
+"was walking",
+"were walking",
+"walking",
+"have walked"
+],
+"w": "The head of the subject is herd (singular), so the verb is singular: was walking. of camels does not control the verb."
+},
+{
+"t": "L8",
+"k": "c",
+"q": "Lama: Did you hear? The exam has been cancelled!\nZainab: Really? If I ______ that, I wouldn't have stayed up all night studying!",
+"a": 0,
+"mock": "2",
+"n": 45,
+"o": [
+"had known",
+"knew",
+"would know",
+"have known"
+],
+"w": "Third conditional for an imaginary past: If + had + V3, would have + V3."
+},
+{
+"t": "L7",
+"k": "c",
+"q": "Ali: Is it difficult driving in London?\nBader: It was at first, but I've ______ used to it now.",
+"a": 0,
+"mock": "2",
+"n": 46,
+"o": [
+"got",
+"get",
+"be",
+"getting"
+],
+"w": "get used to = become familiar with something. After I've (I have), use V3: I've got used to it."
+},
+{
+"t": "S13",
+"k": "c",
+"q": "When ______ with care, these tools will last for many years.",
+"a": 0,
+"mock": "2",
+"n": 47,
+"o": [
+"used",
+"using",
+"they used",
+"use"
+],
+"w": "Reduced adverb clause: When they are used (passive) becomes When used."
+},
+{
+"t": "S15",
+"k": "c",
+"q": "______ I known about the traffic, I would have taken the train.",
+"a": 0,
+"mock": "2",
+"n": 48,
+"o": [
+"Had",
+"Should",
+"Were",
+"If"
+],
+"w": "Third conditional with inversion: Had I known = If I had known."
+},
+{
+"t": "VT14",
+"k": "v",
+"q": "Tourism is one of the fastest-growing ______ of the Saudi economy.",
+"a": 0,
+"mock": "2",
+"n": 49,
+"o": [
+"sectors",
+"renewables",
+"units",
+"grants"
+],
+"w": "sectors (noun, AWL, B2): Distinct parts or divisions of an economy or activity."
+},
+{
+"t": "VT12",
+"k": "v",
+"q": "In a nuclear power station, energy is released through ______, the splitting of uranium atoms.",
+"a": 0,
+"mock": "2",
+"n": 50,
+"o": [
+"fission",
+"combustion",
+"fermentation",
+"radiation"
+],
+"w": "fission (noun, C1): The process of splitting atomic nuclei, releasing large amounts of energy."
+},
+{
+"t": "S9",
+"k": "c",
+"q": "The professor ______ I spoke to after the lecture recommended three books.",
+"a": 0,
+"mock": "2",
+"n": 51,
+"o": [
+"whom",
+"whose",
+"which",
+"what"
+],
+"w": "whom is the object form for people: I spoke to the professor, so the professor whom I spoke to."
+},
+{
+"t": "VT20",
+"k": "v",
+"q": "The referee cancelled the goal, and chaos ______ as angry fans ran onto the pitch.",
+"a": 0,
+"mock": "2",
+"n": 52,
+"o": [
+"ensued",
+"averted",
+"withstood",
+"confirmed"
+],
+"w": "ensue (verb, AWL, B2): To happen or follow as a result of something."
+},
+{
+"t": "VR8",
+"k": "v",
+"q": "The new evidence ______ the police to reopen the case.",
+"a": 0,
+"mock": "2",
+"n": 53,
+"o": [
+"compelled",
+"deprived",
+"alleged",
+"exhumed"
+],
+"w": "compel (verb, C1): Force or drive someone to do something."
+},
+{
+"t": "S6",
+"k": "c",
+"q": "The library closes ______ doesn't open at all on Fridays.",
+"a": 0,
+"mock": "2",
+"n": 54,
+"o": [
+"at 10 p.m., and it",
+"at 10 p.m., it",
+"at 10 p.m., moreover it",
+"at 10 p.m. it also"
+],
+"w": "Two clauses joined with a comma need a coordinate conjunction: , and it. moreover is not a conjunction, and a comma alone is a comma splice."
+},
+{
+"t": "S1",
+"k": "c",
+"q": "We had lunch at Al Baik, ______ fast-food chain famous for its fried chicken.",
+"a": 0,
+"mock": "2",
+"n": 55,
+"o": [
+"a popular",
+"it's a popular",
+"that's a popular",
+"because a popular"
+],
+"w": "After the comma you need an appositive (a noun phrase with no verb): a popular fast-food chain. it's and that's add a second verb."
+},
+{
+"t": "VT17",
+"k": "v",
+"q": "The flu ______ closed hundreds of schools across the country last winter.",
+"a": 0,
+"mock": "2",
+"n": 56,
+"o": [
+"epidemic",
+"reservoir",
+"vaccine",
+"mortality"
+],
+"w": "epidemic (noun, AWL, B2): A widespread occurrence of an infectious disease in a commThemey."
+},
+{
+"t": "VT15",
+"k": "v",
+"q": "Pack some ______ underwear if you're camping in the mountains in January; it gets very cold at night.",
+"a": 0,
+"mock": "2",
+"n": 57,
+"o": [
+"thermal",
+"flammable",
+"greenhouse",
+"kinetic"
+],
+"w": "thermal (adjective, AWL, B2): Relating to the internal energy of a substance due to the motion of its atoms."
+},
+{
+"t": "VR6",
+"k": "v",
+"q": "Only a manager can ______ a refund of more than 500 riyals.",
+"a": 0,
+"mock": "2",
+"n": 58,
+"o": [
+"authorize",
+"evade",
+"defy",
+"imitate"
+],
+"w": "authorize (verb, AWL, B2): Officially allow."
+},
+{
+"t": "S27",
+"k": "e",
+"q": "The Riyadh Metro [[is]] much [[more modern]] [[as]] the London Underground, [[which]] opened in 1863.",
+"a": 2,
+"mock": "2",
+"n": 59,
+"w": "A comparative is followed by than: more modern than."
+},
+{
+"t": "VT21",
+"k": "v",
+"q": "A sting from a box jellyfish can be ______ within minutes if the victim doesn't get help.",
+"a": 0,
+"mock": "2",
+"n": 60,
+"o": [
+"lethal",
+"automated",
+"embedded",
+"autonomous"
+],
+"w": "lethal (adjective, B2): Sufficient to cause death; deadly."
+}
+];
+
 </script>
 <script>
 (function () {
@@ -5577,18 +7340,20 @@ const VBANK = [
   ALLTOPICS.forEach(function (t) { TOPIC[t.id] = t; });
 
   function hash(s) { var x = 5381; for (var i = 0; i < s.length; i++) x = ((x << 5) + x + s.charCodeAt(i)) | 0; return (x >>> 0).toString(36); }
-  var ALL = BANK.concat(VBANK);
+  var ALL = BANK.concat(VBANK, MBANK);
+  var MOCK_IDS = [];
+  MBANK.forEach(function (q) { if (MOCK_IDS.indexOf(q.mock) < 0) MOCK_IDS.push(q.mock); });
   var BYID = {};
   ALL.forEach(function (q) {
     q.sec = TOPIC[q.t].sec;
-    q.id = q.t + "-" + hash(q.q);
+    q.id = q.mock ? "M" + q.mock + "-" + q.n + "-" + hash(q.q) : q.t + "-" + hash(q.q);
     if (q.k === "e") {
       q.o = [];
       q.q.replace(/\[\[(.+?)\]\]/g, function (_, s) { q.o.push(s); return s; });
     }
     BYID[q.id] = q;
   });
-  function inSec(sec) { return ALL.filter(function (q) { return q.sec === sec; }); }
+  function inSec(sec) { return ALL.filter(function (q) { return q.sec === sec && !q.mock; }); }
 
   // ---------- storage
   function load(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
@@ -5609,7 +7374,7 @@ const VBANK = [
   var records = load("m2.records.v2", {});
   Object.keys(records).forEach(function (id) { if (!BYID[id]) delete records[id]; });
   var quizzes = load("m2.quizzes.v2", []);
-  var states = hotData.states || { g: null, v: null };
+  var states = hotData.states || { g: null, v: null, x: null };
   var mfilter = "all";
   var copyText = null, copied = false;
   var timer = null;
@@ -5641,7 +7406,7 @@ const VBANK = [
       summary: { activeMistakes: act.length, byLesson: byLesson },
       mistakes: act.slice(0, 150).map(function (id) {
         var q = BYID[id], r = records[id], t = TOPIC[q.t];
-        return { section: q.sec === "g" ? "grammar" : "vocabulary", lesson: t.src + " " + t.label + " · " + t.name,
+        return { section: q.sec === "g" ? "grammar" : "vocabulary", lesson: t.src + " " + t.label + " · " + t.name, mock: q.mock ? "Mock " + q.mock + " Q" + q.n : null,
           question: plainStem(q), yourAnswer: r.lp == null ? "no answer" : q.o[r.lp], correct: q.o[q.a], timesWrong: r.w };
       })
     };
@@ -5712,27 +7477,36 @@ const VBANK = [
   // ---------- header + tabs
   function paintChrome() {
     var v = settings.view;
-    ["g", "v", "m"].forEach(function (k) { $("tab-" + k).setAttribute("aria-selected", String(v === k)); });
+    ["g", "v", "x", "m"].forEach(function (k) { $("tab-" + k).setAttribute("aria-selected", String(v === k)); });
     $("n-g").textContent = inSec("g").length;
     $("n-v").textContent = inSec("v").length;
+    $("n-x").textContent = MOCK_IDS.length;
     var am = activeMistakes().length;
     $("n-m").hidden = am === 0;
     $("n-m").textContent = am;
-    var sec = SECTION[v === "m" ? "g" : v];
-    $("pageTitle").textContent = v === "m" ? "My Mistakes" : sec.title;
-    var spec = v === "m"
-      ? [["Grammar", activeMistakes("g").length + " to fix"], ["Vocabulary", activeMistakes("v").length + " to fix"], ["Quizzes done", String(quizzes.length)]]
-      : sec.spec.concat([["Bank", inSec(v).length + " questions"]]);
+    var title, spec;
+    if (v === "m") {
+      title = "My Mistakes";
+      spec = [["Grammar", activeMistakes("g").length + " to fix"], ["Vocabulary", activeMistakes("v").length + " to fix"], ["Quizzes done", String(quizzes.length)]];
+    } else if (v === "x") {
+      title = "Mock Exam";
+      spec = [["Questions", "60 per mock"], ["Time", "45 minutes"], ["Split", "30 grammar · 30 vocab"], ["Mocks", String(MOCK_IDS.length)]];
+    } else {
+      title = SECTION[v].title;
+      spec = SECTION[v].spec.concat([["Bank", inSec(v).length + " questions"]]);
+    }
+    $("pageTitle").textContent = title;
     $("spec").innerHTML = spec.map(function (p) { return "<div><dt>" + esc(p[0]) + "</dt><dd>" + esc(p[1]) + "</dd></div>"; }).join("");
-    $("layout").classList.toggle("solo", v === "m");
-    $("builder").hidden = v === "m";
+    var solo = v === "m" || v === "x";
+    $("layout").classList.toggle("solo", solo);
+    $("builder").hidden = solo;
   }
 
   // ---------- builder
   function cur() { return settings[settings.view]; }
   function poolSize() { var s = cur(); return inSec(settings.view).filter(function (q) { return s.topics.indexOf(q.t) > -1; }).length; }
   function renderBuilder() {
-    if (settings.view === "m") return;
+    if (settings.view === "m" || settings.view === "x") return;
     var sec = settings.view, s = cur(), conf = SECTION[sec];
     var list = sec === "g" ? TOPICS : VTOPICS;
     [["grpA", conf.groups[0]], ["grpB", conf.groups[1]]].forEach(function (g) {
@@ -5791,7 +7565,7 @@ const VBANK = [
     if (!b) return;
     settings.view = b.dataset.view; persist();
     copyText = null; copied = false;
-    if (settings.view !== "m" && !states[settings.view]) start(settings.view, null, true);
+    if ((settings.view === "g" || settings.view === "v") && !states[settings.view]) start(settings.view, null, true);
     paintAll();
     tick();
   });
@@ -5799,7 +7573,7 @@ const VBANK = [
   // ---------- quiz
   function st() { return settings.view === "m" ? null : states[settings.view]; }
   function start(sec, ids, quiet, label) {
-    var s = settings[sec];
+    var s = settings[sec] || { topics: [], count: 0 };
     var pool = ids ? ids.map(function (id) { return BYID[id]; }).filter(Boolean)
                    : inSec(sec).filter(function (q) { return s.topics.indexOf(q.t) > -1; });
     pool = shuffle(pool);
@@ -5814,6 +7588,33 @@ const VBANK = [
     paintAll();
     tick();
     if (!quiet) $("sheet").scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+  function startMock(id, mode) {
+    var qs = MBANK.filter(function (q) { return q.mock === id; }).sort(function (a, b) { return a.n - b.n; });
+    states.x = {
+      items: qs.map(function (q) { return { id: q.id, order: q.k === "e" ? [0, 1, 2, 3] : shuffle([0, 1, 2, 3]) }; }),
+      i: 0, picks: {}, mode: mode, label: null, mock: id,
+      started: Date.now(), limit: mode === "exam" ? 45 * 60 : 0, done: false, ended: 0
+    };
+    settings.view = "x"; persist();
+    paintAll();
+    tick();
+    $("sheet").scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+  function renderMockPicker() {
+    var cards = MOCK_IDS.map(function (id) {
+      var tries = quizzes.filter(function (z) { return z.section === "mock " + id; });
+      var last = tries[tries.length - 1];
+      var lastTxt = last ? "Last try: " + last.right + "/" + last.total + " · " + (last.mode === "exam" ? "timed" : "practice") : "Not tried yet";
+      return '<section class="mockcard"><h2>Mock ' + esc(id) + '</h2><p class="hint">60 questions in the exam\'s mixed order: 30 grammar, 30 vocabulary.</p>' +
+        '<span class="last">' + esc(lastTxt) + "</span>" +
+        '<div class="ractions"><button type="button" class="btn" data-mock="' + esc(id) + '" data-mmode="exam">Timed exam · 45 min</button>' +
+        '<button type="button" class="btn ghost" data-mock="' + esc(id) + '" data-mmode="practice">Practice</button></div></section>';
+    }).join("");
+    $("sheet").innerHTML =
+      '<div class="mhead"><p>Each mock is built like the real Use of English paper and your practice mock: indirect questions, conditionals, inversion, verb patterns, agreement, error spotting, and Major 2 words in real-life sentences. The topic of each question stays hidden until you answer.</p>' +
+      "<p>Timed exam hides the answers until the end, like the real thing. Practice shows the answer and the rule after each question.</p></div>" +
+      '<div class="mocks">' + cards + "</div>";
   }
   function elapsed(S) { return ((S.done ? S.ended : Date.now()) - S.started) / 1000; }
   function tick() {
@@ -5840,14 +7641,14 @@ const VBANK = [
 
   function plainStem(q) {
     if (q.k === "e") { var n = 0; return q.q.replace(/\[\[(.+?)\]\]/g, function (_, s) { return "(" + LETTERS[n++] + ") " + s; }); }
-    return q.q;
+    return q.q.replace(/\n/g, " / ");
   }
   function stemHTML(q, pick, reveal) {
     if (q.k !== "e") {
       var word = pick === undefined || pick === null ? "" : q.o[pick];
       if (word && q.q.indexOf("______") === 0) word = word.charAt(0).toUpperCase() + word.slice(1);
       var fill = word ? '<span class="blank filled">' + esc(word) + "</span>" : '<span class="blank" aria-label="blank"></span>';
-      return esc(q.q).replace("______", fill);
+      return esc(q.q).replace("______", fill).replace(/\n/g, "<br>");
     }
     var n = 0;
     return esc(q.q).replace(/\[\[(.+?)\]\]/g, function (_, s) {
@@ -5860,12 +7661,13 @@ const VBANK = [
   function instr(q) {
     return q.k === "c" ? "Choose the answer that completes the sentence"
       : q.k === "e" ? "Choose the underlined part that is NOT correct"
+      : q.k === "s" ? "Read all four sentences before you choose"
       : "Choose the word that completes the sentence";
   }
 
   function renderQuiz() {
     var S = st(), sh = $("sheet");
-    if (!S) { sh.innerHTML = ""; return; }
+    if (!S) { if (settings.view === "x") renderMockPicker(); else sh.innerHTML = ""; return; }
     if (S.done) { renderResults(); return; }
     var item = S.items[S.i], q = BYID[item.id], t = TOPIC[q.t];
     var pick = S.picks[item.id];
@@ -5890,19 +7692,20 @@ const VBANK = [
     var why = "";
     if (locked) {
       var ok = pick === q.a;
-      why = '<div class="why ' + (ok ? "ok" : "no") + '"><b>' + (ok ? "Correct" : "Not quite") + " · " + (q.sec === "g" ? "Rule" : "Meaning") + "</b><p>" + esc(q.w || q.o[q.a]) + "</p></div>";
+      why = '<div class="why ' + (ok ? "ok" : "no") + '"><b>' + (ok ? "Correct" : "Not quite") + " · " + (q.sec === "g" ? "Rule" : "Meaning") + "</b><p>" + esc(q.w || q.o[q.a]) + "</p>" +
+        (S.mock ? '<span class="topic">' + esc(t.src + " " + t.label + " · " + t.name) + "</span>" : "") + "</div>";
     }
     var last = S.i === total - 1, answered = Object.keys(S.picks).length;
     sh.innerHTML =
-      '<div class="sheet-head"><div class="meta"><span class="qnum">Q ' + (S.i + 1) + " / " + total + '</span><span class="chip">' + esc(t.src + " · " + t.label) + "</span>" +
+      '<div class="sheet-head"><div class="meta"><span class="qnum">Q ' + (S.i + 1) + " / " + total + '</span><span class="chip">' + esc(S.mock ? "Mock " + S.mock : t.src + " · " + t.label) + "</span>" +
       (S.label ? '<span class="chip">' + esc(S.label) + "</span>" : "") + '</div><div class="clock" id="clock"></div></div>' +
       '<nav class="grid" aria-label="Answer sheet">' + grid + "</nav>" +
-      '<div class="qbody"><p class="instr">' + instr(q) + " · " + esc(t.name) + "</p>" +
-      '<p class="stem">' + stemHTML(q, pick, locked) + "</p>" +
+      '<div class="qbody"><p class="instr">' + instr(q) + (S.mock ? "" : " · " + esc(t.name)) + "</p>" +
+      '<p class="stem' + (q.k === "s" ? " sentence" : "") + '">' + stemHTML(q, pick, locked) + "</p>" +
       '<ol class="opts">' + opts + "</ol>" + why + "</div>" +
       '<div class="foot"><span class="keys"><kbd>A</kbd>–<kbd>D</kbd> to answer · <kbd>Enter</kbd> next · <kbd>←</kbd> back</span><div class="acts">' +
       '<button type="button" class="btn ghost" id="prevBtn"' + (S.i === 0 ? " disabled" : "") + ">Back</button>" +
-      (S.mode === "exam" && !last ? '<button type="button" class="btn ghost" id="endBtn">Finish (' + answered + "/" + total + ")</button>" : "") +
+      ((S.mode === "exam" || S.mock) && !last ? '<button type="button" class="btn ghost" id="endBtn">Finish (' + answered + "/" + total + ")</button>" : "") +
       '<button type="button" class="btn" id="nextBtn"' + (S.mode === "practice" && !locked ? " disabled" : "") + ">" + (last ? "See results" : "Next") + "</button></div></div>";
     paintClock();
   }
@@ -5922,11 +7725,15 @@ const VBANK = [
     if (!S || S.done) return;
     S.done = true; S.ended = Date.now();
     clearInterval(timer);
-    if (S.mode === "exam") S.items.forEach(function (it) { record(it.id, S.picks[it.id]); });
+    if (S.mode === "practice") {
+      var answeredOnly = S.items.filter(function (it) { return S.picks[it.id] !== undefined; });
+      if (answeredOnly.length) S.items = answeredOnly;
+    }
+    if (S.mode === "exam") S.items.forEach(function (it) { if (S.picks[it.id] !== undefined) record(it.id, S.picks[it.id]); });
     var right = S.items.filter(function (it) { return isRight(S, it); }).length;
     var lessons = {};
     S.items.forEach(function (it) { var t = TOPIC[BYID[it.id].t]; lessons[t.src + " " + t.label] = 1; });
-    quizzes.push({ at: S.ended, section: settings.view === "g" ? "grammar" : "vocabulary", mode: S.mode, total: S.items.length, right: right,
+    quizzes.push({ at: S.ended, section: S.mock ? "mock " + S.mock : settings.view === "g" ? "grammar" : settings.view === "v" ? "vocabulary" : "review", mode: S.mode, total: S.items.length, right: right,
       seconds: Math.round(elapsed(S)), lessons: Object.keys(lessons) });
     quizzes = quizzes.slice(-40);
     save("m2.quizzes.v2", quizzes);
@@ -5950,11 +7757,17 @@ const VBANK = [
     var verdict = pct >= 85 ? "Exam ready on these topics." : pct >= 65 ? "Solid. Review what you missed." : "Go back over the lessons below, then try again.";
     var el = elapsed(S);
     var paceNote = S.mode === "exam" ? "Timed exam · " + fmt(el) + " used of " + fmt(S.limit) : "Practice · " + fmt(el) + " · about " + Math.round(el / total) + " s per question (exam pace is 45 s)";
+    var split = "";
+    if (S.mock) {
+      var gr = 0, gt = 0, vr = 0, vt = 0;
+      items.forEach(function (it) { var q = BYID[it.id], ok = isRight(S, it); if (q.sec === "g") { gt++; if (ok) gr++; } else { vt++; if (ok) vr++; } });
+      split = "Grammar " + gr + "/" + gt + " · Vocabulary " + vr + "/" + vt;
+    }
     $("sheet").innerHTML =
       '<div class="sheet-head"><div class="meta"><span class="qnum">Results</span><span class="chip">' + (S.label ? esc(S.label) : total + " questions") + "</span></div></div>" +
-      '<div class="res"><div class="score"><div class="big">' + right + "<small>/" + total + '</small></div><div class="verdict"><strong>' + pct + "% · " + verdict + "</strong><span>" + esc(paceNote) + "</span></div></div>" +
+      '<div class="res"><div class="score"><div class="big">' + right + "<small>/" + total + '</small></div><div class="verdict"><strong>' + pct + "% · " + verdict + "</strong>" + (split ? "<span>" + esc(split) + "</span>" : "") + "<span>" + esc(paceNote) + "</span></div></div>" +
       '<div class="ractions">' + (wrong.length ? '<button type="button" class="btn" id="retryBtn">Retry the ' + wrong.length + " I missed</button>" : "") +
-      '<button type="button" class="btn ' + (wrong.length ? "ghost" : "") + '" id="againBtn">New quiz</button>' +
+      '<button type="button" class="btn ' + (wrong.length ? "ghost" : "") + '" id="againBtn">' + (settings.view === "x" ? "Back to mock exams" : "New quiz") + "</button>" +
       '<button type="button" class="btn ghost" data-view="m" id="toMistakes">All my mistakes</button></div>' +
       '<section class="bars"><h2>By lesson</h2>' + bars + "</section>" +
       (wrong.length ? '<section style="display:grid;gap:12px"><h2>Questions to review</h2><ol class="missed">' + missed + "</ol></section>" : '<p class="note">No mistakes. Try a timed exam or add more topics.</p>') +
@@ -5966,6 +7779,7 @@ const VBANK = [
     var yours = pick === undefined || pick === null ? "No answer" : (q.k === "e" ? LETTERS[pick] + " · " : "") + q.o[pick];
     var corr = (q.k === "e" ? LETTERS[q.a] + " · " : "") + q.o[q.a];
     return '<li><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="chip">' + esc(t.src + " · " + t.label) + "</span>" +
+      (q.mock ? '<span class="chip">Mock ' + esc(q.mock) + " · Q" + q.n + "</span>" : "") +
       (times ? '<span class="times">wrong ' + times + "×</span>" : "") + '</div><p class="stem">' + stemHTML(q, q.k === "e" ? pick : q.a, true) +
       '</p><div class="ans"><span class="y">' + esc(yours) + '</span><span class="c">' + esc(corr) + '</span></div><p class="rule">' + esc(q.w || "") + "</p></li>";
   }
@@ -5980,7 +7794,7 @@ const VBANK = [
       lines.push(sec === "g" ? "GRAMMAR" : "VOCABULARY");
       list.forEach(function (id, i) {
         var q = BYID[id], r = records[id], t = TOPIC[q.t];
-        lines.push((i + 1) + ". [" + t.src + " " + t.label + "] " + plainStem(q));
+        lines.push((i + 1) + ". [" + (q.mock ? "Mock " + q.mock + " Q" + q.n + " · " : "") + t.src + " " + t.label + "] " + plainStem(q));
         var yours = r.lp == null ? "no answer" : (q.k === "e" ? "(" + LETTERS[r.lp] + ") " : "") + q.o[r.lp];
         var corr = (q.k === "e" ? "(" + LETTERS[q.a] + ") " : "") + q.o[q.a];
         lines.push("   My answer: " + yours + " | Correct: " + corr + " | wrong " + r.w + "x");
@@ -6023,8 +7837,9 @@ const VBANK = [
   $("sheet").addEventListener("click", function (e) {
     var b = e.target.closest("button");
     if (!b) return;
-    if (b.dataset.view) { settings.view = b.dataset.view; persist(); copyText = null; if (settings.view !== "m" && !states[settings.view]) start(settings.view, null, true); paintAll(); tick(); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    if (b.dataset.view) { settings.view = b.dataset.view; persist(); copyText = null; if ((settings.view === "g" || settings.view === "v") && !states[settings.view]) start(settings.view, null, true); paintAll(); tick(); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
     if (b.dataset.mf) { mfilter = b.dataset.mf; copyText = null; renderMistakes(); return; }
+    if (b.dataset.mock) { startMock(b.dataset.mock, b.dataset.mmode === "exam" ? "exam" : "practice"); return; }
     if (b.id === "mPractise") {
       var ids = shuffle(activeMistakes(mfilter === "all" ? null : mfilter));
       var g = ids.filter(function (id) { return BYID[id].sec === "g"; }), v = ids.filter(function (id) { return BYID[id].sec === "v"; });
@@ -6048,7 +7863,7 @@ const VBANK = [
     else if (b.id === "prevBtn") go(S.i - 1);
     else if (b.id === "endBtn") finish();
     else if (b.id === "retryBtn") start(settings.view, S.items.filter(function (it) { return !isRight(S, it); }).map(function (it) { return it.id; }), false, "Retry");
-    else if (b.id === "againBtn") start(settings.view);
+    else if (b.id === "againBtn") { if (settings.view === "x") { states.x = null; paintAll(); window.scrollTo({ top: 0, behavior: "smooth" }); } else start(settings.view); }
   });
 
   document.addEventListener("keydown", function (e) {
@@ -6076,7 +7891,7 @@ const VBANK = [
   }
   function boot() {
     if (!window.matchMedia("(min-width: 881px)").matches) $("builder").open = false;
-    if (settings.view !== "m" && !states[settings.view]) start(settings.view, null, true);
+    if ((settings.view === "g" || settings.view === "v") && !states[settings.view]) start(settings.view, null, true);
     else { paintAll(); tick(); }
     startCloud();
   }
